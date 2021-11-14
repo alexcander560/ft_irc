@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#define DEBUG 1
+#define DEBUG 1 //Дебажим? Для более обширных логов в FD = 1 (console write FD)
 
 void	message(std::string line);
 void	warning(std::string line);
