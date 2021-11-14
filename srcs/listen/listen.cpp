@@ -1,4 +1,5 @@
 #include "listen.hpp"
+#include "../../user.hpp"
 
 /* Прослушивание порта и передача итогового сообщения в обработчик */
 /* Состоит из кучи проверок. Не пугаться */
@@ -160,9 +161,11 @@ static void	listen_socket(const int socket_fd)
 /* Слушаем отдельного клиента - отдельную машину, если угодно */
 void	listen_clients(const int socket_fd)
 {
-	int		connection_fd;
-	fd_set	fds, read_fds;
-	std::map<int, std::string>	clients;
+	int						connection_fd;
+	fd_set					fds, read_fds;
+	map<int, std::string>	clients;
+	map<int, User>			clients_map;
+	
 
 	FD_ZERO(&fds);
 	FD_SET(socket_fd, &fds);
@@ -211,7 +214,7 @@ void	listen_clients(const int socket_fd)
 						{
 							std::string line = add_character_by_id(i, '\0', clients);
 							printf("ID [%d]: %s\n", i, line.c_str()); // Для команды: ВЫВОД НА СЕРВЕР
-							send_message(i, "Hello, world!"); // Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
+							send_message(i, handle_start(line, i, &clients_map)); // Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
 							clear_by_id(i, clients);
 						}
 					}

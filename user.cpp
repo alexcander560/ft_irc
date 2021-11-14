@@ -15,27 +15,43 @@ User::~User()
 
 bool	User::setNick(const string name)
 {
+	cout << name << endl;
+
+	if (DEBUG)
+		debug("[User::setNick] start funk");
+
 	size_t len = name.size();
 
 	if (len > 9 || len <= 0)
 		return (0);
 
-	for (size_t i = 0; i < len; i++)
-	{
-		if (!(isalpha(name[i]) || isalnum(name[i]) || name[i] == '-' ||
-			name[i] == '[' || name[i] == ']' || name[i] == '\\' ||
-			name[i] == '^' || name[i] == '{' || name[i] == '}'))
-			return (false);
-	}
+	// for (size_t i = 0; i < len; i++)
+	// {
+	// 	/*|| isalnum(name[i]) || name[i] == '-' ||
+	// 		name[i] == '[' || name[i] == ']' || name[i] == '\\' ||
+	// 		name[i] == '^' || name[i] == '{' || name[i] == '}')) */
+	// 	if (!(isalpha(name[i])))
+	// 	{
+	// 		if (DEBUG)
+	// 			debug("[User::setNick] запрещённый символ");
+	// 	}
+	// }
 
 	_nick.first = name;
 	_nick.second = true;
+	if (DEBUG)
+		debug("[User::setNick] end funk");
 	return (true);
 }
 
 bool	User::setPass(const string pass_user, const string pass_server)
 {
-	return (pass_user == pass_server ? _pass = true : _pass = false);
+	bool	res;
+
+	pass_user == pass_server ? res = true : res = false;
+	
+	_pass = res;
+	return (res);
 }
 
 bool	User::setData(const string data)

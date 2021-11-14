@@ -1,5 +1,32 @@
 #include "../../general.hpp"
-#include "user.hpp"
+#include "../../user.hpp"
+
+int	handle_user(const string str_message, string pass, User *user);
+
+string	handle_start(string str_message, int id, map<int, User> *clients_map)
+{
+	string	pass = "123";
+	User	user;
+	bool	res;
+
+	cout << "Cообщение получено {" << str_message << "}" << endl;
+
+
+
+
+	//handle_user(str_message, pass, &user);
+
+	//res = handle_user("NICK Alex", pass, &user);
+	// res = handle_user("PASS 12345", pass, &user);
+	// res = handle_user("PASS 123", pass, &user);
+	// res = handle_user("USER 500    600    700 800  ", pass, &user);
+
+	//cout << "res= " << res << endl;
+	//user.printUser();
+
+	res = rand() % 2;
+	return (res ? GREEN "OK\n" DEFAULT : RED "KO\n" DEFAULT);
+}
 
 int	handle_user(const string str_message, string pass, User *user)
 {
@@ -18,6 +45,8 @@ int	handle_user(const string str_message, string pass, User *user)
 			cout << "QUIT запуск\n";
 		else if (str_message.find("OPER") == 0)
 			cout << "OPER запуск\n";
+		else
+			cout << "Нет такйо команды\n";
 	}
 	else
 	{
@@ -28,20 +57,3 @@ int	handle_user(const string str_message, string pass, User *user)
 	return (res);
 }
 
-// int main()
-// {
-// 	string pass = "123";
-// 	User user;
-// 	int res;
-
-// 	res = handle_user("NICK Alex", pass, &user);
-// 	res = handle_user("PASS 12345", pass, &user);
-// 	res = handle_user("PASS 123", pass, &user);
-// 	//res = handle_user("USER    500  600 700     :800 300", pass, &user);
-// 	res = handle_user("USER 500    600    700 800  ", pass, &user);
-
-// 	cout << "res= " << res << endl;
-// 	user.printUser();
-
-// 	return (0);
-// }

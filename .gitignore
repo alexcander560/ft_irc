@@ -1,9 +1,11 @@
 .
 ..
 .DS_Store
+.idea
 *.out
 *.o
 *.json
 a.out
 *.vscode
 ircserv
+.gch
