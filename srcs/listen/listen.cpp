@@ -1,5 +1,4 @@
 #include "listen.hpp"
-#include "../../general.hpp"
 
 /* Прослушивание порта и передача итогового сообщения в обработчик */
 /* Состоит из кучи проверок. Не пугаться */
@@ -80,7 +79,7 @@ static void	bind_socket(const int socket_fd, const int port)
 	struct sockaddr_in address; //For IPv4 instead IPv6 (sockaddr_in6);
 
 	address.sin_family = AF_INET;
-	address.sin_port = port;
+	address.sin_port = htons(port);
 	address.sin_addr.s_addr = INADDR_ANY;
 
 	bind_value = bind(socket_fd, reinterpret_cast<struct sockaddr *>(&address), sizeof(address));
@@ -158,6 +157,71 @@ static void	listen_socket(const int socket_fd)
 	}
 }
 
+/* Слушаем отдельного клиента - отдельную машину, если угодно */
+void	listen_clients(const int socket_fd)
+{
+	int		connection_fd;
+	fd_set	fds, read_fds;
+	std::map<int, std::string>	clients;
+
+	FD_ZERO(&fds);
+	FD_SET(socket_fd, &fds);
+	if (DEBUG)
+		debug("[listen_clients] Listening clients");
+	while (true)
+	{
+		FD_COPY(&fds, &read_fds);
+		handle_select( select(FD_SETSIZE, &read_fds, NULL, NULL, NULL) );
+		for (int i = 0; i < FD_SETSIZE; i++)
+		{
+			if (FD_ISSET(i, &read_fds))
+			{
+				if (i == socket_fd) //Новое подключение
+				{
+					connection_fd = accept(socket_fd, NULL, NULL);
+					handle_accept(connection_fd);
+					clients.insert(std::pair<int, std::string>(connection_fd, ""));
+					FD_SET(connection_fd, &fds);
+					if (DEBUG)
+						std::cout	<< "DEBUG: [listen_clients] New connection with ID "
+									<< connection_fd << " was add" << std::endl;
+				}
+				else //Старое подключение - обработка
+				{
+					char	buffer;
+					int	bytes = recv(i, &buffer, 1, 0);
+					if (bytes != 1) //Пользователь отключился. Удаляем из MAP
+					{
+						if (DEBUG)
+						{
+							std::cout	<< "DEBUG: [listen_clients] Client with ID "
+										<< i << " was disconnected. Active users count: "
+										<< clients.size() - 1 << std::endl;
+						}
+
+						close(i);
+						FD_CLR(i, &fds);
+						clients.erase(i);
+					}
+					else //Пользователь ввел данные, обрабатываем
+					{
+						if (buffer != 10) //Если введен любой символ, кроме ENTER в консоли
+							add_character_by_id(i, buffer, clients);
+						else //Если символ - конец строки (ENTER в консоли)
+						{
+							std::string line = add_character_by_id(i, '\0', clients);
+							printf("ID [%d]: %s\n", i, line.c_str()); // Для команды: ВЫВОД НА СЕРВЕР
+							send_message(i, "Hello, world!"); // Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
+							clear_by_id(i, clients);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+/* Главная функция для прослушивания. Запускает все второстепенные, является главным узлом целого блока */
 void	listen_messages(const int port)
 {
 	int	socket_fd;
@@ -173,5 +237,6 @@ void	listen_messages(const int port)
 		debug("[listen_messages] bind_socket() successful");
 	listen_socket(socket_fd);
 	if (DEBUG)
-		debug("[listen_messages] listen_socket() successful. Waiting connections");
+		debug("[listen_messages] listen_socket() successful");
+	listen_clients(socket_fd);
 }
