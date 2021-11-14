@@ -1,4 +1,5 @@
-#Our beautiful make
+# Мэйкфайл
+# P.S. Драконы
 
 NAME = ircserv
 

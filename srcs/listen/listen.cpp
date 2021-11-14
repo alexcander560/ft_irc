@@ -210,7 +210,8 @@ void	listen_clients(const int socket_fd)
 						else //Если символ - конец строки (ENTER в консоли)
 						{
 							std::string line = add_character_by_id(i, '\0', clients);
-							printf("ID [%d]: %s\n", i, line.c_str());
+							printf("ID [%d]: %s\n", i, line.c_str()); // Для команды: ВЫВОД НА СЕРВЕР
+							send_message(i, "Hello, world!"); // Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
 							clear_by_id(i, clients);
 						}
 					}

@@ -2,7 +2,20 @@
 
 /* Поддерживающие функции для более удобного расположения кода */
 /* Две функции - обработка ошибок, и еще две - для работы с буффером по ID пользователя */
+/* UPD: Добавлена функция отправки сообщения по ID пользователя */
 /* P.S. Драконы */
+
+/* Отправить сообщение для пользователя по его ID */
+void	send_message(const int id, std::string message)
+{
+	size_t	send_value;
+
+	send_value = send(id, message.c_str(), message.size(), 0);
+	if (send_value != -1 && DEBUG)
+		debug("[send_message] Message was send successful");
+	if (send_value == -1)
+		warning("[send_message] Message cannot send. Unknown and not fatal error");
+}
 
 /* Очистить строку ввода по ID пользователя */
 void 	clear_by_id(int id, std::map<int, std::string> &clients)
