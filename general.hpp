@@ -9,3 +9,9 @@ void	warning(std::string line);
 void	fatal(std::string line);
 
 void	debug(std::string line);
+
+using	std::cout;
+using	std::endl;
+using	std::string;
+using	std::pair;
+
