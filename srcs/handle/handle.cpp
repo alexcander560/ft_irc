@@ -28,20 +28,20 @@ int	handle_user(const string str_message, string pass, User *user)
 	return (res);
 }
 
-int main()
-{
-	string pass = "123";
-	User user;
-	int res;
+// int main()
+// {
+// 	string pass = "123";
+// 	User user;
+// 	int res;
 
-	res = handle_user("NICK Alex", pass, &user);
-	res = handle_user("PASS 12345", pass, &user);
-	res = handle_user("PASS 123", pass, &user);
-	//res = handle_user("USER    500  600 700     :800 300", pass, &user);
-	res = handle_user("USER 500    600    700 800  ", pass, &user);
+// 	res = handle_user("NICK Alex", pass, &user);
+// 	res = handle_user("PASS 12345", pass, &user);
+// 	res = handle_user("PASS 123", pass, &user);
+// 	//res = handle_user("USER    500  600 700     :800 300", pass, &user);
+// 	res = handle_user("USER 500    600    700 800  ", pass, &user);
 
-	cout << "res= " << res << endl;
-	user.printUser();
+// 	cout << "res= " << res << endl;
+// 	user.printUser();
 
-	return (0);
-}
+// 	return (0);
+// }
