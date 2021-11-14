@@ -80,7 +80,7 @@ static void	bind_socket(const int socket_fd, const int port)
 	struct sockaddr_in address; //For IPv4 instead IPv6 (sockaddr_in6);
 
 	address.sin_family = AF_INET;
-	address.sin_port = port;
+	address.sin_port = htons(port);
 	address.sin_addr.s_addr = INADDR_ANY;
 
 	bind_value = bind(socket_fd, reinterpret_cast<struct sockaddr *>(&address), sizeof(address));
@@ -158,6 +158,28 @@ static void	listen_socket(const int socket_fd)
 	}
 }
 
+/* Слушаем отдельного клиента - отдельную машину, если угодно */
+void	listen_client(const int socket_fd)
+{
+	int		clients_count;
+	fd_set	for_listen, current;
+	std::vector<int>	clients;
+
+	FD_ZERO(&for_listen);
+	FD_SET(socket_fd, &for_listen);
+	while (true)
+	{
+		printf("GGG\n");
+		FD_COPY(&for_listen, &current); //current = for_listen;
+		clients_count = select(socket_fd + 1, &current, NULL, NULL, NULL);
+		for (int i = 0; i < clients_count; i++)
+		{
+			
+		}
+	}
+}
+
+/* Главная функция для прослушивания. Запускает все второстепенные, является главным узлом целого блока */
 void	listen_messages(const int port)
 {
 	int	socket_fd;
@@ -174,4 +196,5 @@ void	listen_messages(const int port)
 	listen_socket(socket_fd);
 	if (DEBUG)
 		debug("[listen_messages] listen_socket() successful. Waiting connections");
+	listen_client(socket_fd);
 }

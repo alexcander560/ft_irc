@@ -1,11 +1,89 @@
-#include "srcs/listen/listen.hpp"
-
 #define PORT 42
 
-int	main(void)
+/*int	main(void)
 {
 	listen_messages(PORT);
-}/*
+}*/
+
+#include <stdio.h>
+#include <string.h>   //strlen
+#include <stdlib.h>
+#include <errno.h>
+#include <unistd.h>   //close
+#include <arpa/inet.h>    //close
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
+
+#define TRUE   1
+#define FALSE  0
+//#define PORT 4242
+
+int main(int argc , char *argv[])
+{
+	int opt = TRUE;
+	int master_socket , addrlen , new_socket , client_socket[30] ,
+	max_clients = 30 , activity, i , valread , sd;
+	int max_sd;
+	struct sockaddr_in address;
+
+	char buffer[1025];
+	fd_set readfds;
+
+	char *message = "ECHO Daemon v1.0 \r\n";
+
+	for (i = 0; i < max_clients; i++)
+	{
+		client_socket[i] = 0;
+	}
+	if( (master_socket = socket(AF_INET , SOCK_STREAM , 0)) == 0)
+	{
+		perror("socket failed");
+		exit(EXIT_FAILURE);
+	}
+	if( setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt,
+				   sizeof(opt)) < 0 )
+	{
+		perror("setsockopt");
+		exit(EXIT_FAILURE);
+	}
+	address.sin_family = AF_INET;
+	address.sin_addr.s_addr = INADDR_ANY;
+	address.sin_port = htons( PORT );
+	if (bind(master_socket, (struct sockaddr *)&address, sizeof(address))<0)
+	{
+		perror("bind failed");
+		exit(EXIT_FAILURE);
+	}
+	printf("Listener on port %d \n", PORT);
+	if (listen(master_socket, 3) < 0)
+	{
+		perror("listen");
+		exit(EXIT_FAILURE);
+	}
+	addrlen = sizeof(address);
+	puts("Waiting for connections ...");
+	while(TRUE)
+	{
+		FD_ZERO(&readfds);
+		FD_SET(master_socket, &readfds);
+		max_sd = master_socket;
+//		for ( i = 0 ; i < max_clients ; i++)
+//		{
+//			sd = client_socket[i];
+//			if(sd > 0)
+//				FD_SET( sd , &readfds);
+//			if(sd > max_sd)
+//				max_sd = sd;
+//		}
+	printf("GGG\n");
+		activity = select( max_sd + 1 , &readfds , NULL , NULL , NULL);
+		printf("GGG2\n");
+	}
+
+	return 0;
+}
 
 
 /*#include <stdio.h>
