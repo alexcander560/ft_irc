@@ -159,22 +159,48 @@ static void	listen_socket(const int socket_fd)
 }
 
 /* Слушаем отдельного клиента - отдельную машину, если угодно */
-void	listen_client(const int socket_fd)
+void	listen_clients(const int socket_fd)
 {
-	int		clients_count;
-	fd_set	for_listen, current;
-	std::vector<int>	clients;
+	int		connection_fd;
+	fd_set	fds, read_fds;
+	std::set<int>	clients;
 
-	FD_ZERO(&for_listen);
-	FD_SET(socket_fd, &for_listen);
+	FD_ZERO(&fds);
+	FD_SET(socket_fd, &fds);
 	while (true)
 	{
-		printf("GGG\n");
-		FD_COPY(&for_listen, &current); //current = for_listen;
-		clients_count = select(socket_fd + 1, &current, NULL, NULL, NULL);
-		for (int i = 0; i < clients_count; i++)
+		FD_COPY(&fds, &read_fds);
+		handle_select( select(FD_SETSIZE, &read_fds, NULL, NULL, NULL) );
+		for (int i = 0; i < FD_SETSIZE; i++)
 		{
-			
+			if (FD_ISSET(i, &read_fds))
+			{
+				if (i == socket_fd) //Новое подключение
+				{
+					printf("New connection. ");
+					connection_fd = accept(socket_fd, NULL, NULL);
+					handle_accept(connection_fd);
+					//TODO: Handle errors from ACCEPT();
+					clients.insert(connection_fd);
+					FD_SET(connection_fd, &fds);
+					printf("Was add with ID: %d\n", connection_fd);
+				}
+				else //Старое подключение - обработка
+				{
+					char	buffer;
+					int	bytes = recv(i, &buffer, 1, 0);
+					if (bytes != 1)
+					{
+						close(i);
+						FD_CLR(i, &fds);
+						clients.erase(i);
+						printf("Disconnected\n");
+						std::cout << clients.size() << std::endl;
+					}
+					else
+						std::cout.write(&buffer, 1);
+				}
+			}
 		}
 	}
 }
@@ -196,5 +222,5 @@ void	listen_messages(const int port)
 	listen_socket(socket_fd);
 	if (DEBUG)
 		debug("[listen_messages] listen_socket() successful. Waiting connections");
-	listen_client(socket_fd);
+	listen_clients(socket_fd);
 }
