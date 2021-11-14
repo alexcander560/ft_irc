@@ -163,10 +163,12 @@ void	listen_clients(const int socket_fd)
 {
 	int		connection_fd;
 	fd_set	fds, read_fds;
-	std::set<int>	clients;
+	std::map<int, std::string>	clients;
 
 	FD_ZERO(&fds);
 	FD_SET(socket_fd, &fds);
+	if (DEBUG)
+		debug("[listen_clients] Listening clients");
 	while (true)
 	{
 		FD_COPY(&fds, &read_fds);
@@ -177,28 +179,42 @@ void	listen_clients(const int socket_fd)
 			{
 				if (i == socket_fd) //Новое подключение
 				{
-					printf("New connection. ");
 					connection_fd = accept(socket_fd, NULL, NULL);
 					handle_accept(connection_fd);
-					//TODO: Handle errors from ACCEPT();
-					clients.insert(connection_fd);
+					clients.insert(std::pair<int, std::string>(connection_fd, ""));
 					FD_SET(connection_fd, &fds);
-					printf("Was add with ID: %d\n", connection_fd);
+					if (DEBUG)
+						std::cout	<< "DEBUG: [listen_clients] New connection with ID "
+									<< connection_fd << " was add" << std::endl;
 				}
 				else //Старое подключение - обработка
 				{
 					char	buffer;
 					int	bytes = recv(i, &buffer, 1, 0);
-					if (bytes != 1)
+					if (bytes != 1) //Пользователь отключился. Удаляем из MAP
 					{
+						if (DEBUG)
+						{
+							std::cout	<< "DEBUG: [listen_clients] Client with ID "
+										<< i << " was disconnected. Active users count: "
+										<< clients.size() - 1 << std::endl;
+						}
+
 						close(i);
 						FD_CLR(i, &fds);
 						clients.erase(i);
-						printf("Disconnected\n");
-						std::cout << clients.size() << std::endl;
 					}
-					else
-						std::cout.write(&buffer, 1);
+					else //Пользователь ввел данные, обрабатываем
+					{
+						if (buffer != 10) //Если введен любой символ, кроме ENTER в консоли
+							add_character_by_id(i, buffer, clients);
+						else //Если символ - конец строки (ENTER в консоли)
+						{
+							std::string line = add_character_by_id(i, '\0', clients);
+							printf("ID [%d]: %s\n", i, line.c_str());
+							clear_by_id(i, clients);
+						}
+					}
 				}
 			}
 		}
@@ -221,6 +237,6 @@ void	listen_messages(const int port)
 		debug("[listen_messages] bind_socket() successful");
 	listen_socket(socket_fd);
 	if (DEBUG)
-		debug("[listen_messages] listen_socket() successful. Waiting connections");
+		debug("[listen_messages] listen_socket() successful");
 	listen_clients(socket_fd);
 }

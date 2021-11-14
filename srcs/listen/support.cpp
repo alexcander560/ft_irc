@@ -1,5 +1,20 @@
 #include "support.hpp"
 
+/* Очистить строку ввода по ID пользователя */
+void 	clear_by_id(int id, std::map<int, std::string> &clients)
+{
+	std::map<int, std::string>::iterator element = clients.find(id);
+	(*element).second.clear();
+}
+
+/* Добавить символ в общий ввод пользователя для формирования полноценной строки, потому как читаем посимвольно */
+std::string	&add_character_by_id(int id, int character, std::map<int, std::string> &clients)
+{
+	std::map<int, std::string>::iterator element = clients.find(id);
+	(*element).second.push_back(character);
+	return ((*element).second);
+}
+
 /* Обработка ошибок для функции select() */
 void	handle_select(const int select_value)
 {
