@@ -47,6 +47,7 @@ static int	create_socket()
 	return (-1);
 }
 
+/* Настройка сокета, проверка */
 static void	set_socket_options(const int socket_fd)
 {
 	int		set_options;
@@ -72,6 +73,7 @@ static void	set_socket_options(const int socket_fd)
 	}
 }
 
+/* Выдача сокету "имя" в виде адреса и порта */
 static void	bind_socket(const int socket_fd, const int port)
 {
 	int	bind_value;
@@ -128,11 +130,48 @@ static void	bind_socket(const int socket_fd, const int port)
 	}
 }
 
+/* Установка хука на активность сокета */
+static void	listen_socket(const int socket_fd)
+{
+	int	listen_value;
+
+	listen_value = listen(socket_fd, 42);
+	if (listen_value != -1)
+		return ;
+	switch (errno)
+	{
+		case EADDRINUSE:
+			fatal("Another socket is already listening on the same port.");
+			break ;
+		case EBADF:
+			fatal("The argument socket FD is not a valid file descriptor.");
+			break ;
+		case ENOTSOCK:
+			fatal("The file descriptor sockfd does not refer to a socket.");
+			break ;
+		case EOPNOTSUPP:
+			fatal("The socket is not of a type that supports the listen() operation.");
+			break ;
+		default:
+			fatal("Unknown error.");
+			break ;
+	}
+}
+
 void	listen_messages(const int port)
 {
 	int	socket_fd;
 
 	socket_fd = create_socket();
+	if (DEBUG)
+		debug("[listen_messages] create_socket() successful");
 	set_socket_options(socket_fd);
+	if (DEBUG)
+		debug("[listen_messages] set_socket_options() successful");
 	bind_socket(socket_fd, port);
+	if (DEBUG)
+		debug("[listen_messages] bind_socket() successful");
+	listen_socket(socket_fd);
+	if (DEBUG)
+		debug("[listen_messages] listen_socket() successful. Waiting connections");
 }

@@ -11,13 +11,13 @@ OBJFILES = *.o
 all: $(NAME)
 
 $(NAME):
-	clang++ -c $(CPPFILES)
-	clang++ $(OBJFILES) -o $(NAME)
+	@clang++ -c $(CPPFILES)
+	@clang++ $(OBJFILES) -o $(NAME)
 
 clean:
-	rm -rf $(OBJFILES)
+	@rm -rf $(OBJFILES)
 
 fclean:	clean
-	rm -rf $(NAME)
+	@rm -rf $(NAME)
 
 re:	fclean	all

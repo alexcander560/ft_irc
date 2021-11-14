@@ -18,3 +18,8 @@ void	fatal(std::string line)
 	std::cout << "FATAL ERROR: " << line << std::endl;
 	std::exit(EXIT_FAILURE);
 }
+
+void	debug(std::string line)
+{
+	std::cout << "DEBUG: " << line << std::endl;
+}

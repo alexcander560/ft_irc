@@ -4,9 +4,7 @@
 
 int	main(void)
 {
-	std::cout << "Delaying start\n";
 	listen_messages(PORT);
-	std::cout << "Stopping...\n";
 }
 
 
