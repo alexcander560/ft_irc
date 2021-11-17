@@ -1,5 +1,5 @@
 #include "listen.hpp"
-#include "../../user.hpp"
+#include "../../UserMap.hpp"
 
 /* Прослушивание порта и передача итогового сообщения в обработчик */
 /* Состоит из кучи проверок. Не пугаться */
@@ -164,13 +164,14 @@ void	listen_clients(const int socket_fd)
 	int						connection_fd;
 	fd_set					fds, read_fds;
 	map<int, std::string>	clients;
-	map<int, User>			clients_map;
+	UserMap					clients_map;		//структура данных со всеми пользователями
 	
 
 	FD_ZERO(&fds);
 	FD_SET(socket_fd, &fds);
-	if (DEBUG)
-		debug("[listen_clients] Listening clients");
+
+	debug("[listen_clients] Listening clients");
+	
 	while (true)
 	{
 		FD_COPY(&fds, &read_fds);
@@ -185,8 +186,8 @@ void	listen_clients(const int socket_fd)
 					handle_accept(connection_fd);
 					clients.insert(std::pair<int, std::string>(connection_fd, ""));
 					FD_SET(connection_fd, &fds);
-					if (DEBUG)
-						std::cout	<< "DEBUG: [listen_clients] New connection with ID "
+
+					std::cout	<< "DEBUG: [listen_clients] New connection with ID "
 									<< connection_fd << " was add" << std::endl;
 				}
 				else //Старое подключение - обработка
@@ -195,12 +196,9 @@ void	listen_clients(const int socket_fd)
 					int	bytes = recv(i, &buffer, 1, 0);
 					if (bytes != 1) //Пользователь отключился. Удаляем из MAP
 					{
-						if (DEBUG)
-						{
-							std::cout	<< "DEBUG: [listen_clients] Client with ID "
+						std::cout	<< "DEBUG: [listen_clients] Client with ID "
 										<< i << " was disconnected. Active users count: "
 										<< clients.size() - 1 << std::endl;
-						}
 
 						close(i);
 						FD_CLR(i, &fds);
@@ -230,16 +228,12 @@ void	listen_messages(const int port)
 	int	socket_fd;
 
 	socket_fd = create_socket();
-	if (DEBUG)
-		debug("[listen_messages] create_socket() successful");
+	debug("[listen_messages] create_socket() successful");
 	set_socket_options(socket_fd);
-	if (DEBUG)
-		debug("[listen_messages] set_socket_options() successful");
+	debug("[listen_messages] set_socket_options() successful");
 	bind_socket(socket_fd, port);
-	if (DEBUG)
-		debug("[listen_messages] bind_socket() successful");
+	debug("[listen_messages] bind_socket() successful");
 	listen_socket(socket_fd);
-	if (DEBUG)
-		debug("[listen_messages] listen_socket() successful");
+	debug("[listen_messages] listen_socket() successful");
 	listen_clients(socket_fd);
 }

@@ -7,11 +7,8 @@ using	std::cout;
 using	std::endl;
 using	std::string;
 using	std::pair;
+using	std::make_pair;
 using	std::map;
-
-#include "user.hpp"
-
-class User;
 
 # define DEFAULT	"\033[0m"
 # define BOLD		"\033[1m"
@@ -26,10 +23,14 @@ class User;
 #define DEBUG 0 //Дебажим? Для более обширных логов в FD = 1 (console write FD)
 #define DEBUG_LOG 0
 
+#include "User.hpp"
+
+class User;
+
 void	message(std::string line);
 void	warning(std::string line);
 void	fatal(std::string line);
 
 void	debug(std::string line);
 
-string	handle_start(string str_message, int id, map<int, User> *clients_map);
+string	handle_start(string str_message, int id, map<int, User>);

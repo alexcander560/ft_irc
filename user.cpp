@@ -1,116 +1,117 @@
-#include "user.hpp"
+#include "User.hpp"
 
-User::User()
+User::User(int id)
 {
+	_nick.second = false;
+	_pass = false;
+	_data.second = false;
 	_status = -1;
-	if (DEBUG)
-		debug("[User()] Новый пользователь создан");
+	_id = id;
+	debug("Новый пользователь создан");
 }
 
 User::~User()
 {
-	if (DEBUG)
-		debug("[~User()] Пользователь удалён");
+	debug("Пользователь удалён");
 }
 
-bool	User::setNick(const string name)
+const string	User::getName() const { return (_nick.first); }
+
+bool			User::setNick(const string name)
 {
-	cout << name << endl;
-
-	if (DEBUG)
-		debug("[User::setNick] start funk");
-
-	size_t len = name.size();
-
-	if (len > 9 || len <= 0)
-		return (0);
-
-	// for (size_t i = 0; i < len; i++)
-	// {
-	// 	/*|| isalnum(name[i]) || name[i] == '-' ||
-	// 		name[i] == '[' || name[i] == ']' || name[i] == '\\' ||
-	// 		name[i] == '^' || name[i] == '{' || name[i] == '}')) */
-	// 	if (!(isalpha(name[i])))
-	// 	{
-	// 		if (DEBUG)
-	// 			debug("[User::setNick] запрещённый символ");
-	// 	}
-	// }
-
-	_nick.first = name;
-	_nick.second = true;
-	if (DEBUG)
-		debug("[User::setNick] end funk");
-	return (true);
-}
-
-bool	User::setPass(const string pass_user, const string pass_server)
-{
-	bool	res;
-
-	pass_user == pass_server ? res = true : res = false;
-	
-	_pass = res;
-	return (res);
-}
-
-bool	User::setData(const string data)
-{
-	size_t	len = data.size(), start = 0, len_substr = 0, count = 0;
+	int		len = name.size(), count = 0;
 	bool	flag = false;
 
-	cout << data << endl;
-
-	for (size_t i = 0; i < len; i++)
+	//cout << "(" << name << ")" << endl;
+	while (name[count] && name[count] == ' ')
+		count++;
+	len -= count;
+	if (len > 9 || len <= 0)
 	{
-		if (data[i] == ' ')
-			start++;
-		else if (data[i] == ':' && count == 3)
-		{
-			_data.first._realname = data.substr(start + 1, len);
-			break ;
-		}
-		else if (data[i] != ' ')
-		{
-			for (; i < len; i++)
-			{
-				if (data[i] == ' ' || (i + 1) == len)
-				{
-					if (count == 0)
-						_data.first._username = data.substr(start, data[i] == ' ' ? i - start : i - start + 1);
-					else if (count == 1)
-						_data.first._hostname = data.substr(start, data[i] == ' ' ? i - start : i - start + 1);
-					else if (count == 2)
-						_data.first._servername = data.substr(start, data[i] == ' ' ? i - start : i - start + 1);
-					else if (count == 3)
-						_data.first._realname = data.substr(start, data[i] == ' ' ? i - start : i - start + 1);
-					else
-						return (false);
-					count++;
-					start = i + 1;
-					break ;
-				}
-			}
-		}
+		cout << "Неверная длина ника\n";
+		return (false);
 	}
-	_data.second = true;
-	return (true);
+	for (int i = count; i < len; i++)
+	{
+		if (!isalnum(name[i]) && name[i] != '-' && name[i] != '[' && name[i] != ']' &&
+			name[i] != '\\' && name[i] != '^' && name[i] != '{' && name[i] != '}')
+			return (false);
+	}
+	_nick.first = name.substr(count, len);
+	_nick.second = true;
+	return (_nick.second);
 }
 
-void	User::printUser() const
+bool			User::setPass(const string pass_user, const string pass_server)
 {
-	//cout << "USER PRINT" << endl;
+	int	count = 0;
+
+	while (pass_user[count] && pass_user[count] == ' ')
+		count++;
+	cout << "pass_user=(" << pass_user << ")" << "pass_server=(" << pass_server << ")\n";
+	pass_user.substr(count, pass_user.size()) == pass_server ? _pass = true : _pass = false;
+	return (_pass);
+}
+
+bool			User::setData(const string data)
+{
+	int		len = data.size(), start = 0, count = 0;
+	bool	flag = false;
+	string	username, hostname, servername, realname;
+
+	cout << "(" << data << ")" << endl;
+
+	while (data[start] && data[start] == ' ')
+		start++;
+
+	username = data.substr(start, data.find(' ', start) - start);
+
+	start += username.size();
+	while (data[start] && data[start] == ' ')
+		start++;
+	hostname = data.substr(start, data.find(' ', start) - start);
+	start += hostname.size();
+	while (data[start] && data[start] == ' ')
+		start++;
+	servername = data.substr(start, data.find(' ', start) - start);
+	start += servername.size();
+	while (data[start] && data[start] == ' ')
+		start++;
+	if (data[start] == ':')
+	{
+		realname = data.substr(start + 1, data.size());
+		start++;
+	}
+	else
+		realname = data.substr(start, data.find(' ', start) - start);
+	start += realname.size();
+
+	for (;data[start]; start++)
+	{
+		if (data[start] != ' ')
+			return (false);
+	}
+
+	if (username != "" && hostname != "" && servername != "" && realname != "")
+	{
+		_data.first._username = username;
+		_data.first._hostname = hostname;
+		_data.first._servername = servername;
+		_data.first._realname = realname;
+		_data.second = true;
+	}
+	return (_data.second);
+}
+
+void			User::printUser() const
+{
+	cout << "----------\n";
+	cout << "USER ID: " << _id << endl;
 	cout << "USER STATUS: " << _status << endl;
 	cout << "pass: ";
-	if (_pass)
-		cout << "Установлен" << endl;
-	else
-		cout << "Не установлен" << endl;
+	_pass ? cout << "Установлен\n" : cout << "Не установлен\n";
 	cout << "nick: ";
-	if (_nick.second)
-		cout << _nick.first << endl;
-	else
-		cout << "Не установленно" << endl;
+	_nick.second ? cout << _nick.first << endl : cout << "Не установленно\n";
 	cout << "user: ";
 	if (_data.second)
 	{
@@ -122,5 +123,5 @@ void	User::printUser() const
 	}
 	else
 		cout << "Не установленно" << endl;
-
+	cout << "----------\n";
 }

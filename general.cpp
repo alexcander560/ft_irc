@@ -2,24 +2,26 @@
 
 /* Общие функции для удобной работы */
 /* P.S. Драконы */
+/* P.P.S В debug, добавил if (DEBUG), потому что везде прописывать это условие невыносимо */
 
-void	message(std::string line)
+void	message(string line)
 {
-	std::cout << line << std::endl;
+	cout << line << endl;
 }
 
-void	warning(std::string line)
+void	warning(string line)
 {
-	std::cout << "WARNING: " << line << std::endl;
+	cout << "WARNING: " << line << std::endl;
 }
 
-void	fatal(std::string line)
+void	fatal(string line)
 {
-	std::cout << "FATAL ERROR: " << line << std::endl;
-	std::exit(EXIT_FAILURE);
+	cout << "FATAL ERROR: " << line << endl;
+	exit(EXIT_FAILURE);
 }
 
-void	debug(std::string line)
+void	debug(string line)
 {
-	std::cout << "DEBUG: " << line << std::endl;
+	if (DEBUG)
+		cout << "DEBUG: " << line << endl;
 }
