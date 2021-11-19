@@ -2,7 +2,7 @@
 #include "general.hpp"
 
 // Структура для записи данных о пользователе (передаются командой USER при регистрации)
-struct userData
+struct	userData
 {
 	string	_username;
 	string	_hostname;

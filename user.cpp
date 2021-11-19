@@ -23,7 +23,7 @@ const int		User::getStatus() const { return (_status); }
 // Возвращает true, если ник успешно установлен, fasle если ник не валиден
 bool			User::setNick(vector<string> param)
 {
-	int len = param[1].size();
+	int	len = param[1].size();
 
 	if (len > 9 || len <= 0)
 	{
