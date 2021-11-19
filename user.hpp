@@ -15,27 +15,31 @@ struct userData
 // Второй элемент пары: наличии данных (0 - нет, 1 - да)
 class User
 {
-	public:
+	private:
 		pair<string, bool>		_nick;
 		bool					_pass;
 		pair<userData, bool>	_data;
-		int						_status;
-		int						_id;
+		int						_status;	// -1-не прошёл регистрацию, 1-зарегестрирован
+		int						_id;		// Излишнии данные, нужно просто ради удобства печати информации о пользователе
 
 	public:
+		// Конструктор
 		User(int id);
+		// Деструктор
 		~User();
 
 		// Возвращает имя пользователя
 		const string	getName() const;
+		// Возвращает статус пользователя
+		const int		getStatus() const;
 		// Устанавливает пользователю имя (проверяет на валидность)
-		bool		setNick(const string name);
+		bool			setNick(vector<string> param);
 		// Проверяет ввёл ли пользователь верный пароль
-		bool		setPass(const string pass_user, const string pass_server);
+		bool			setPass(vector<string> param, const string pass_server);
 		// Устанавливает пользователю все нужные данные (проверяет на валидность)
-		bool		setData(const string data);
-		// Проверяет все ли данные для пользователя заполненны
-		bool		dataAll() const;
+		bool			setData(vector<string> param);
+		// Проверяет все ли данные для пользователя заполненны, если да, то статус меняется на 1
+		bool			registration();
 		// Распечатать все данные о пользователе
-		void		printUser() const;
+		void			printUser() const;
 };

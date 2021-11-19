@@ -1,5 +1,6 @@
 #include "User.hpp"
 
+// Конструктор
 User::User(int id)
 {
 	_nick.second = false;
@@ -7,105 +8,99 @@ User::User(int id)
 	_data.second = false;
 	_status = -1;
 	_id = id;
-	debug("Новый пользователь создан");
 }
 
-User::~User()
-{
-	debug("Пользователь удалён");
-}
+// Деструктор
+User::~User(){}
 
+// Возвращает имя пользователя
 const string	User::getName() const { return (_nick.first); }
 
-bool			User::setNick(const string name)
-{
-	int		len = name.size(), count = 0;
-	bool	flag = false;
+// Возвращает статус пользователя
+const int		User::getStatus() const { return (_status); }
 
-	//cout << "(" << name << ")" << endl;
-	while (name[count] && name[count] == ' ')
-		count++;
-	len -= count;
+// Устанавливает пользователю имя (проверяет на валидность)
+// Возвращает true, если ник успешно установлен, fasle если ник не валиден
+bool			User::setNick(vector<string> param)
+{
+	int len = param[1].size();
+
 	if (len > 9 || len <= 0)
 	{
-		cout << "Неверная длина ника\n";
+		debug(RED"[setNick] Неверная длина nick"DEFAULT);
 		return (false);
 	}
-	for (int i = count; i < len; i++)
+	for (int i = 0; i < len; i++)
 	{
-		if (!isalnum(name[i]) && name[i] != '-' && name[i] != '[' && name[i] != ']' &&
-			name[i] != '\\' && name[i] != '^' && name[i] != '{' && name[i] != '}')
+		if (!isalnum(param[1][i]) && param[1][i] != '-' && param[1][i] != '[' && param[1][i] != ']' &&
+		param[1][i] != '\\' && param[1][i] != '^' && param[1][i] != '{' && param[1][i] != '}')
+		{
+			debug(string(RED "[setNick] Запрещённый символ (")+ param[1][i] + ") в имени"DEFAULT);
 			return (false);
+		}
 	}
-	_nick.first = name.substr(count, len);
+	_nick.first = param[1];
 	_nick.second = true;
-	return (_nick.second);
+	debug("[setNick] Ник успешно установлен");
+	return (true);
 }
 
-bool			User::setPass(const string pass_user, const string pass_server)
+// Проверяет ввёл ли пользователь верный пароль
+// Возвращет true, если пароль верный, false если пароль неправильный
+bool			User::setPass(vector<string> param, const string pass_server)
 {
-	int	count = 0;
-
-	while (pass_user[count] && pass_user[count] == ' ')
-		count++;
-	cout << "pass_user=(" << pass_user << ")" << "pass_server=(" << pass_server << ")\n";
-	pass_user.substr(count, pass_user.size()) == pass_server ? _pass = true : _pass = false;
+	debug("[setPass] Пароль сервера: (" + pass_server + ") Пароль клиента: (" + param[1] + ")");
+	if (param.size() == 2)
+	{
+		if (param[1] == pass_server)
+			_pass = true;
+		else
+			_pass = false;
+	}
+	else
+	{
+		_pass = false;
+		debug(RED"[setPass] Неверное число аргументов"DEFAULT);
+	}
+	debug(_pass ? "[setPass] Введён верный пароль" : RED"[setPass] ПАРОЛЬ НЕВЕРНЫЙ"DEFAULT);
 	return (_pass);
 }
 
-bool			User::setData(const string data)
+// Устанавливает данные пользователя
+// Возвращает true, если данные успешно установлены, fasle при провале
+bool			User::setData(vector<string> param)
 {
-	int		len = data.size(), start = 0, count = 0;
-	bool	flag = false;
-	string	username, hostname, servername, realname;
-
-	cout << "(" << data << ")" << endl;
-
-	while (data[start] && data[start] == ' ')
-		start++;
-
-	username = data.substr(start, data.find(' ', start) - start);
-
-	start += username.size();
-	while (data[start] && data[start] == ' ')
-		start++;
-	hostname = data.substr(start, data.find(' ', start) - start);
-	start += hostname.size();
-	while (data[start] && data[start] == ' ')
-		start++;
-	servername = data.substr(start, data.find(' ', start) - start);
-	start += servername.size();
-	while (data[start] && data[start] == ' ')
-		start++;
-	if (data[start] == ':')
+	if (param.size() == 5)
 	{
-		realname = data.substr(start + 1, data.size());
-		start++;
-	}
-	else
-		realname = data.substr(start, data.find(' ', start) - start);
-	start += realname.size();
-
-	for (;data[start]; start++)
-	{
-		if (data[start] != ' ')
-			return (false);
-	}
-
-	if (username != "" && hostname != "" && servername != "" && realname != "")
-	{
-		_data.first._username = username;
-		_data.first._hostname = hostname;
-		_data.first._servername = servername;
-		_data.first._realname = realname;
+		_data.first._username = param[1];
+		_data.first._hostname = param[2];
+		_data.first._servername = param[3];
+		_data.first._realname = param[4];
 		_data.second = true;
 	}
-	return (_data.second);
+	else
+	{
+		debug(RED"[setData] Неверное число паарметров"DEFAULT);
+		return (false);
+	}
+
+	return (true);
 }
 
+// Проверяет все ли данные для пользователя заполненны, если да, то статус меняется на 1
+bool			User::registration()
+{
+	int old_status = _status;
+
+	if (_nick.second && _pass && _data.second)
+		_status = 1;
+	return (_status == 1 && old_status == -1 ? true : false);
+}
+
+// Распечатать все данные о пользователе
 void			User::printUser() const
 {
-	cout << "----------\n";
+	cout << "--------------------------------------------------\n";
 	cout << "USER ID: " << _id << endl;
 	cout << "USER STATUS: " << _status << endl;
 	cout << "pass: ";
@@ -123,5 +118,5 @@ void			User::printUser() const
 	}
 	else
 		cout << "Не установленно" << endl;
-	cout << "----------\n";
+	cout << "--------------------------------------------------\n";
 }

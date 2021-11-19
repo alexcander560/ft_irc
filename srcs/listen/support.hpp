@@ -3,7 +3,7 @@
 #include "listen.hpp"
 #include "../../general.hpp"
 
-void	send_message(const int id, std::string message);
+void	send_message(pair<int, string> message);
 void 	clear_by_id(int id, std::map<int, std::string> &clients);
 string	&add_character_by_id(int id, int character, std::map<int, std::string> &clients);
 void	handle_select(const int select_value);

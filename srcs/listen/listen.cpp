@@ -1,5 +1,6 @@
 #include "listen.hpp"
-#include "../../UserMap.hpp"
+#include "../../User.hpp"
+#include "../../general.hpp"
 
 /* Прослушивание порта и передача итогового сообщения в обработчик */
 /* Состоит из кучи проверок. Не пугаться */
@@ -164,7 +165,7 @@ void	listen_clients(const int socket_fd)
 	int						connection_fd;
 	fd_set					fds, read_fds;
 	map<int, std::string>	clients;
-	UserMap					clients_map;		//структура данных со всеми пользователями
+	map<int, User>			clients_map;		//структура данных со всеми пользователями
 	
 
 	FD_ZERO(&fds);
@@ -211,8 +212,11 @@ void	listen_clients(const int socket_fd)
 						else //Если символ - конец строки (ENTER в консоли)
 						{
 							std::string line = add_character_by_id(i, '\0', clients);
+
+							line = line.substr(0, line.size() - 1);
 							printf("ID [%d]: %s\n", i, line.c_str()); // Для команды: ВЫВОД НА СЕРВЕР
-							send_message(i, handle_start(line, i, &clients_map)); // Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
+
+							send_message(handle_message(line, i, &clients_map, "123")); // Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
 							clear_by_id(i, clients);
 						}
 					}

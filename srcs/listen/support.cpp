@@ -6,11 +6,11 @@
 /* P.S. Драконы */
 
 /* Отправить сообщение для пользователя по его ID */
-void	send_message(const int id, std::string message)
+void	send_message(pair<int, string> message)
 {
 	size_t	send_value;
 
-	send_value = send(id, message.c_str(), message.size(), 0);
+	send_value = send(message.first, message.second.c_str(), message.second.size(), 0);
 	if (send_value != -1 && DEBUG)
 		debug("[send_message] Message was send successful");
 	if (send_value == -1)

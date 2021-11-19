@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <map>
+#include <vector>
 
 using	std::cout;
 using	std::endl;
@@ -9,6 +10,7 @@ using	std::string;
 using	std::pair;
 using	std::make_pair;
 using	std::map;
+using	std::vector;
 
 # define DEFAULT	"\033[0m"
 # define BOLD		"\033[1m"
@@ -20,7 +22,7 @@ using	std::map;
 # define BLUE		"\033[34m"
 # define AQUA		"\033[36m"
 
-#define DEBUG 0 //Дебажим? Для более обширных логов в FD = 1 (console write FD)
+#define DEBUG 1 //Дебажим? Для более обширных логов в FD = 1 (console write FD)
 #define DEBUG_LOG 0
 
 #include "User.hpp"
@@ -33,4 +35,4 @@ void	fatal(std::string line);
 
 void	debug(std::string line);
 
-string	handle_start(string str_message, int id, map<int, User>);
+pair<int, string>	handle_message(string str_message, int id, map<int, User> *clients_map, string pass);
