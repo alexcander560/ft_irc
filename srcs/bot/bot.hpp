@@ -12,6 +12,8 @@ using std::string;
 #define COMMAND_GETHASH "GETHASH"
 #define COMMAND_GETIMAGE "GETIMAGE"
 
+#define COLOR_FOR_BOT GREEN
+
 /* Вспомогательные функции. Пожалуйста, не надо нас ломать */
 string	get_command_by_msg(std::string &msg);
 string	get_data_by_msg(std::string &msg);

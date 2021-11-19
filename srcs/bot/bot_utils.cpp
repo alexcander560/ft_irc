@@ -1,5 +1,9 @@
 #include "bot.hpp"
 
+/* Вспомогательный файл для бота */
+/* Получение команды и информации из принимаемой строки */
+
+/* Из 'GETIMAGE прекрасный котик' возвращает 'GETIMAGE' */
 string	get_command_by_msg(std::string &msg)
 {
 	int	position = 0;
@@ -14,6 +18,7 @@ string	get_command_by_msg(std::string &msg)
 	return (command);
 }
 
+/* Из 'GETIMAGE прекрасный котик' возвращает 'прекрасный котик' */
 string	get_data_by_msg(std::string &msg)
 {
 	int	position = 0;

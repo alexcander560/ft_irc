@@ -37,21 +37,7 @@ void	handle_select(const int select_value)
 {
 	if (select_value != -1)
 		return ;
-	switch (errno)
-	{
-		case (EBADF):
-			fatal("An invalid file descriptor was given in one of the sets. (Perhaps a file descriptor that was already closed, or one on which an error has occurred.)");
-			break ;
-		case (EINTR):
-			fatal("A signal was caught");
-			break ;
-		case (EINVAL):
-			fatal("The value contained within timeout is invalid.");
-			break ;
-		case (ENOMEM):
-			fatal("Unable to allocate memory for internal tables.");
-			break ;
-	}
+	fatal(std::strerror(errno));
 }
 
 /* Обработка ошибок для функции accept() */
@@ -59,49 +45,5 @@ void	handle_accept(const int select_accept)
 {
 	if (select_accept != -1)
 		return ;
-	switch (errno)
-	{
-		case (EAGAIN):
-			fatal("The socket is marked nonblocking and no connections are present to be accepted.");
-			break ;
-		case (EBADF):
-			fatal("Socket FD is not an open file descriptor.");
-			break ;
-		case (ECONNABORTED):
-			fatal("A connection has been aborted.");
-			break ;
-		case (EFAULT):
-			fatal("The system call was interrupted by a signal that was caught before a valid connection arrived");
-			break ;
-		case (EINTR):
-			fatal("The socket is marked nonblocking and no connections are present to be accepted.");
-			break ;
-		case (EINVAL):
-			fatal("Socket is not listening for connections, or addrlen is invalid");
-			break ;
-		case (EMFILE):
-			fatal("The per-process limit on the number of open file descriptors has been reached.");
-			break ;
-		case (ENFILE):
-			fatal("The system-wide limit on the total number of open files has been reached.");
-			break ;
-		case (ENOBUFS):
-			fatal("Not enough free memory.");
-			break ;
-		case (ENOMEM):
-			fatal("Not enough free memory.");
-			break ;
-		case (ENOTSOCK):
-			fatal("The file descriptor socket FD does not refer to a socket.");
-			break ;
-		case (EOPNOTSUPP):
-			fatal("The referenced socket is not of type SOCK_STREAM.");
-			break ;
-		case (EPERM):
-			fatal("Firewall rules forbid connection.");
-			break ;
-		case (EPROTO):
-			fatal("Protocol error.");
-			break ;
-	}
+	fatal(std::strerror(errno));
 }

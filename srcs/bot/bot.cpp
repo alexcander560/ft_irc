@@ -1,7 +1,9 @@
 #include "bot.hpp"
 
-#define COLOR_FOR_BOT GREEN
+/* Главный файл для бота */
+/* P.S. Дракончики */
 
+/* Команда HELP */
 string	help_command(void)
 {
 	std::string	help;
@@ -17,6 +19,7 @@ string	help_command(void)
 	return (help);
 }
 
+/* Команда GETHASH */
 string	get_hash_command(std::string text)
 {
 	std::string	hash;
@@ -36,6 +39,7 @@ done:
 	return (hash);
 }
 
+/* Команда GETIMAGE */
 string	get_image_command(std::string text)
 {
 	std::string	image;
@@ -67,6 +71,7 @@ done:
 	return (image);
 }
 
+/* Неизвестная команда */
 string	not_found_command(void)
 {
 	std::string	not_found;
@@ -79,6 +84,7 @@ string	not_found_command(void)
 	return (not_found);
 }
 
+/* Основная функция для бота. Обрабатывает строку, возвращает результат для отправки */
 string	handle_command(string line)
 {
 	std::string	command = get_command_by_msg(line);
