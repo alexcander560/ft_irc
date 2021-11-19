@@ -3,6 +3,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include "srcs/bot/bot.hpp"
 
 using	std::cout;
 using	std::endl;

@@ -3,20 +3,21 @@
 
 NAME = ircserv
 
-CPPFILES = *.cpp */*/*.cpp
+CPPFILES = *.cpp */*/*.cpp */*/*/*.cpp
 
-HPPFILES = *.hpp */*/*.hpp
+HPPFILES = *.hpp */*/*.hpp */*/*/*.hpp
 
 OBJFILES = *.o
 
 all: $(NAME)
 
-$(NAME):
+$(NAME): $(CPPFILES) $(HPPFILES)
 	@clang++ -c $(CPPFILES)
-	@clang++ $(OBJFILES) -o $(NAME)
+	@clang++ $(OBJFILES) -o $(NAME) -lcurl
 
 clean:
 	@rm -rf $(OBJFILES)
+	@rm -rf *.hpp.gch
 
 fclean:	clean
 	@rm -rf $(NAME)

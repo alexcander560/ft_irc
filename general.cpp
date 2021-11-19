@@ -11,12 +11,12 @@ void	message(string line)
 
 void	warning(string line)
 {
-	cout << "WARNING: " << line << std::endl;
+	cout << YELLOW"WARNING: " << line << std::endl << DEFAULT;
 }
 
 void	fatal(string line)
 {
-	cout << "FATAL ERROR: " << line << endl;
+	cout << RED"FATAL ERROR: " << line << endl << DEFAULT;
 	exit(EXIT_FAILURE);
 }
 

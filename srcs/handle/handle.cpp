@@ -115,6 +115,15 @@ pair<int, string>	handle_message(string str_message, int id, map<int, User> *cli
 				{
 					map<int, User>::iterator	it1 = clients_map->begin(), it2 = clients_map->end();
 
+					/* IVAN - FOR BOT */
+					if (param.at(1) == "bot")
+					{
+						debug("Calling bot with command");
+						output.first = id;
+						output.second = handle_command(param.at(2));
+						goto done;
+					}
+					/* IVAN - FOR BOT */
 					for (; it1 != it2; it1++)
 					{
 						if (it1->second.getName() == param[1])
@@ -146,6 +155,7 @@ pair<int, string>	handle_message(string str_message, int id, map<int, User> *cli
 	else
 		debug(RED"[handle_message] в строке слишком мало параметров"DEFAULT);
 
+done:
 	if (DEBUG)
 	{
 		debug(clients_map->size() ? "[handle_message] Печать всех пользователей" : "[handle_message] Нет пользователей");
