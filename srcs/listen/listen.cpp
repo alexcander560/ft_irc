@@ -215,7 +215,14 @@ void	listen_clients(const int socket_fd)
 							line = line.substr(0, line.size() - 1);
 							printf("ID [%d]: %s\n", i, line.c_str()); // Для команды: ВЫВОД НА СЕРВЕР
 
-							send_message(handle_message(line, i, &clients_map, "123")); // Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
+							try
+							{
+								send_message(handle_message(line, i, &clients_map, "123")); // Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
+							}
+							catch (std::string e)
+							{
+								//TODO: FOR ALEX		Show message?		FOR ALEX
+							}
 							clear_by_id(i, clients);
 						}
 					}

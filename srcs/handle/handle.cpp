@@ -108,7 +108,10 @@ pair<int, string>	handle_message(string str_message, int id, map<int, User> *cli
 		else if (param[0] == "PRIVMSG")
 		{
 			if (len_param != 3)
+			{
 				debug(RED"[handle_message] PRIVMSG неверное число аргументов"DEFAULT);
+				throw (std::string("Wrong arguments count"));
+			}
 			else
 			{
 				if (res.first->second.getStatus() == 1)
@@ -139,21 +142,33 @@ pair<int, string>	handle_message(string str_message, int id, map<int, User> *cli
 						}
 					}
 					if (it1 == it2)
+					{
 						debug(RED"[handle_message] Пользователь с таким ником не найден"DEFAULT);
+						throw (std::string("User was not found"));
+					}
 				}
 				else
+				{
 					debug(RED"[handle_message] Нельзя отправить сообщение до регистрации"DEFAULT);
+					throw (std::string("Need log in before send message"));
+				}
 			}
 		}
 		else
+		{
 			debug(RED"[handle_message] Неизвестная команда"DEFAULT);
+			throw (std::string("Unknown command"));
+		}
 
 		// Регистрация пользователей
 		if (res.first->second.registration())
 			debug("[handle_message] Новый пользователь зарегистрирован");
 	}
 	else
+	{
 		debug(RED"[handle_message] в строке слишком мало параметров"DEFAULT);
+		throw (std::string("Empty line"));
+	}
 
 done:
 	if (DEBUG)

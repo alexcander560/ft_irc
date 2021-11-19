@@ -12,8 +12,9 @@ using std::string;
 #define COMMAND_GETHASH "GETHASH"
 #define COMMAND_GETIMAGE "GETIMAGE"
 
-#define ENCRYPT_KEY 42 //From 1 to 254
-
+/* Вспомогательные функции. Пожалуйста, не надо нас ломать */
 string	get_command_by_msg(std::string &msg);
 string	get_data_by_msg(std::string &msg);
-string	handle_command(string line);
+/* Вспомогательные функции. Пожалуйста, не надо нас ломать */
+
+string	handle_command(string line); /* Основаная команда для обработки. Отправляется params[2], например: 'GETIMAGE beautiful cat' */

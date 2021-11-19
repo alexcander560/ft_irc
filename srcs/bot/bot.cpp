@@ -53,7 +53,7 @@ string	get_image_command(std::string text)
 	}
 	catch (std::string e)
 	{
-		warning("[get_image_command] Error");
+		warning("[get_image_command] Cannot get image by name. Captcha in Yandex?");
 		warning(e.c_str());
 		image.append(RED"Oooops. Captcha!? I can not!!!\n"DEFAULT);
 		goto done;
