@@ -12,8 +12,7 @@ string	help_command(void)
 	help.append(COLOR_FOR_BOT); // Установка цвета
 	help.append("Commands for you:\n");
 	help.append("\tHELP - show this information\n");
-	help.append("\tENCRYPT [your text] - encrypt your data for high level security\n");
-	help.append("\tDECRYPT [your text] - decrypt your data that has been encrypted\n");
+	help.append("\tGETHASH [your text] - encrypt your data for high level security\n");
 	help.append("\tGETIMAGE [phrase] - get link to the image by phrase (can looking for beautiful cats)\n");
 	help.append(DEFAULT); // Установка цвета
 	return (help);

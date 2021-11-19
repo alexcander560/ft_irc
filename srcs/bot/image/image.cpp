@@ -16,7 +16,6 @@ std::string	get_link(const char *name)
 	{
 		throw (e);
 	}
-	std::cout <<response << std::endl;
 	begin = std::strstr(response.c_str(), ",\"img_href\":\"");
 	if (begin == NULL)
 		throw (std::string("Link to image was not found"));
