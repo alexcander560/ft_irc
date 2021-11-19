@@ -1,4 +1,4 @@
-#include "User.hpp"
+#include "user.hpp"
 
 // Конструктор
 User::User(int id)

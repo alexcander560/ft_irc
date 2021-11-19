@@ -1,5 +1,4 @@
 #include "../../general.hpp"
-#include "../../User.hpp"
 
 // Разбивают строку на набор параметров
 void	parser_param(string str_message, vector<string> *param)

@@ -1,5 +1,4 @@
 #include "listen.hpp"
-#include "../../User.hpp"
 #include "../../general.hpp"
 
 /* Прослушивание порта и передача итогового сообщения в обработчик */

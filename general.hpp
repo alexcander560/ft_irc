@@ -25,7 +25,7 @@ using	std::vector;
 #define DEBUG 1 //Дебажим? Для более обширных логов в FD = 1 (console write FD)
 #define DEBUG_LOG 0
 
-#include "User.hpp"
+#include "user.hpp"
 
 class User;
 
