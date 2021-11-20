@@ -24,26 +24,38 @@ std::pair<t_groupData, User> &getCurrentOperator(std::vector< std::pair<t_groupD
 	throw (std::string("Current operator not found"));
 }
 
+bool	isUserOperator(std::vector< std::pair<t_groupData, User> > &users, User user)
+{
+	std::pair<t_groupData, User> currentOperator = getCurrentOperator(users);
+
+	if (currentOperator.second == user)
+		return (true);
+	return (false);
+}
+
 void	setAnotherOperator(std::vector< std::pair<t_groupData, User> > &users)
 {
 	std::vector< std::pair<t_groupData, User> >::iterator *nearestOperator = NULL;
 	try
 	{
 		std::pair<t_groupData, User> currentOperator = getCurrentOperator(users);
+		std::vector< std::pair<t_groupData, User> >::iterator begin = users.begin();
+		std::vector< std::pair<t_groupData, User> >::iterator end = users.end();
+		while (begin != end)
+		{
+			if (begin->second == currentOperator.second)
+				goto next;
+			if (nearestOperator != NULL && (*nearestOperator)->first.join_time > begin->first.join_time)
+				nearestOperator = &begin;
+			else if (nearestOperator == NULL)
+				nearestOperator = &begin;
+		next:
+			begin++;
+		}
+		(*nearestOperator)->first.is_operator = true;
 	}
 	catch (std::string &e)
 	{
 		throw (e);
 	}
-	std::vector< std::pair<t_groupData, User> >::iterator begin = users.begin();
-	std::vector< std::pair<t_groupData, User> >::iterator end = users.end();
-	while (begin != end)
-	{
-		if (nearestOperator != NULL && (*nearestOperator)->first.join_time > begin->first.join_time)
-			nearestOperator = &begin;
-		else if (nearestOperator == NULL)
-			nearestOperator = &begin;
-		begin++;
-	}
-	(*nearestOperator)->first.is_operator = true;
 }
