@@ -25,6 +25,11 @@ bool			User::setNick(vector<string> param)
 {
 	int	len = param[1].size();
 
+	if (param[1] == "bot")
+	{
+		debug(RED"[setNick] Имя только для бота"DEFAULT);
+		return (false);
+	}
 	if (len > 9 || len <= 0)
 	{
 		debug(RED"[setNick] Неверная длина nick"DEFAULT);

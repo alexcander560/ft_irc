@@ -12,18 +12,15 @@ size_t	getCurrentTime(void)
 
 std::pair<t_groupData, User> &getCurrentOperator(std::vector< std::pair<t_groupData, User> > &users)
 {
-	std::vector< std::pair<t_groupData, User> >::iterator begin = users.begin();
-	std::vector< std::pair<t_groupData, User> >::iterator end = users.end();
+	std::vector< std::pair<t_groupData, User> >::iterator begin = users.begin(), end = users.end();
 
 	if (users.size() == 0)
-		goto done;
-	while (begin != end)
-	{
+		throw (std::string("Current operator not found"));
+	while (begin != end) {
 		if (begin->first.is_operator)
 			return (*begin);
 		begin++;
 	}
-done:
 	throw (std::string("Current operator not found"));
 }
 
