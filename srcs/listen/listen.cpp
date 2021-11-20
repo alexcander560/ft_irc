@@ -96,13 +96,8 @@ void	listen_clients(const int socket_fd)
 					int	bytes = recv(i, &buffer, 1, 0);
 					if (bytes != 1) //Пользователь отключился. Удаляем из MAP
 					{
-						std::cout	<< "DEBUG: [listen_clients] Client with ID "
-										<< i << " was disconnected. Active users count: "
-										<< clients.size() - 1 << std::endl;
 						send_message(handle_message("QUIT", i, &clients_map, "123")); // ПОЛЬЗОВАТЕЛЬ ОТКЛЮЧИЛСЯ
-						close(i);
-						FD_CLR(i, &fds);
-						clients.erase(i);
+						disconnect_by_id(i, clients, fds);
 					}
 					else //Пользователь ввел данные, обрабатываем
 					{

@@ -17,6 +17,17 @@ void	send_message(pair<int, string> message)
 		warning("[send_message] Message cannot send. Unknown and not fatal error");
 }
 
+/* Отключить пользователя от прослушивания сервером по его ID */
+void	disconnect_by_id(int id, std::map<int, std::string> &clients, fd_set &fds)
+{
+	std::cout	<< "DEBUG: [listen_clients] Client with ID "
+				 << id << " was disconnected. Active users count: "
+				 << clients.size() - 1 << std::endl;
+	close(id);
+	FD_CLR(id, &fds);
+	clients.erase(id);
+}
+
 /* Очистить строку ввода по ID пользователя */
 void 	clear_by_id(int id, std::map<int, std::string> &clients)
 {
