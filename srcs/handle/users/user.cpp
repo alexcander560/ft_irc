@@ -85,7 +85,7 @@ bool			User::setData(vector<string> param)
 	}
 	else
 	{
-		debug(RED"[setData] Неверное число паарметров"DEFAULT);
+		debug(RED"[setData] Неверное число парметров"DEFAULT);
 		return (false);
 	}
 
