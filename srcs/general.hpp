@@ -27,6 +27,7 @@ using	std::vector;
 #define DEBUG_LOG 0
 
 #include "handle/users/user.hpp"
+#include "handle/groups/group.hpp"
 
 class User;
 

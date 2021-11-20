@@ -120,3 +120,8 @@ void			User::printUser() const
 		cout << "Не установленно" << endl;
 	cout << "--------------------------------------------------\n";
 }
+
+bool			operator == (const User &first, const User &second) // TODO: ALEX
+{
+	return (first.getName() == second.getName());
+}
