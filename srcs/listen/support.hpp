@@ -1,7 +1,7 @@
 #pragma once
 
 #include "listen.hpp"
-#include "../../general.hpp"
+#include "../general.hpp"
 
 void	send_message(pair<int, string> message);
 void 	clear_by_id(int id, std::map<int, std::string> &clients);

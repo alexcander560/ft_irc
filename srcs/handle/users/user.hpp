@@ -1,5 +1,5 @@
 #pragma once
-#include "general.hpp"
+#include "../../general.hpp"
 
 // Структура для записи данных о пользователе (передаются командой USER при регистрации)
 struct	userData

@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <string>
-#include "../../general.hpp"
+#include "../general.hpp"
 #include "image/image.hpp"
 #include <unistd.h>
 

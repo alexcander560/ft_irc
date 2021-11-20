@@ -3,7 +3,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
-#include "srcs/bot/bot.hpp"
+#include "bot/bot.hpp"
 
 using	std::cout;
 using	std::endl;
@@ -26,7 +26,7 @@ using	std::vector;
 #define DEBUG 1 //Дебажим? Для более обширных логов в FD = 1 (console write FD)
 #define DEBUG_LOG 0
 
-#include "user.hpp"
+#include "handle/users/user.hpp"
 
 class User;
 

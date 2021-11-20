@@ -3,9 +3,9 @@
 
 NAME = ircserv
 
-CPPFILES = *.cpp */*/*.cpp */*/*/*.cpp
+CPPFILES = */*.cpp */*/*.cpp */*/*/*.cpp
 
-HPPFILES = *.hpp */*/*.hpp */*/*/*.hpp
+HPPFILES = */*.hpp */*/*.hpp */*/*/*.hpp
 
 OBJFILES = *.o
 
