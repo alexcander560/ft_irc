@@ -10,6 +10,7 @@ static int	create_socket()
 {
 	int	socket_fd;
 
+
 	socket_fd = socket(PF_INET, SOCK_STREAM, TCP);
 	if (socket_fd != -1)
 		return (socket_fd);
