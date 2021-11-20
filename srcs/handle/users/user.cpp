@@ -8,6 +8,7 @@ User::User(int id)
 	_data.second = false;
 	_status = -1;
 	_id = id;
+	_data.first._timeAfterPing = time(0);
 }
 
 // Деструктор

@@ -2,8 +2,11 @@
 #include "../../general.hpp"
 //#include "../users/user.hpp"
 
+
 class MassegeHandler {
 private:
+	typedef pair<int, string> (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, pair<int, string> *);
+	map<string, Method> commands;
 	void _parser_param() {
 		int		len = str_message.size(), end = len - 1;
 		string	temp = "";
@@ -155,6 +158,11 @@ public:
 	id(id), str_message(str_message), clients(clients), pass(_pass)/*, groups*/ {
 		_parser_param();
 		lenparam = param.size();
+		commands["PASS"] = &MassegeHandler::command_pass;
+		commands["NICK"] = &MassegeHandler::command_nick;
+		commands["USER"] = &MassegeHandler::command_user;
+		commands["QUIT"] = &MassegeHandler::command_quit;
+		commands["PRIVMSG"] = &MassegeHandler::command_privmsg;
 	}
 	// Распечатка
 	void printMassege() {
@@ -178,18 +186,23 @@ public:
 		pair<map<int, User>::iterator, bool>	res = clients->insert(make_pair(id, user));
 
 		if(lenparam > 0){
-			if (param[0] == "PASS")
-				message = command_pass(&res, &message);
-			else if (param[0] == "NICK")
-				message = command_nick(&res, &message);
-			else if (param[0] == "USER")
-				message = command_user(&res, &message);
-			else if (param[0] == "QUIT")
-				message = command_quit(&res, &message);
-			else if (param[0] == "PRIVMSG")
-				message = command_privmsg(&res, &message);
-			else
-				debug(RED"[handle_message] Неизвестная команда"DEFAULT);
+			try {
+				message = (this->*commands.at(param[0])) (&res, &message);
+			} catch(const std::exception & e) {
+				debug(RED"[handle_message] Неизвестная команда"DEFAULT);	
+			}
+			// if (param[0] == "PASS")
+			// 	message = command_pass(&res, &message);
+			// else if (param[0] == "NICK")
+			// 	message = command_nick(&res, &message);
+			// else if (param[0] == "USER")
+			// 	message = command_user(&res, &message);
+			// else if (param[0] == "QUIT")
+			// 	message = command_quit(&res, &message);
+			// else if (param[0] == "PRIVMSG")
+			// 	message = command_privmsg(&res, &message);
+			// else
+			// 	debug(RED"[handle_message] Неизвестная команда"DEFAULT);
 		}
 		else
 			debug(RED"[handle_message] в строке слишком мало параметров"DEFAULT);

@@ -8,6 +8,7 @@ struct	userData
 	string	_hostname;
 	string	_servername;
 	string	_realname;
+	time_t	_timeAfterPing;
 };
 
 // Класс содержит всё информацию о пользователе
