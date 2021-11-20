@@ -24,8 +24,6 @@ private:
 public:
 	Group(const string name);
 	~Group();
-	Group(const Group &another);
-	Group	&operator = (const Group &another);
 	size_t	add_user(User &user);
 	size_t	delete_user(User &user);
 	size_t	get_usersCount();
