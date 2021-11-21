@@ -1,5 +1,6 @@
 #include "listen.hpp"
 #include "../general.hpp"
+#include <sys/time.h>
 
 /* Прослушивание порта и передача итогового сообщения в обработчик */
 /* Состоит из кучи проверок. Не пугаться */
@@ -74,7 +75,8 @@ void	listen_clients(const int socket_fd)
 	
 	while (true)
 	{
-		FD_COPY(&fds, &read_fds);
+		read_fds = fd_set(fds);
+		// FD_COPY(&fds, &read_fds);
 		handle_select( select(FD_SETSIZE, &read_fds, NULL, NULL, NULL) );
 		for (int i = 0; i < FD_SETSIZE; i++)
 		{

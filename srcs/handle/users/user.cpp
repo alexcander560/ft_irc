@@ -28,12 +28,12 @@ bool			User::setNick(vector<string> param)
 
 	if (param[1] == "bot")
 	{
-		debug(RED"[setNick] Имя только для бота"DEFAULT);
+		debug(RED"[setNick] Имя только для бота" DEFAULT);
 		return (false);
 	}
 	if (len > 9 || len <= 0)
 	{
-		debug(RED"[setNick] Неверная длина nick"DEFAULT);
+		debug(RED"[setNick] Неверная длина nick" DEFAULT);
 		return (false);
 	}
 	for (int i = 0; i < len; i++)
@@ -41,7 +41,7 @@ bool			User::setNick(vector<string> param)
 		if (!isalnum(param[1][i]) && param[1][i] != '-' && param[1][i] != '[' && param[1][i] != ']' &&
 		param[1][i] != '\\' && param[1][i] != '^' && param[1][i] != '{' && param[1][i] != '}')
 		{
-			debug(string(RED "[setNick] Запрещённый символ (")+ param[1][i] + ") в имени"DEFAULT);
+			debug(string(RED "[setNick] Запрещённый символ (")+ param[1][i] + ") в имени" DEFAULT);
 			return (false);
 		}
 	}
@@ -66,9 +66,9 @@ bool			User::setPass(vector<string> param, const string pass_server)
 	else
 	{
 		_pass = false;
-		debug(RED"[setPass] Неверное число аргументов"DEFAULT);
+		debug(RED"[setPass] Неверное число аргументов" DEFAULT);
 	}
-	debug(_pass ? "[setPass] Введён верный пароль" : RED"[setPass] ПАРОЛЬ НЕВЕРНЫЙ"DEFAULT);
+	debug(_pass ? "[setPass] Введён верный пароль" : RED"[setPass] ПАРОЛЬ НЕВЕРНЫЙ" DEFAULT);
 	return (_pass);
 }
 
@@ -86,7 +86,7 @@ bool			User::setData(vector<string> param)
 	}
 	else
 	{
-		debug(RED"[setData] Неверное число парметров"DEFAULT);
+		debug(RED"[setData] Неверное число парметров" DEFAULT);
 		return (false);
 	}
 

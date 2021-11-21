@@ -26,7 +26,7 @@ string	get_hash_command(std::string text)
 	debug("[get_hash_command] Command GETHASH for bot was called");
 	if (text.empty())
 	{
-		hash.append(RED"Oooops. Is empty!? I can not!!!\n"DEFAULT);
+		hash.append(RED"Oooops. Is empty!? I can not!!!\n" DEFAULT);
 		goto done;
 	}
 	hash.append(COLOR_FOR_BOT); // Установка цвета
@@ -47,7 +47,7 @@ string	get_image_command(std::string text)
 	debug("[get_image_command] Command GETIMAGE for bot was called");
 	if (text.empty())
 	{
-		image.append(RED"Oooops. Is empty!? I can not!!!\n"DEFAULT);
+		image.append(RED"Oooops. Is empty!? I can not!!!\n" DEFAULT);
 		goto done;
 	}
 	try
@@ -58,7 +58,7 @@ string	get_image_command(std::string text)
 	{
 		warning("[get_image_command] Cannot get image by name. Captcha in Yandex?");
 		warning(e.c_str());
-		image.append(RED"Oooops. Captcha!? I can not!!!\n"DEFAULT);
+		image.append(RED"Oooops. Captcha!? I can not!!!\n" DEFAULT);
 		goto done;
 	}
 	image.append(COLOR_FOR_BOT); // Установка цвета
@@ -75,7 +75,7 @@ string	not_found_command(void)
 {
 	std::string	not_found;
 
-	warning(YELLOW"[not_found_command] Unknown command was called for bot."DEFAULT);
+	warning(YELLOW"[not_found_command] Unknown command was called for bot." DEFAULT);
 	not_found.append(RED); // Установка цвета
 	not_found.append("¯\\_(ツ)_/¯\n");
 	not_found.append("Use HELP command for information about my beautiful life\n");

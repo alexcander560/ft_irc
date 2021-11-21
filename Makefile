@@ -13,7 +13,7 @@ all: $(NAME)
 
 $(NAME): $(CPPFILES) $(HPPFILES)
 	@clang++ -c $(CPPFILES)
-	@clang++ $(OBJFILES) -o $(NAME) -lcurl
+	@clang++ $(OBJFILES) -o $(NAME) -lcurl -lcrypt
 
 clean:
 	@rm -rf $(OBJFILES)
