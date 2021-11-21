@@ -8,7 +8,7 @@
 /* Отправить сообщение для пользователя по его ID */
 void	send_message(pair<int, string> message)
 {
-	size_t	send_value;
+	size_t	send_value = 2;
 
 	send_value = send(message.first, message.second.c_str(), message.second.size(), 0);
 	if (send_value != -1 && DEBUG)
@@ -32,7 +32,8 @@ void	disconnect_by_id(int id, std::map<int, std::string> &clients, fd_set &fds)
 void 	clear_by_id(int id, std::map<int, std::string> &clients)
 {
 	std::map<int, std::string>::iterator element = clients.find(id);
-	(*element).second.clear();
+	if (element != clients.end())
+		(*element).second.clear();
 }
 
 /* Добавить символ в общий ввод пользователя для формирования полноценной строки, потому как читаем посимвольно */

@@ -1,6 +1,5 @@
 #include "listen.hpp"
 #include "../general.hpp"
-#include <sys/time.h>
 
 /* Прослушивание порта и передача итогового сообщения в обработчик */
 /* Состоит из кучи проверок. Не пугаться */
@@ -98,8 +97,8 @@ void	listen_clients(const int socket_fd)
 					int	bytes = recv(i, &buffer, 1, 0);
 					if (bytes != 1) //Пользователь отключился. Удаляем из MAP
 					{
-						send_message(handle_message("QUIT", i, &clients_map, "123")); // ПОЛЬЗОВАТЕЛЬ ОТКЛЮЧИЛСЯ
-						disconnect_by_id(i, clients, fds);
+						send_message(handle_message("QUIT", i, &clients_map, "123",
+								clients, fds)); // ПОЛЬЗОВАТЕЛЬ ОТКЛЮЧИЛСЯ
 					}
 					else //Пользователь ввел данные, обрабатываем
 					{
@@ -114,7 +113,8 @@ void	listen_clients(const int socket_fd)
 
 							try
 							{
-								send_message(handle_message(line, i, &clients_map, "123")); // Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
+								send_message(handle_message(line, i, &clients_map, "123",
+										clients, fds)); // Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
 							}
 							catch (std::string e)
 							{

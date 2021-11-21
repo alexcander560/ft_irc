@@ -1,5 +1,6 @@
 #pragma once
 #include "../../general.hpp"
+#include "../../listen/support.hpp"
 //#include "../users/user.hpp"
 
 
@@ -82,7 +83,8 @@ private:
 	}
 	pair<int, string> command_quit(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {
 		clients->erase(id);
-
+		disconnect_by_id(this->id, this->clients_ivan, this->fds);
+		debug("Command QUIT was use for user");
 		return *message;
 	}
 
@@ -152,10 +154,14 @@ public:
 	vector<string>	param;
 	int 			lenparam;
 	string			pass;
+	map<int, std::string> &clients_ivan;
+	fd_set &fds;
 
 	// Конструктор
-	MassegeHandler(int id, string str_message, map<int, User> *clients, string _pass/*, map<int, Group> groups*/):
-	id(id), str_message(str_message), clients(clients), pass(_pass)/*, groups*/ {
+	MassegeHandler(int id, string str_message, map<int, User> *clients, string _pass,
+	map<int, std::string> &clients_ivan, fd_set &fds/*, map<int, Group> groups*/):
+	id(id), str_message(str_message), clients(clients), pass(_pass),
+	clients_ivan(clients_ivan), fds(fds)/*, groups*/ {
 		_parser_param();
 		lenparam = param.size();
 		commands["PASS"] = &MassegeHandler::command_pass;

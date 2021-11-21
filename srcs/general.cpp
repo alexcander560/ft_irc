@@ -11,7 +11,7 @@ void	message(string line)
 
 void	warning(string line)
 {
-	cout << YELLOW"WARNING: " << line << std::endl << DEFAULT;
+	cout << YELLOW"WARNING: " << line << DEFAULT"" << std::endl;
 }
 
 void	fatal(string line)

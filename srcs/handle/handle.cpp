@@ -1,11 +1,13 @@
 #include "../general.hpp"
 #include "messegeHandler/messegeHandler.hpp"
 
-pair<int, string>	handle_message(string str_message, int id, map<int, User> *clients_map, string pass)
+/* Обработка сообщения в str_message */
+pair<int, string>	handle_message(string str_message, int id, map<int, User> *clients_map, string pass,
+								map<int, std::string> &clients, fd_set &fds)
 {
 	pair<int, string>	output = make_pair(-1, "Сообщения нет, какая жалость\n");
 
-	MassegeHandler Handler(id, str_message, clients_map, pass);
+	MassegeHandler Handler(id, str_message, clients_map, pass, clients, fds);
 	output = Handler.message();
 
 	// Распечатка
