@@ -1,3 +1,4 @@
+#include <fcntl.h>
 #include "listen.hpp"
 #include "../general.hpp"
 
@@ -8,14 +9,16 @@
 /* Создание сокета под IPv4, TCP, и проверка функции на ошибки */
 static int	create_socket()
 {
-	int	socket_fd;
+	int	socket_fd, nonblocking;
 
 
 	socket_fd = socket(PF_INET, SOCK_STREAM, TCP);
-	if (socket_fd != -1)
-		return (socket_fd);
-	fatal(std::strerror(errno));
-	return (-1);
+	if (socket_fd == -1)
+		fatal(std::strerror(errno));
+	nonblocking = fcntl(socket_fd, F_SETFL, O_NONBLOCK);
+	if (nonblocking == -1)
+		fatal(std::strerror(errno));
+	return (socket_fd);
 }
 
 /* Настройка сокета, проверка */
@@ -75,7 +78,6 @@ void	listen_clients(const int socket_fd)
 	while (true)
 	{
 		read_fds = fd_set(fds);
-		// FD_COPY(&fds, &read_fds);
 		handle_select( select(FD_SETSIZE, &read_fds, NULL, NULL, NULL) );
 		for (int i = 0; i < FD_SETSIZE; i++)
 		{
