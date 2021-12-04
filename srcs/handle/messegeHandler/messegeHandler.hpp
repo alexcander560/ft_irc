@@ -188,7 +188,6 @@ public:
 	// Обработка
 	std::vector< pair<int, string> > message() {
 		std::vector< pair<int, string> >		messages;
-		pair<int, string>						message = make_pair(id, "Заглушка кукушка\n");
 		User									user(id);
 		pair<map<int, User>::iterator, bool>	res = clients->insert(make_pair(id, user));
 

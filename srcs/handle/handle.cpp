@@ -6,7 +6,6 @@ std::vector< pair<int, string> >	handle_message(string str_message, int id, map<
 								map<int, std::string> &clients, fd_set &fds)
 {
 	std::vector< pair<int, string> >	output;
-	output.push_back( make_pair(-1, "Сообщения нет, какая жалость\n") );
 
 	MassegeHandler Handler(id, str_message, clients_map, pass, clients, fds);
 	output = Handler.message();
