@@ -1,7 +1,7 @@
 #include "user.hpp"
 
 // Конструктор
-User::User(int id)
+User::User(int id, string ip)
 {
 	_nick.second = false;
 	_pass = false;
@@ -9,6 +9,7 @@ User::User(int id)
 	_status = -1;
 	_id = id;
 	_data.first._timeAfterPing = time(0);
+	_ip = ip;
 }
 
 // Деструктор
@@ -27,6 +28,8 @@ const string	User::getHostName() const { return (_data.first._hostname); }
 const string	User::getRealName() const { return (_data.first._realname); }
 
 const string	User::getServerName() const { return (_data.first._servername); }
+
+const string 	User::getIp() const { return (_ip); }
 
 // Устанавливает пользователю имя (проверяет на валидность)
 // Возвращает true, если ник успешно установлен, fasle если ник не валиден
@@ -132,6 +135,7 @@ void			User::printUser() const
 	}
 	else
 		cout << "Не установленно" << endl;
+	cout << "ip: " << _ip << endl;
 	cout << "--------------------------------------------------\n";
 }
 

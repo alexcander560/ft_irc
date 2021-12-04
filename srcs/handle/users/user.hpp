@@ -22,10 +22,11 @@ class User
 		pair<userData, bool>	_data;
 		int						_status;	// '-1' - не прошёл регистрацию, '1' - зарегестрирован
 		int						_id;		// Излишние данные; для удобства печати информации о пользователе
+		string 					_ip;
 
 	public:
 		// Конструктор
-		User(int id);
+		User(int id, string ip);
 		// Деструктор
 		~User();
 
@@ -37,6 +38,7 @@ class User
 		const string	getHostName() const;
 		const string	getServerName() const;
 		const string	getRealName() const;
+		const string 	getIp() const;
 	// Устанавливает пользователю имя (проверяет на валидность)
 		bool			setNick(vector<string> param);
 		// Проверяет ввёл ли пользователь верный пароль
