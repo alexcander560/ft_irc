@@ -1,4 +1,5 @@
 #include <fcntl.h>
+
 #include "listen.hpp"
 #include "../general.hpp"
 
@@ -67,7 +68,9 @@ void	listen_clients(const int socket_fd)
 	int						connection_fd;
 	fd_set					fds, read_fds;
 	map<int, std::string>	clients;
+	map<int, string>		clients_ip;
 	map<int, User>			clients_map;		//структура данных со всеми пользователями
+	struct sockaddr_in		client_ip;			//содержится в том числе IP-address подключенного клиента
 	
 
 	FD_ZERO(&fds);
@@ -85,7 +88,9 @@ void	listen_clients(const int socket_fd)
 			{
 				if (i == socket_fd) //Новое подключение
 				{
-					connection_fd = accept(socket_fd, NULL, NULL);
+					socklen_t	size = sizeof(client_ip);
+					connection_fd = accept(socket_fd, (struct sockaddr *)&client_ip, &size);
+					clients_ip.insert( make_pair<int, string>(connection_fd, std::string(inet_ntoa(client_ip.sin_addr))) );
 					handle_accept(connection_fd);
 					clients.insert(std::pair<int, std::string>(connection_fd, ""));
 					FD_SET(connection_fd, &fds);
@@ -116,7 +121,7 @@ void	listen_clients(const int socket_fd)
 							try
 							{
 								send_message(handle_message(line, i, &clients_map, "123",
-										clients, fds)); // Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
+										clients, fds, clients_ip.find(i))); // Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
 							}
 							catch (std::string e)
 							{

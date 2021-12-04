@@ -6,6 +6,14 @@
 
 class MassegeHandler {
 private:
+	string	getFrontLine()
+	{
+		string user = this->clients->find(this->id)->second.getName();
+		string name = this->clients->find(this->id)->second.getUserName();
+		string ipaddress = this->clients->find(this->id)->second.getUserName();
+		return (user);
+	}
+
 	typedef vector< pair<int, string> > (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, vector< pair<int, string> > *);
 	map<string, Method> commands;
 	void _parser_param() {
