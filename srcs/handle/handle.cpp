@@ -2,10 +2,11 @@
 #include "messegeHandler/messegeHandler.hpp"
 
 /* Обработка сообщения в str_message */
-pair<int, string>	handle_message(string str_message, int id, map<int, User> *clients_map, string pass,
+std::vector< pair<int, string> >	handle_message(string str_message, int id, map<int, User> *clients_map, string pass,
 								map<int, std::string> &clients, fd_set &fds)
 {
-	pair<int, string>	output = make_pair(-1, "Сообщения нет, какая жалость\n");
+	std::vector< pair<int, string> >	output;
+	output.push_back( make_pair(-1, "Сообщения нет, какая жалость\n") );
 
 	MassegeHandler Handler(id, str_message, clients_map, pass, clients, fds);
 	output = Handler.message();

@@ -6,15 +6,24 @@
 /* P.S. Драконы */
 
 /* Отправить сообщение для пользователя по его ID */
-void	send_message(pair<int, string> message)
+void	send_message(std::vector< pair<int, string> > message)
 {
-	size_t	send_value = 2;
+	size_t	send_value;
+	pair<int, string>	value;
+	std::vector< pair<int, string> >::iterator	begin = message.begin();
+	std::vector< pair<int, string> >::iterator	end = message.end();
 
-	send_value = send(message.first, message.second.c_str(), message.second.size(), 0);
-	if (send_value != -1 && DEBUG)
-		debug("[send_message] Message was send successful");
-	if (send_value == -1)
-		warning("[send_message] Message cannot send. Unknown and not fatal error");
+	while (begin != end)
+	{
+		value = *begin;
+		send_value = send(value.first, value.second.c_str(), value.second.size(), 0);
+		if (send_value != -1 && DEBUG) {
+			debug("[send_message] Message was send successful");
+		}
+		if (send_value == -1)
+			warning("[send_message] Message cannot send. Unknown and not fatal error");
+		begin++;
+	}
 }
 
 /* Отключить пользователя от прослушивания сервером по его ID */

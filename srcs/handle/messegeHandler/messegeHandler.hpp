@@ -6,7 +6,7 @@
 
 class MassegeHandler {
 private:
-	typedef pair<int, string> (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, pair<int, string> *);
+	typedef std::vector< pair<int, string> > (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, std::vector< pair<int, string> > *);
 	map<string, Method> commands;
 	void _parser_param() {
 		int		len = str_message.size(), end = len - 1;
@@ -49,7 +49,7 @@ private:
 		if (temp != "")
 			param.push_back(temp);
 	}
-	pair<int, string> command_pass(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {
+	std::vector< pair<int, string> > command_pass(pair<map<int, User>::iterator, bool> *res, std::vector< pair<int, string> > *message) {
 		if (res->first->second.getStatus() == -1)
 			res->first->second.setPass(param, pass);
 		else
@@ -57,7 +57,7 @@ private:
 
 		return *message;
 	}
-	pair<int, string> command_nick(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {
+	std::vector< pair<int, string> > command_nick(pair<map<int, User>::iterator, bool> *res, std::vector< pair<int, string> > *message) {
 
 		if (lenparam != 2)
 			debug(RED"[handle_message] Неверное число аргументов для команды NICK" DEFAULT);
@@ -76,12 +76,12 @@ private:
 
 		return *message;
 	}
-	pair<int, string> command_user(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {
+	std::vector< pair<int, string> > command_user(pair<map<int, User>::iterator, bool> *res, std::vector< pair<int, string> > *message) {
 		res->first->second.setData(param);
 
 		return *message;
 	}
-	pair<int, string> command_quit(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {
+	std::vector< pair<int, string> > command_quit(pair<map<int, User>::iterator, bool> *res, std::vector< pair<int, string> > *message) {
 		clients->erase(id);
 		disconnect_by_id(this->id, this->clients_ivan, this->fds);
 		debug("Command QUIT was use for user");
@@ -89,7 +89,7 @@ private:
 	}
 
 	// pair<int, string> command_oper(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	pair<int, string> command_privmsg(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {
+	std::vector< pair<int, string> > command_privmsg(pair<map<int, User>::iterator, bool> *res, std::vector< pair<int, string> > *message) {
 		if (lenparam != 3)
 			debug(RED"[handle_message] PRIVMSG неверное число аргументов" DEFAULT);
 		else {
@@ -99,7 +99,7 @@ private:
 
 				if (param.at(1) == "bot") {	/* IVAN - FOR BOT */
 					debug("[handle_message] Calling bot with command");
-					*message = make_pair(id, handle_command(param.at(2)));
+					message->push_back(make_pair(id, handle_command(param.at(2))));
 				}
 				else {
 					for (; it1 != it2; it1++) {
@@ -109,7 +109,7 @@ private:
 							else
 							{
 								debug("[handle_message] Пользователь найден, отправляю сообщение...");
-								*message = make_pair(it1->first, param[2] + "\n");
+								message->push_back( make_pair(it1->first, param[2] + "\n") );
 							}
 							break ;
 						}
@@ -186,14 +186,15 @@ public:
 		debug("[handle_message] =============================================================================");
 	}
 	// Обработка
-	pair<int, string> message() {
+	std::vector< pair<int, string> > message() {
+		std::vector< pair<int, string> >		messages;
 		pair<int, string>						message = make_pair(id, "Заглушка кукушка\n");
 		User									user(id);
 		pair<map<int, User>::iterator, bool>	res = clients->insert(make_pair(id, user));
 
 		if(lenparam > 0){
 			try {
-				message = (this->*commands.at(param[0])) (&res, &message);
+				messages = (this->*commands.at(param[0])) (&res, &messages);
 			} catch(const std::exception & e) {
 				debug(RED"[handle_message] Неизвестная команда" DEFAULT);	
 			}
@@ -215,6 +216,6 @@ public:
 
 		if (res.first->second.registration())
 			debug("[handle_message] Новый пользователь зарегистрирован");
-		return message;
+		return messages;
 	} 
 };
