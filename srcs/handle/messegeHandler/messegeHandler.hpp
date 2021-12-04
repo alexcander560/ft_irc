@@ -57,21 +57,37 @@ private:
 		if (temp != "")
 			param.push_back(temp);
 	}
-	int _parser_user(string str){
-		int start = 0;
+	bool _parser_user(string str){
+		
 
-		//for ()
+		/*
+		ПРОВЕРКОЙ НА ДВОЙНОЙ НИК
+		*/
 
-		for (int i = 0; str[i]; i++)
+		//user_list
+		std::string	current_name("");
+		int	i = 0;
+
+
+		while (str[i])
 		{
 			if (str[i] == ',')
 			{
-				user_list.push_back(str.substr(start, i));
-				start = i + 1;
+				if (current_name.size() > 0)
+				{
+					if (!(user_list.insert(current_name)).second)
+						debug(RED"[_parser_user] Двойнок ник");
+					current_name.clear();
+				}
 			}
+			else
+				current_name.push_back(str[i]);
+			i++;
 		}
-		user_list.push_back(str.substr(start, str.size()));
-		return 0;
+		if (current_name.size() > 0)
+			if (!(user_list.insert(current_name)).second)
+				debug(RED"[_parser_user] Двойнок ник " + current_name + DEFAULT);
+		return (true);
 	}
 	vector< pair<int, string> > command_pass(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		if (res->first->second.getStatus() == -1)
@@ -129,7 +145,7 @@ private:
 					_parser_user(param[1]);
 					//----------------------------
 					cout << "size user_list= " << user_list.size() << endl;
-					for (vector<string>::iterator us1 = user_list.begin(); us1 < user_list.end(); us1++)
+					for (set<string>::iterator us1 = user_list.begin(); us1 != user_list.end(); us1++)
 						cout << "{" << *us1 << "}" << endl;
 					//----------------------------
 					for (; it1 != it2; it1++) {
@@ -185,7 +201,7 @@ public:
 	string				pass;
 	map<int, string>	&clients_ivan;
 	fd_set				&fds;
-	vector<string>		user_list;
+	set<string>			user_list;
 	string				ip;
 
 	// Конструктор

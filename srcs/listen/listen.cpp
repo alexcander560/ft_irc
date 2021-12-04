@@ -104,8 +104,8 @@ void	listen_clients(const int socket_fd)
 					int	bytes = recv(i, &buffer, 1, 0);
 					if (bytes != 1) //Пользователь отключился. Удаляем из MAP
 					{
-						send_message(handle_message("QUIT", i, &clients_map, "123",
-								clients, fds, clients_ip.find(i)->second)); // ПОЛЬЗОВАТЕЛЬ ОТКЛЮЧИЛСЯ
+						debug("[listen_clients] ip_host= {" + clients_ip.find(i)->second + "}");
+						send_message(handle_message("QUIT", i, &clients_map, "123", clients, fds, clients_ip.find(i)->second)); // ПОЛЬЗОВАТЕЛЬ ОТКЛЮЧИЛСЯ
 					}
 					else //Пользователь ввел данные, обрабатываем
 					{
