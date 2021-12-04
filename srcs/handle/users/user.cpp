@@ -20,6 +20,14 @@ const string	User::getName() const { return (_nick.first); }
 // Возвращает статус пользователя
 const int		User::getStatus() const { return (_status); }
 
+const string	User::getUserName() const { return (_data.first._username); }
+
+const string	User::getHostName() const { return (_data.first._hostname); }
+
+const string	User::getRealName() const { return (_data.first._realname); }
+
+const string	User::getServerName() const { return (_data.first._servername); }
+
 // Устанавливает пользователю имя (проверяет на валидность)
 // Возвращает true, если ник успешно установлен, fasle если ник не валиден
 bool			User::setNick(vector<string> param)

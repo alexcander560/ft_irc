@@ -33,7 +33,11 @@ class User
 		const string	getName() const;
 		// Возвращает статус пользователя
 		const int		getStatus() const;
-		// Устанавливает пользователю имя (проверяет на валидность)
+		const string	getUserName() const;
+		const string	getHostName() const;
+		const string	getServerName() const;
+		const string	getRealName() const;
+	// Устанавливает пользователю имя (проверяет на валидность)
 		bool			setNick(vector<string> param);
 		// Проверяет ввёл ли пользователь верный пароль
 		bool			setPass(vector<string> param, const string pass_server);
