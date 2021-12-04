@@ -58,16 +58,8 @@ private:
 			param.push_back(temp);
 	}
 	bool _parser_user(string str){
-		
-
-		/*
-		ПРОВЕРКОЙ НА ДВОЙНОЙ НИК
-		*/
-
-		//user_list
-		std::string	current_name("");
-		int	i = 0;
-
+		string	current_name("");
+		int		i = 0;
 
 		while (str[i])
 		{
@@ -128,7 +120,6 @@ private:
 		return *message;
 	}
 
-	// pair<int, string> command_oper(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
 	vector< pair<int, string> > command_privmsg(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		if (lenparam != 3)
 			debug(RED"[handle_message] PRIVMSG неверное число аргументов" DEFAULT);
@@ -247,18 +238,6 @@ public:
 			} catch(const std::exception & e) {
 				debug(RED"[handle_message] Неизвестная команда" DEFAULT);	
 			}
-			// if (param[0] == "PASS")
-			// 	message = command_pass(&res, &message);
-			// else if (param[0] == "NICK")
-			// 	message = command_nick(&res, &message);
-			// else if (param[0] == "USER")
-			// 	message = command_user(&res, &message);
-			// else if (param[0] == "QUIT")
-			// 	message = command_quit(&res, &message);
-			// else if (param[0] == "PRIVMSG")
-			// 	message = command_privmsg(&res, &message);
-			// else
-			// 	debug(RED"[handle_message] Неизвестная команда" DEFAULT);
 		}
 		else
 			debug(RED"[handle_message] в строке слишком мало параметров" DEFAULT);

@@ -26,18 +26,15 @@ using 	std::set;
 # define AQUA		"\033[36m"
 
 #define DEBUG 1 //Дебажим? Для более обширных логов в FD = 1 (console write FD)
-#define DEBUG_LOG 0
 
 #include "handle/users/user.hpp"
 // #include "handle/messegeHandler/messegeHandler.hpp"
 
 class User;
 
-void	message(std::string line);
-void	warning(std::string line);
-void	fatal(std::string line);
+void	message(string line);
+void	warning(string line);
+void	fatal(string line);
+void	debug(string line);
 
-void	debug(std::string line);
-
-std::vector< pair<int, string> >	handle_message(string str_message, int id, map<int, User> *clients_map, string pass,
-			                map<int, std::string> &clients, fd_set &fds, string ip);
+std::vector< pair<int, string> >	handle_message(string str_message, int id, map<int, User> *clients_map, string pass, map<int, string> &clients, fd_set &fds, string ip);

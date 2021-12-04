@@ -39,7 +39,7 @@ class User
 		const string	getServerName() const;
 		const string	getRealName() const;
 		const string 	getIp() const;
-	// Устанавливает пользователю имя (проверяет на валидность)
+		// Устанавливает пользователю имя (проверяет на валидность)
 		bool			setNick(vector<string> param);
 		// Проверяет ввёл ли пользователь верный пароль
 		bool			setPass(vector<string> param, const string pass_server);
