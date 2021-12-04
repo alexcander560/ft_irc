@@ -49,6 +49,21 @@ private:
 		if (temp != "")
 			param.push_back(temp);
 	}
+	int _parser_user(string str){
+		int start = 0;
+
+		//for ()
+
+		for (int i = 0; str[i]; i++)
+		{
+			if (str[i] == ',')
+			{
+				user_list.push_back(str.substr(start, i));
+				start = i + 1;
+			}
+		}
+		user_list.push_back(str.substr(start, str.size()));
+	}
 	vector< pair<int, string> > command_pass(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		if (res->first->second.getStatus() == -1)
 			res->first->second.setPass(param, pass);
@@ -102,6 +117,12 @@ private:
 					message->push_back(make_pair(id, handle_command(param.at(2))));
 				}
 				else {
+					_parser_user(param[1]);
+					//----------------------------
+					cout << "size user_list= " << user_list.size() << endl;
+					for (vector<string>::iterator us1 = user_list.begin(); us1 < user_list.end(); us1++)
+						cout << "{" << *us1 << "}" << endl;
+					//----------------------------
 					for (; it1 != it2; it1++) {
 						if (it1->second.getName() == param[1]) {
 							if (it1->second.getStatus() == -1)
@@ -147,15 +168,15 @@ private:
 	// pair<int, string> command_admin(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
 	// pair<int, string> command_time(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
 public:
-	string			str_message;
-	int				id;
-	map<int, User>	*clients;
-	//map<int, Group>	_groups;
-	vector<string>	param;
-	int 			lenparam;
-	string			pass;
-	map<int, std::string> &clients_ivan;
-	fd_set &fds;
+	string				str_message;
+	int					id;
+	map<int, User>		*clients;
+	vector<string>		param;
+	int 				lenparam;
+	string				pass;
+	map<int, string>	&clients_ivan;
+	fd_set				&fds;
+	vector<string>		user_list;
 
 	// Конструктор
 	MassegeHandler(int id, string str_message, map<int, User> *clients, string _pass,
