@@ -109,7 +109,7 @@ void	listen_clients(const int socket_fd)
 					}
 					else //Пользователь ввел данные, обрабатываем
 					{
-						if (buffer != 10) //Если введен любой символ, кроме ENTER в консоли
+						if (buffer != 10 && buffer != 13 && buffer != 0) //Если введен любой символ, кроме ENTER в консоли
 							add_character_by_id(i, buffer, clients);
 						else //Если символ - конец строки (ENTER в консоли)
 						{

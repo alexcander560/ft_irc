@@ -139,7 +139,7 @@ private:
 							else
 							{
 								debug("[handle_message] Пользователь найден, отправляю сообщение...");
-								message->push_back( make_pair(it1->first, getFrontLine() + param[0] + " " + param[1] + " " + ((param[2][0] == ':') ? (" ") : ("")) + param[2] + "\n") );
+								message->push_back( make_pair(it1->first, getFrontLine() + param[0] + " " + param[1] + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n") );
 							}
 							break ;
 						}
