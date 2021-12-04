@@ -71,6 +71,7 @@ private:
 			}
 		}
 		user_list.push_back(str.substr(start, str.size()));
+		return 0;
 	}
 	vector< pair<int, string> > command_pass(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		if (res->first->second.getStatus() == -1)
@@ -185,12 +186,13 @@ public:
 	map<int, string>	&clients_ivan;
 	fd_set				&fds;
 	vector<string>		user_list;
+	string				ip;
 
 	// Конструктор
 	MassegeHandler(int id, string str_message, map<int, User> *clients, string _pass,
-	map<int, std::string> &clients_ivan, fd_set &fds/*, map<int, Group> groups*/):
+	map<int, std::string> &clients_ivan, fd_set &fds, string ip):
 	id(id), str_message(str_message), clients(clients), pass(_pass),
-	clients_ivan(clients_ivan), fds(fds)/*, groups*/ {
+	clients_ivan(clients_ivan), fds(fds), ip(ip) {
 		_parser_param();
 		lenparam = param.size();
 		commands["PASS"] = &MassegeHandler::command_pass;
@@ -217,7 +219,7 @@ public:
 	// Обработка
 	vector< pair<int, string> > message() {
 		vector< pair<int, string> >		messages;
-		User									user(id);
+		User									user(id, ip);
 		pair<map<int, User>::iterator, bool>	res = clients->insert(make_pair(id, user));
 
 		if(lenparam > 0){

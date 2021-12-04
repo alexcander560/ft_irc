@@ -38,4 +38,4 @@ void	fatal(std::string line);
 void	debug(std::string line);
 
 std::vector< pair<int, string> >	handle_message(string str_message, int id, map<int, User> *clients_map, string pass,
-			                map<int, std::string> &clients, fd_set &fds);
+			                map<int, std::string> &clients, fd_set &fds, string ip);
