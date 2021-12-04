@@ -264,7 +264,12 @@ public:
 			debug(RED"[handle_message] в строке слишком мало параметров" DEFAULT);
 
 		if (res.first->second.registration())
+		{
 			debug("[handle_message] Новый пользователь зарегистрирован");
+			messages.push_back(make_pair(id, ":IRDRAGONS 375 " + res.first->second.getName() + " :- IRDRAGONS Message of the day -\n"));
+			messages.push_back(make_pair(id, ":IRDRAGONS 372 " + res.first->second.getName() + " :Регистрация пройдена\n"));
+			messages.push_back(make_pair(id, ":IRDRAGONS 376 " + res.first->second.getName() + " :End of /MOTD command\n"));
+		}
 		return (messages);
 	} 
 };
