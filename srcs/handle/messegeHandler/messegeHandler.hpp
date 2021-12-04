@@ -135,33 +135,36 @@ private:
 		else {
 			if (res->first->second.getStatus() == 1)
 			{
-				map<int, User>::iterator	it1 = clients->begin(), it2 = clients->end();
-
 				if (param.at(1) == "bot") {	/* IVAN - FOR BOT */
 					debug("[handle_message] Calling bot with command");
 					message->push_back(make_pair(id, getFrontLine() + handle_command(param.at(2))));
 				}
 				else {
 					_parser_user(param[1]);
+					set<string>::iterator		us1 = user_list.begin(), us2 = user_list.end();
 					//----------------------------
 					cout << "size user_list= " << user_list.size() << endl;
 					for (set<string>::iterator us1 = user_list.begin(); us1 != user_list.end(); us1++)
 						cout << "{" << *us1 << "}" << endl;
 					//----------------------------
-					for (; it1 != it2; it1++) {
-						if (it1->second.getName() == param[1]) {
-							if (it1->second.getStatus() == -1)
-								debug(RED"[handle_message] Пользователь с таким ником не прошёл полную регистрацию" DEFAULT);
-							else
-							{
-								debug("[handle_message] Пользователь найден, отправляю сообщение...");
-								message->push_back( make_pair(it1->first, getFrontLine() + param[0] + " " + param[1] + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n") );
+					for (; us1 != us2; us1++){
+						map<int, User>::iterator	it1 = clients->begin(), it2 = clients->end();
+						for (; it1 != it2; it1++) {
+							if (it1->second.getName() == *us1) {
+								if (it1->second.getStatus() == -1)
+									debug(RED"[handle_message] Пользователь с таким ником не прошёл полную регистрацию" DEFAULT);
+								else
+								{
+									debug("[handle_message] Пользователь найден, отправляю сообщение...");
+									//std::cout << "ааааааа Ж " << it1->first << endl;
+									message->push_back(make_pair(it1->first, getFrontLine() + param[0] + " " + *us1 + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n") );
+								}
+								break ;
 							}
-							break ;
 						}
+						if (it1 == it2)
+							debug(RED"[handle_message] Пользователь с таким ником не найден" DEFAULT);
 					}
-					if (it1 == it2)
-						debug(RED"[handle_message] Пользователь с таким ником не найден" DEFAULT);
 				}
 			}
 			else
