@@ -6,12 +6,12 @@
 
 class MassegeHandler {
 private:
-	string	getFrontLine()
+	const string	getFrontLine() const
 	{
 		string user = this->clients->find(this->id)->second.getName();
 		string name = this->clients->find(this->id)->second.getUserName();
-		string ipaddress = this->clients->find(this->id)->second.getUserName();
-		return (string(":") + user + string("!") + name + string("@") + ipaddress);
+		string ipaddress = this->clients->find(this->id)->second.getIp();
+		return (string(":") + user + string("!") + name + string("@") + ipaddress + string(" "));
 	}
 
 	typedef vector< pair<int, string> > (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, vector< pair<int, string> > *);
@@ -123,7 +123,7 @@ private:
 
 				if (param.at(1) == "bot") {	/* IVAN - FOR BOT */
 					debug("[handle_message] Calling bot with command");
-					message->push_back(make_pair(id, handle_command(param.at(2))));
+					message->push_back(make_pair(id, getFrontLine() + handle_command(param.at(2))));
 				}
 				else {
 					_parser_user(param[1]);
@@ -139,7 +139,7 @@ private:
 							else
 							{
 								debug("[handle_message] Пользователь найден, отправляю сообщение...");
-								message->push_back( make_pair(it1->first, param[2] + "\n") );
+								message->push_back( make_pair(it1->first, getFrontLine() + param[0] + " " + param[1] + " " + ((param[2][0] == 0) ? (" ") : ("")) + param[2] + "\n") );
 							}
 							break ;
 						}
