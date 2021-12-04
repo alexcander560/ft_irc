@@ -44,5 +44,5 @@ class User
 		// Распечатать все данные о пользователе
 		void			printUser() const;
 		//Оператор сравнения двух пользователей
-		friend bool			operator == (const User &first, const User &second);
+		friend bool		operator == (const User &first, const User &second);
 };

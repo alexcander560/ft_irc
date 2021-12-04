@@ -6,7 +6,7 @@
 
 class MassegeHandler {
 private:
-	typedef std::vector< pair<int, string> > (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, std::vector< pair<int, string> > *);
+	typedef vector< pair<int, string> > (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, vector< pair<int, string> > *);
 	map<string, Method> commands;
 	void _parser_param() {
 		int		len = str_message.size(), end = len - 1;
@@ -49,7 +49,7 @@ private:
 		if (temp != "")
 			param.push_back(temp);
 	}
-	std::vector< pair<int, string> > command_pass(pair<map<int, User>::iterator, bool> *res, std::vector< pair<int, string> > *message) {
+	vector< pair<int, string> > command_pass(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		if (res->first->second.getStatus() == -1)
 			res->first->second.setPass(param, pass);
 		else
@@ -57,7 +57,7 @@ private:
 
 		return *message;
 	}
-	std::vector< pair<int, string> > command_nick(pair<map<int, User>::iterator, bool> *res, std::vector< pair<int, string> > *message) {
+	vector< pair<int, string> > command_nick(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 
 		if (lenparam != 2)
 			debug(RED"[handle_message] Неверное число аргументов для команды NICK" DEFAULT);
@@ -76,12 +76,12 @@ private:
 
 		return *message;
 	}
-	std::vector< pair<int, string> > command_user(pair<map<int, User>::iterator, bool> *res, std::vector< pair<int, string> > *message) {
+	vector< pair<int, string> > command_user(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		res->first->second.setData(param);
 
 		return *message;
 	}
-	std::vector< pair<int, string> > command_quit(pair<map<int, User>::iterator, bool> *res, std::vector< pair<int, string> > *message) {
+	vector< pair<int, string> > command_quit(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		clients->erase(id);
 		disconnect_by_id(this->id, this->clients_ivan, this->fds);
 		debug("Command QUIT was use for user");
@@ -89,7 +89,7 @@ private:
 	}
 
 	// pair<int, string> command_oper(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	std::vector< pair<int, string> > command_privmsg(pair<map<int, User>::iterator, bool> *res, std::vector< pair<int, string> > *message) {
+	vector< pair<int, string> > command_privmsg(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		if (lenparam != 3)
 			debug(RED"[handle_message] PRIVMSG неверное число аргументов" DEFAULT);
 		else {
@@ -186,8 +186,8 @@ public:
 		debug("[handle_message] =============================================================================");
 	}
 	// Обработка
-	std::vector< pair<int, string> > message() {
-		std::vector< pair<int, string> >		messages;
+	vector< pair<int, string> > message() {
+		vector< pair<int, string> >		messages;
 		User									user(id);
 		pair<map<int, User>::iterator, bool>	res = clients->insert(make_pair(id, user));
 
@@ -215,6 +215,6 @@ public:
 
 		if (res.first->second.registration())
 			debug("[handle_message] Новый пользователь зарегистрирован");
-		return messages;
+		return (messages);
 	} 
 };
