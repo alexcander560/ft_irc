@@ -11,7 +11,7 @@ private:
 		string user = this->clients->find(this->id)->second.getName();
 		string name = this->clients->find(this->id)->second.getUserName();
 		string ipaddress = this->clients->find(this->id)->second.getUserName();
-		return (user);
+		return (string(":") + user + string("!") + name + string("@") + ipaddress);
 	}
 
 	typedef vector< pair<int, string> > (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, vector< pair<int, string> > *);
