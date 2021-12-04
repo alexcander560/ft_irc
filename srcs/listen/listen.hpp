@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 #define TCP 6 //From 'man protocols' -  /etc/protocols
 
