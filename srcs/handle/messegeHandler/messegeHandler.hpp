@@ -150,8 +150,7 @@ private:
 								{
 									debug("[handle_message] Пользователь найден, отправляю сообщение...");
 									message->push_back(make_pair(it1->first, getFrontLine() + param[0] + " " + *us1 + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n") );
-									message->push_back(make_pair(id, ":bot!DragonsCHAT@127.0.0.1 PRIVMSG imora :test\n"));
-
+									/* Check AWAY - BEGIN */
 									if (it1->second.getAwayMessage().first)
 									{
 										debug("Away automessage was add");
@@ -159,6 +158,7 @@ private:
 									}
 									else
 										debug("It's not need to send automessage");
+									/* Check AWAY - END */
 								}
 								break ;
 							}
