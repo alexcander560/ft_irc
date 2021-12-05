@@ -145,6 +145,7 @@ void			User::printUser() const
 	else
 		cout << "Не установленно" << endl;
 	cout << "ip: " << _ip << endl;
+	cout << "time: " << _data.first.timeAfterPing << endl;
 	cout
 	<< "mode: "
 	<< "  i(делает пользователя невидимым)              = " << _mode.i << endl
