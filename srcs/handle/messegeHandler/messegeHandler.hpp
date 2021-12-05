@@ -341,9 +341,9 @@ public:
 		if (res.first->second.registration())
 		{
 			debug("[handle_message] Новый пользователь зарегистрирован");
-			messages.push_back(make_pair(id, ":"SERVER_NAME" 375 " + res.first->second.getName() + " :- DragonsCHAT Message of the day -\n"));
-			messages.push_back(make_pair(id, ":"SERVER_NAME" 372 " + res.first->second.getName() + " :Регистрация пройдена\n"));
-			messages.push_back(make_pair(id, ":"SERVER_NAME" 376 " + res.first->second.getName() + " :End of /MOTD command\n"));
+			messages.push_back(make_pair(id, getFrontLineRPL("- DragonsCHAT Message of the day -\n", RPL_MOTDSTART)));
+			messages.push_back(make_pair(id, getFrontLineRPL("Регистрация пройдена\n", RPL_MOTD)));
+			messages.push_back(make_pair(id, getFrontLineRPL("End of /MOTD command\n", RPL_ENDOFMOTD)));
 		}
 		return (messages);
 	} 
