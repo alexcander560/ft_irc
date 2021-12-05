@@ -23,13 +23,8 @@ private:
 	{
 		if (user_id == -1)
 			user_id = id;
-<<<<<<< HEAD
 		string user = this->clients->find(user_id)->second.getName();
 		return (":"SERVER_NAME" " + rpl + " " + user + " "SERVER_NAME" :" + value);
-=======
-		string	user = this->clients->find(user_id)->second.getName();
-		return (":"SERVER_NAME" " + rpl + " test IRCat :");
->>>>>>> 2ad55b16cf62f36b1a5a2944573e1386569fc8f0
 	}
 
 	typedef vector< pair<int, string> > (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, vector< pair<int, string> > *);
