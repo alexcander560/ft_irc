@@ -12,9 +12,9 @@ private:
 	{
 		if (user_id == -1)
 			user_id = id;
-		string user = this->clients->find(user_id)->second.getName();
-		string name = this->clients->find(user_id)->second.getUserName();
-		string ipaddress = this->clients->find(user_id)->second.getIp();
+		string	user = this->clients->find(user_id)->second.getName();
+		string	name = this->clients->find(user_id)->second.getUserName();
+		string	ipaddress = this->clients->find(user_id)->second.getIp();
 		return (string(":") + user + string("!") + name + string("@") + ipaddress + string(" "));
 	}
 
@@ -22,7 +22,7 @@ private:
 	{
 		if (user_id == -1)
 			user_id = id;
-		string user = this->clients->find(user_id)->second.getName();
+		string	user = this->clients->find(user_id)->second.getName();
 		return (":"SERVER_NAME" " + rpl + " test IRCat :");
 	}
 
@@ -60,7 +60,7 @@ private:
 				if (str_message[i] == ':' && flag == false)
 				{
 					temp = str_message.substr(i + 1, len);
-						break ;
+					break ;
 				}
 				flag = true;
 				temp += str_message[i];
@@ -72,7 +72,6 @@ private:
 	bool _parser_user(string str){
 		string	current_name("");
 		int		i = 0;
-
 		while (str[i])
 		{
 			if (str[i] == ',')
