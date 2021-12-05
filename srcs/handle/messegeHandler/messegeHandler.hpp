@@ -5,6 +5,9 @@
 #include "../general/answers.hpp"
 //#include "../users/user.hpp"
 
+#define SERVER_NAME "DragonsCHAT"
+#define SERVER_VERSION "release (1.12.2)"
+
 class MassegeHandler {
 private:
 	const string	getFrontLine(int user_id = -1) const //Использовать с аргументом по умолчанию, когда хотим получить строку с данными ЭТОГО юзера. Подавать user_id в иных случаях
@@ -272,12 +275,24 @@ private:
 //	vector< pair<int, string> > command_pong(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_ison(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_userhost(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+
 //	vector< pair<int, string> > command_version(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+	vector< pair<int, string> > command_version(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
+	{
+		if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME))
+			message->push_back(make_pair(id, getFrontLineRPL(SERVER_VERSION, RPL_VERSION) + "\n"));
+		else
+			debug(RED"[command_version] No such server"DEFAULT);
+		return (*message);
+	}
+//	vector< pair<int, string> > command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_admin(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 	vector< pair<int, string> > command_time(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
 		if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME))
-			message->push_back(make_pair(id, getFrontLineRPL(getCurrentTime(), RPL_TIME))); //TODO
+			message->push_back(make_pair(id, getFrontLineRPL(getCurrentTime(), RPL_TIME)));
+		else
+			debug(RED"[command_time] No such server"DEFAULT);
 		return (*message);
 	}
 public:
@@ -308,23 +323,24 @@ public:
 		commands["AWAY"] = &MassegeHandler::command_away;
 		commands["NOTICE"] = &MassegeHandler::command_notice;
 		commands["MODE"] = &MassegeHandler::command_mode;
+		commands["VERSION"] = &MassegeHandler::command_version;
 		commands["TIME"] = &MassegeHandler::command_time;
 		commands["INFO"] = &MassegeHandler::command_info;
 	}
 	// Распечатка
 	void printMassege() {
 		string	temp = "";
-		debug("[handle_message] Cообщение получено {" + str_message + "}");
+		debug("[printMassege] Cообщение получено {" + str_message + "}");
 		for (int i = 0; i < lenparam; i++)
 			temp += "(" + param[i] + ") ";
 		if (DEBUG)
 		{
-			debug(clients->size() ? "[handle_message] Печать всех пользователей" : "[handle_message] Нет пользователей");
+			debug(clients->size() ? "[printMassege] Печать всех пользователей" : "[handle_message] Нет пользователей");
 			for (map<int, User>::iterator it1 = clients->begin(); it1 != clients->end(); it1++)
 				it1->second.printUser();
-			debug(lenparam ? "[handle_message] Аргументы: " + temp : RED"[handle_message] нет аргументов" DEFAULT);
+			debug(lenparam ? "[printMassege] Аргументы: " + temp : RED"[handle_message] нет аргументов" DEFAULT);
 		}
-		debug("[handle_message] =============================================================================");
+		debug("[printMassege] =============================================================================");
 	}
 	// Обработка
 	vector< pair<int, string> > message() {
@@ -344,9 +360,9 @@ public:
 		if (res.first->second.registration())
 		{
 			debug("[handle_message] Новый пользователь зарегистрирован");
-			messages.push_back(make_pair(id, ":"SERVER_NAME" 375 " + res.first->second.getName() + " :- DragonsCHAT Message of the day -\n"));
-			messages.push_back(make_pair(id, ":"SERVER_NAME" 372 " + res.first->second.getName() + " :Регистрация пройдена\n"));
-			messages.push_back(make_pair(id, ":"SERVER_NAME" 376 " + res.first->second.getName() + " :End of /MOTD command\n"));
+			messages.push_back(make_pair(id, getFrontLineRPL("- DragonsCHAT Message of the day -\n", RPL_MOTDSTART)));
+			messages.push_back(make_pair(id, getFrontLineRPL("Регистрация пройдена\n", RPL_MOTD)));
+			messages.push_back(make_pair(id, getFrontLineRPL("End of /MOTD command\n", RPL_ENDOFMOTD)));
 		}
 		return (messages);
 	} 
