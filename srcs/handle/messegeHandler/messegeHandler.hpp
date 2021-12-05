@@ -263,7 +263,8 @@ private:
 //	vector< pair<int, string> > command_admin(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 	vector< pair<int, string> > command_time(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
-		message->push_back(make_pair(id, getFrontLineRPL(getCurrentTime(), RPL_TIME))); //TODO
+		if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME))
+			message->push_back(make_pair(id, getFrontLineRPL(getCurrentTime(), RPL_TIME))); //TODO
 		return (*message);
 	}
 public:
