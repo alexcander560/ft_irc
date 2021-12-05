@@ -121,7 +121,6 @@ private:
 		debug("Command QUIT was use for user");
 		return *message;
 	}
-
 	vector< pair<int, string> > command_privmsg(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		if (lenparam != 3)
 			debug(RED"[handle_message] PRIVMSG неверное число аргументов" DEFAULT);
@@ -171,7 +170,6 @@ private:
 			else
 				debug(RED"[handle_message] Нельзя отправить сообщение до регистрации" DEFAULT);
 		}
-
 		return *message;
 	}
 	vector< pair<int, string> > command_away(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) //ГОТОВА 100%
@@ -267,7 +265,6 @@ public:
 		}
 		else
 			debug(RED"[handle_message] в строке слишком мало параметров" DEFAULT);
-
 		if (res.first->second.registration())
 		{
 			debug("[handle_message] Новый пользователь зарегистрирован");
