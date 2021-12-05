@@ -283,7 +283,7 @@ public:
 	}
 	// Распечатка
 	void printMassege() {
-		string temp = "";
+		string	temp = "";
 		debug("[handle_message] Cообщение получено {" + str_message + "}");
 		for (int i = 0; i < lenparam; i++)
 			temp += "(" + param[i] + ") ";
@@ -298,7 +298,7 @@ public:
 	}
 	// Обработка
 	vector< pair<int, string> > message() {
-		vector< pair<int, string> >		messages;
+		vector< pair<int, string> >				messages;
 		User									user(id, ip);
 		pair<map<int, User>::iterator, bool>	res = clients->insert(make_pair(id, user));
 
