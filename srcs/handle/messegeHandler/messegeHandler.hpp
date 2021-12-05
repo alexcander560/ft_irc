@@ -123,12 +123,12 @@ private:
 	}
 	vector< pair<int, string> > command_privmsg(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		if (lenparam != 3)
-			debug(RED"[handle_message] PRIVMSG неверное число аргументов" DEFAULT);
+			debug(RED"[command_privmsg] PRIVMSG неверное число аргументов" DEFAULT);
 		else {
 			if (res->first->second.getStatus() == 1)
 			{
 				if (param.at(1) == "bot") {	/* IVAN - FOR BOT */
-					debug("[handle_message] Calling bot with command");
+					debug("[command_privmsg] Calling bot with command");
 					handle_command(param.at(2), id, clients->find(id)->second.getName(), message);
 				}
 				else {
@@ -144,20 +144,24 @@ private:
 						for (; it1 != it2; it1++) {
 							if (it1->second.getName() == *us1) {
 								if (it1->second.getStatus() == -1)
-									debug(RED"[handle_message] Пользователь с таким ником не прошёл полную регистрацию" DEFAULT);
+									debug(RED"[command_privmsg] Пользователь с таким ником не прошёл полную регистрацию" DEFAULT);
+								else if (it1->second.getMode().s)
+									debug("[command_privmsg] У конечной точки стоит флаг +s. NOTICE не сработает!");
 								else
 								{
-									debug("[handle_message] Пользователь найден, отправляю сообщение...");
+									debug("[command_privmsg] Пользователь найден, отправляю сообщение...");
 									message->push_back(make_pair(it1->first, getFrontLine() + param[0] + " " + *us1 + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n") );
-									message->push_back(make_pair(id, ":bot!DragonsCHAT@127.0.0.1 PRIVMSG imora :test\n"));
-
-									if (it1->second.getAwayMessage().first)
+									/* Check AWAY - BEGIN */
+									if (!is_notice && it1->second.getAwayMessage().first)
 									{
 										debug("Away automessage was add");
 										message->push_back(make_pair(id, getFrontLine(it1->first) + "PRIVMSG " + clients->find(id)->second.getName() + " :" + it1->second.getAwayMessage().second + "\n"));
 									}
+									else if (is_notice)
+										debug("It's not need to send automessage, because it's notice");
 									else
 										debug("It's not need to send automessage");
+									/* Check AWAY - END */
 								}
 								break ;
 							}
@@ -188,7 +192,19 @@ private:
 			warning(RED"[command_away] Неверное число аргументов" DEFAULT);
 		return (*message);
 	}
-//	vector< pair<int, string> > command_notice(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+	vector< pair<int, string> > command_notice(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
+	{
+		if (lenparam != 3)
+		{
+			debug("[command_notice] Неверное число аргументов");
+			goto done;
+		}
+		is_notice = true;
+		command_privmsg(res, message);
+		is_notice = false;
+	done:
+		return (*message);
+	}
 //	vector< pair<int, string> > command_who(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_whois(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_whowas(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
@@ -220,12 +236,13 @@ public:
 	fd_set				&fds;
 	set<string>			user_list;
 	string				ip;
+	bool				is_notice;
 
 	// Конструктор
 	MassegeHandler(int id, string str_message, map<int, User> *clients, string _pass,
 	map<int, std::string> &clients_ivan, fd_set &fds, string ip):
 	id(id), str_message(str_message), clients(clients), pass(_pass),
-	clients_ivan(clients_ivan), fds(fds), ip(ip) {
+	clients_ivan(clients_ivan), fds(fds), ip(ip), is_notice(false) {
 		_parser_param();
 		lenparam = param.size();
 		commands["PASS"] = &MassegeHandler::command_pass;
@@ -234,6 +251,7 @@ public:
 		commands["QUIT"] = &MassegeHandler::command_quit;
 		commands["PRIVMSG"] = &MassegeHandler::command_privmsg;
 		commands["AWAY"] = &MassegeHandler::command_away;
+		commands["NOTICE"] = &MassegeHandler::command_notice;
 	}
 	// Распечатка
 	void printMassege() {
