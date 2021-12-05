@@ -204,27 +204,32 @@ private:
 			debug(RED"[command_notice] Неверное число аргументов"DEFAULT);
 	}
 	void command_mode(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {
-		if (lenparam == 2)
+		if (lenparam == 3)
 		{
 			if (res->first->second.getStatus() == 1)
 			{
-				if (param[1].size() != 2)
-					debug(RED"[command_mode] Строка с параметрами неверной длины"DEFAULT);
-				else if (param[1][0] != '+' && param[1][0] != '-')
-					debug(RED"[command_mode] Знак mode неверный {" + string(1, param[1][0]) + "}"DEFAULT);
-				else
+				if (param[1] == res->first->second.getName()) // Вот эта потом нужно будет поменять, наверное
 				{
-					if (param[1][1] == 'i')
-						res->first->second.setModeI(param[1][0] == '+' ? true : false);
-					else if (param[1][1] == 'w')
-						res->first->second.setModeW(param[1][0] == '+' ? true : false);
-					else if (param[1][1] == 's')
-						res->first->second.setModeS(param[1][0] == '+' ? true : false);
-					else if (param[1][1] == 'o')
-						res->first->second.setModeO(param[1][0] == '+' ? true : false);
+					if (param[2].size() != 2)
+						debug(RED"[command_mode] Строка с параметрами неверной длины"DEFAULT);
+					else if (param[2][0] != '+' && param[2][0] != '-')
+						debug(RED"[command_mode] Знак mode неверный {" + string(1, param[1][0]) + "}"DEFAULT);
 					else
-						debug(RED"[command_mode] флаг mode неверный {" + string(1, param[1][1]) + "}"DEFAULT);
+					{
+						if (param[2][1] == 'i')
+							res->first->second.setModeI(param[2][0] == '+' ? true : false);
+						else if (param[2][1] == 'w')
+							res->first->second.setModeW(param[2][0] == '+' ? true : false);
+						else if (param[2][1] == 's')
+							res->first->second.setModeS(param[2][0] == '+' ? true : false);
+						else if (param[2][1] == 'o')
+							res->first->second.setModeO(param[2][0] == '+' ? true : false);
+						else
+							debug(RED"[command_mode] флаг mode неверный {" + string(1, param[2][1]) + "}"DEFAULT);
+					}
 				}
+				else
+					debug(RED"[command_mode] Имя пользователя введено неверно"DEFAULT);
 			}
 			else
 				debug(RED"[command_mode] Нельзя менять статусы до полной регистрации"DEFAULT);
