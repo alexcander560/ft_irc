@@ -5,8 +5,6 @@
 #include "../general/answers.hpp"
 //#include "../users/user.hpp"
 
-#define SERVER_NAME "DragonsCHAT"
-
 class MassegeHandler {
 private:
 	const string	getFrontLine(int user_id = -1) const //Использовать с аргументом по умолчанию, когда хотим получить строку с данными ЭТОГО юзера. Подавать user_id в иных случаях
