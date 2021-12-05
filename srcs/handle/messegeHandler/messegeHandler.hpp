@@ -265,7 +265,6 @@ private:
 //	void command_ison(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	void command_userhost(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 
-//	void command_version(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 	void command_version(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
 		if (res->first->second.getStatus() != 1)
@@ -280,7 +279,6 @@ private:
 		else
 			debug(RED"[command_version] No such server"DEFAULT);
 	}
-//	void command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 	void command_admin(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
 		if (res->first->second.getStatus() != 1)
