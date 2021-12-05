@@ -281,7 +281,25 @@ private:
 			debug(RED"[command_version] No such server"DEFAULT);
 	}
 //	void command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	void command_admin(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+	void command_admin(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
+	{
+		if (res->first->second.getStatus() != 1)
+		{
+			debug(RED"[command_admin] Нельзя запросить информацию до полной регистрации"DEFAULT);
+			return ;
+		}
+		if (lenparam > 2)
+			debug(RED"[command_version] arg error"DEFAULT);
+		else if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME))
+		{
+			message->push_back(make_pair(id, getFrontLineRPL("", RPL_ADMINME) + "Information about administrators\n"));
+			message->push_back(make_pair(id, getFrontLineRPL("", RPL_ADMINLOC1) + "Names are Giganta Mother, Irena Mora, Free Milissa\n"));
+			message->push_back(make_pair(id, getFrontLineRPL("", RPL_ADMINLOC2) + "Usernames are gmother, imora, fmilissa\n"));
+			message->push_back(make_pair(id, getFrontLineRPL("", RPL_ADMINEMAIL) + "Email are gmother@student.21-school.ru, imorastudent.21-school.ru, fmilissastudent.21-school.ru\n"));
+		}
+		else
+			debug(RED"[command_version] No such server"DEFAULT);
+	}
 	void command_time(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
 		if (res->first->second.getStatus() != 1)
@@ -326,6 +344,7 @@ public:
 		commands["MODE"] = &MassegeHandler::command_mode;
 		commands["VERSION"] = &MassegeHandler::command_version;
 		commands["TIME"] = &MassegeHandler::command_time;
+		commands["ADMIN"] = &MassegeHandler::command_admin;
 		commands["INFO"] = &MassegeHandler::command_info;
 	}
 	// Распечатка
