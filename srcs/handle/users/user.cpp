@@ -8,9 +8,13 @@ User::User(int id, string ip)
 	_data.second = false;
 	_status = -1;
 	_id = id;
-	_data.first._timeAfterPing = time(0);
+	_data.first.timeAfterPing = time(0);
 	_ip = ip;
 	_away_message = make_pair(false, "");
+	_mode.i = false;
+	_mode.s = false;
+	_mode.o = false;
+	_mode.w = false;
 }
 
 // Деструктор
@@ -20,21 +24,19 @@ User::~User(){}
 const string	User::getName() const { return (_nick.first); }
 
 // Возвращает статус пользователя
-const int		User::getStatus() const { return (_status); }
-
-const string	User::getUserName() const { return (_data.first._username); }
-
-const string	User::getHostName() const { return (_data.first._hostname); }
-
-const string	User::getRealName() const { return (_data.first._realname); }
-
-const string	User::getServerName() const { return (_data.first._servername); }
-
-const string 	User::getIp() const { return (_ip); }
-
+const int					User::getStatus() const { return (_status); }
+const string				User::getUserName() const { return (_data.first.username); }
+const string				User::getHostName() const { return (_data.first.hostname); }
+const string				User::getRealName() const { return (_data.first.realname); }
+const string				User::getServerName() const { return (_data.first.servername); }
+const string				User::getIp() const { return (_ip); }
+const userMode				User::getMode() const { return (_mode); }
 const pair<bool, string>	User::getAwayMessage() const { return (_away_message); }
-
-void		 	User::setAwayMessage(pair<bool, string> away_message) { _away_message = away_message; }
+void						User::setAwayMessage(pair<bool, string> away_message) { _away_message = away_message; }
+void						User::setModeI(bool flag) { _mode.i = flag; }
+void						User::setModeS(bool flag) { _mode.s = flag; }
+void						User::setModeO(bool flag) { _mode.o = flag; }
+void						User::setModeW(bool flag) { _mode.w = flag; }
 
 // Устанавливает пользователю имя (проверяет на валидность)
 // Возвращает true, если ник успешно установлен, fasle если ник не валиден
@@ -94,10 +96,10 @@ bool			User::setData(vector<string> param)
 {
 	if (param.size() == 5)
 	{
-		_data.first._username = param[1];
-		_data.first._hostname = param[2];
-		_data.first._servername = param[3];
-		_data.first._realname = param[4];
+		_data.first.username = param[1];
+		_data.first.hostname = param[2];
+		_data.first.servername = param[3];
+		_data.first.realname = param[4];
 		_data.second = true;
 	}
 	else
@@ -133,10 +135,10 @@ void			User::printUser() const
 	if (_data.second)
 	{
 		cout
-		<< "username:   [" << _data.first._username << "]" << endl
-		<< "      hostname:   [" << _data.first._hostname << "]" << endl
-		<< "      servername: [" << _data.first._servername << "]" << endl
-		<< "      realname:   [" << _data.first._realname << "]" << endl;
+		<< "username:   [" << _data.first.username << "]" << endl
+		<< "      hostname:   [" << _data.first.hostname << "]" << endl
+		<< "      servername: [" << _data.first.servername << "]" << endl
+		<< "      realname:   [" << _data.first.realname << "]" << endl;
 	}
 	else
 		cout << "Не установленно" << endl;
