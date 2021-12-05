@@ -92,7 +92,6 @@ private:
 		return *message;
 	}
 	vector< pair<int, string> > command_nick(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
-
 		if (lenparam != 2)
 			debug(RED"[handle_message] Неверное число аргументов для команды NICK" DEFAULT);
 		else {
@@ -112,7 +111,6 @@ private:
 	}
 	vector< pair<int, string> > command_user(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		res->first->second.setData(param);
-
 		return *message;
 	}
 	vector< pair<int, string> > command_quit(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
@@ -194,21 +192,50 @@ private:
 	}
 	vector< pair<int, string> > command_notice(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
-		if (lenparam != 3)
+		if (lenparam == 3)
 		{
-			debug("[command_notice] Неверное число аргументов");
-			goto done;
+			is_notice = true;
+			command_privmsg(res, message);
+			is_notice = false;
 		}
-		is_notice = true;
-		command_privmsg(res, message);
-		is_notice = false;
-	done:
+		else
+			debug(RED"[command_notice] Неверное число аргументов"DEFAULT);
 		return (*message);
 	}
+	vector< pair<int, string> > command_mode(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {
+		if (lenparam == 2)
+		{
+			if (res->first->second.getStatus() == 1)
+			{
+				if (param[1].size() != 2)
+					debug(RED"[command_mode] Строка с параметрами неверной длины"DEFAULT);
+				else if (param[1][0] != '+' && param[1][0] != '-')
+					debug(RED"[command_mode] Знак mode неверный {" + string(1, param[1][0]) + "}"DEFAULT);
+				else
+				{
+					if (param[1][1] == 'i')
+						res->first->second.setModeI(param[1][0] == '+' ? true : false);
+					else if (param[1][1] == 'w')
+						res->first->second.setModeW(param[1][0] == '+' ? true : false);
+					else if (param[1][1] == 's')
+						res->first->second.setModeS(param[1][0] == '+' ? true : false);
+					else if (param[1][1] == 'o')
+						res->first->second.setModeO(param[1][0] == '+' ? true : false);
+					else
+						debug(RED"[command_mode] флаг mode неверный {" + string(1, param[1][1]) + "}"DEFAULT);
+				}
+			}
+			else
+				debug(RED"[command_mode] Нельзя менять статусы до полной регистрации"DEFAULT);
+		}
+		else
+			debug(RED"[command_mode] Неверное число аргументов"DEFAULT);
+		return *message;
+	}
+
 //	vector< pair<int, string> > command_who(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_whois(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_whowas(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_mode(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_topic(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_join(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_invite(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
@@ -252,6 +279,7 @@ public:
 		commands["PRIVMSG"] = &MassegeHandler::command_privmsg;
 		commands["AWAY"] = &MassegeHandler::command_away;
 		commands["NOTICE"] = &MassegeHandler::command_notice;
+		commands["MODE"] = &MassegeHandler::command_mode;
 	}
 	// Распечатка
 	void printMassege() {

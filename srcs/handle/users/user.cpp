@@ -107,7 +107,6 @@ bool			User::setData(vector<string> param)
 		debug(RED"[setData] Неверное число парметров" DEFAULT);
 		return (false);
 	}
-
 	return (true);
 }
 
