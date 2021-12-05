@@ -2,6 +2,7 @@
 #include "../../general.hpp"
 #include "../../listen/support.hpp"
 #include "additions.hpp"
+#include "../general/answers.hpp"
 //#include "../users/user.hpp"
 
 #define SERVER_NAME "DragonsCHAT"
@@ -23,7 +24,7 @@ private:
 		if (user_id == -1)
 			user_id = id;
 		string user = this->clients->find(user_id)->second.getName();
-		return (":"SERVER_NAME" " + rpl + " test IRCat :");
+		return (":"SERVER_NAME" " + rpl + " " + user + " "SERVER_NAME" :" + value);
 	}
 
 	typedef vector< pair<int, string> > (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, vector< pair<int, string> > *);
@@ -263,7 +264,7 @@ private:
 //	vector< pair<int, string> > command_admin(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 	vector< pair<int, string> > command_time(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
-		message->push_back(make_pair(id, getCurrentTime() + "")); //TODO
+		message->push_back(make_pair(id, getFrontLineRPL(getCurrentTime(), RPL_TIME))); //TODO
 		return (*message);
 	}
 public:
@@ -294,6 +295,7 @@ public:
 		commands["AWAY"] = &MassegeHandler::command_away;
 		commands["NOTICE"] = &MassegeHandler::command_notice;
 		commands["MODE"] = &MassegeHandler::command_mode;
+		commands["TIME"] = &MassegeHandler::command_time;
 	}
 	// Распечатка
 	void printMassege() {
