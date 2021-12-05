@@ -7,6 +7,13 @@ const std::string	getCurrentTime()
 	return (std::string(std::ctime(&now_time)));
 }
 
+const time_t		getCurrentTimeForUser()
+{
+	time_t	now_time;
+	time(&now_time);
+	return (now_time);
+}
+
 std::map<int, User>::iterator getUserByName(std::map<int, User> *clients, std::string name)
 {
 	std::map<int, User>::iterator begin = clients->begin();

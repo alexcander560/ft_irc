@@ -51,11 +51,13 @@ class User
 		const string				getIp() const;
 		const userMode				getMode() const;
 		const pair<bool, string>	getAwayMessage() const;
+		time_t						getTime() const;
 		void						setAwayMessage(pair<bool, string> away_message);
 		void						setModeI(bool flag);
 		void						setModeS(bool flag);
 		void						setModeO(bool flag);
 		void						setModeW(bool flag);
+		void						setTime(time_t time);
 		// Устанавливает пользователю имя (проверяет на валидность)
 		bool			setNick(vector<string> param);
 		// Проверяет ввёл ли пользователь верный пароль

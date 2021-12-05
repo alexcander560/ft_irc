@@ -232,21 +232,6 @@ private:
 		else
 			debug(RED"[command_mode] Неверное число аргументов"DEFAULT);
 	}
-	void command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {
-		if (lenparam == 1)
-		{
-			if (res->first->second.getStatus() == 1)
-			{
-				message->push_back(make_pair(id, getFrontLineRPL("describe\n", RPL_INFO)));
-				message->push_back(make_pair(id, getFrontLineRPL("IRC server based on TCP/IP protocol to rfc1459 standard\n", RPL_INFO)));
-				message->push_back(make_pair(id, getFrontLineRPL("End of /INFO list\n", RPL_ENDOFINFO)));
-			}
-			else
-				debug(RED"[command_info] Нельзя запросить информацию до полной регистрации"DEFAULT);
-		}
-		else
-			debug(RED"[command_info] Неверное число аргументов"DEFAULT);
-	}
 
 //	void command_who(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	void command_whois(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
@@ -261,7 +246,7 @@ private:
 //	void command_wallops(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	void command_ping(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	void command_pong(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	void command_ison(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_ison(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message){}
 	void command_userhost(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {
 		if (res->first->second.getStatus() != 1)
 		{
@@ -292,7 +277,6 @@ private:
 		}
 		message->push_back(make_pair(id, getFrontLineRPL(line, RPL_USERHOST) + "\n"));
 	}
-
 	void command_version(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
 		if (res->first->second.getStatus() != 1)
@@ -306,6 +290,21 @@ private:
 			message->push_back(make_pair(id, getFrontLineRPL(SERVER_VERSION, RPL_VERSION) + "\n"));
 		else
 			debug(RED"[command_version] No such server"DEFAULT);
+	}
+	void command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {
+		if (lenparam == 1)
+		{
+			if (res->first->second.getStatus() == 1)
+			{
+				message->push_back(make_pair(id, getFrontLineRPL("describe\n", RPL_INFO)));
+				message->push_back(make_pair(id, getFrontLineRPL("IRC server based on TCP/IP protocol to rfc1459 standard\n", RPL_INFO)));
+				message->push_back(make_pair(id, getFrontLineRPL("End of /INFO list\n", RPL_ENDOFINFO)));
+			}
+			else
+				debug(RED"[command_info] Нельзя запросить информацию до полной регистрации"DEFAULT);
+		}
+		else
+			debug(RED"[command_info] Неверное число аргументов"DEFAULT);
 	}
 	void command_admin(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
@@ -395,6 +394,7 @@ public:
 		User									user(id, ip);
 		pair<map<int, User>::iterator, bool>	res = clients->insert(make_pair(id, user));
 
+		res.first->second.setTime(getCurrentTimeForUser());
 		if(lenparam > 0){
 			try {
 				(this->*commands.at(param[0]))(&res, &messages);

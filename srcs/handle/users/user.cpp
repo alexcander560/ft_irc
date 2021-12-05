@@ -32,11 +32,14 @@ const string				User::getServerName() const { return (_data.first.servername); }
 const string				User::getIp() const { return (_ip); }
 const userMode				User::getMode() const { return (_mode); }
 const pair<bool, string>	User::getAwayMessage() const { return (_away_message); }
+time_t						User::getTime() const { return (_data.first.timeAfterPing); }
+
 void						User::setAwayMessage(pair<bool, string> away_message) { _away_message = away_message; }
 void						User::setModeI(bool flag) { _mode.i = flag; }
 void						User::setModeS(bool flag) { _mode.s = flag; }
 void						User::setModeO(bool flag) { _mode.o = flag; }
 void						User::setModeW(bool flag) { _mode.w = flag; }
+void						User::setTime(time_t time)	{_data.first.timeAfterPing = time; }
 
 // Устанавливает пользователю имя (проверяет на валидность)
 // Возвращает true, если ник успешно установлен, fasle если ник не валиден
