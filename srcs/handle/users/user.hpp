@@ -4,11 +4,19 @@
 // Структура для записи данных о пользователе (передаются командой USER при регистрации)
 struct	userData
 {
-	string	_username;
-	string	_hostname;
-	string	_servername;
-	string	_realname;
-	time_t	_timeAfterPing;
+	string	username;
+	string	hostname;
+	string	servername;
+	string	realname;
+	time_t	timeAfterPing;
+};
+
+struct	userMode
+{
+	bool	i;
+	bool	s;
+	bool	o;
+	bool	w;
 };
 
 // Класс содержит всё информацию о пользователе
@@ -24,6 +32,7 @@ class User
 		int						_id;		// Излишние данные; для удобства печати информации о пользователе
 		string 					_ip;
 		pair<bool, string>		_away_message; //Сообщение, устанавливаемое командой AWAY {MESSAGE} - служит для автоматического ответа при PRIVMSG к юзеру.
+		userMode				_mode;
 
 	public:
 		// Конструктор
@@ -32,17 +41,22 @@ class User
 		~User();
 
 		// Возвращает имя пользователя
-		const string	getName() const;
+		const string				getName() const;
 		// Возвращает статус пользователя
-		const int		getStatus() const;
-		const string	getUserName() const;
-		const string	getHostName() const;
-		const string	getServerName() const;
-		const string	getRealName() const;
-		const string 	getIp() const;
+		const int					getStatus() const;
+		const string				getUserName() const;
+		const string				getHostName() const;
+		const string				getServerName() const;
+		const string				getRealName() const;
+		const string				getIp() const;
+		const userMode				getMode() const;
 		const pair<bool, string>	getAwayMessage() const;
-		void	setAwayMessage(pair<bool, string> away_message);
-	// Устанавливает пользователю имя (проверяет на валидность)
+		void						setAwayMessage(pair<bool, string> away_message);
+		void						setModeI(bool flag);
+		void						setModeS(bool flag);
+		void						setModeO(bool flag);
+		void						setModeW(bool flag);
+		// Устанавливает пользователю имя (проверяет на валидность)
 		bool			setNick(vector<string> param);
 		// Проверяет ввёл ли пользователь верный пароль
 		bool			setPass(vector<string> param, const string pass_server);

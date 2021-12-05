@@ -178,12 +178,12 @@ private:
 	{
 		if (lenparam == 1)
 		{
-			debug("Away message was unset");
+			debug("[command_away] Away message was unset");
 			clients->find(id)->second.setAwayMessage(make_pair(false, ""));
 		}
 		else if (lenparam == 2)
 		{
-			debug("Away message was set");
+			debug("[command_away] Away message was set");
 			clients->find(id)->second.setAwayMessage(make_pair(true, param[1]));
 		}
 		else

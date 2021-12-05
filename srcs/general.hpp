@@ -37,4 +37,4 @@ void	warning(string line);
 void	fatal(string line);
 void	debug(string line);
 
-std::vector< pair<int, string> >	handle_message(string str_message, int id, map<int, User> *clients_map, string pass, map<int, string> &clients, fd_set &fds, string ip);
+vector< pair<int, string> >	handle_message(string str_message, int id, map<int, User> *clients_map, string pass, map<int, string> &clients, fd_set &fds, string ip);
