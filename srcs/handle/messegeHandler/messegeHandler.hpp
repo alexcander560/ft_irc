@@ -281,14 +281,14 @@ private:
 	{
 		if (res->first->second.getStatus() != 1)
 		{
-			debug(RED"[command_info] Нельзя запросить информацию до полной регистрации"DEFAULT);
+			debug(RED"[command_version] Нельзя запросить информацию до полной регистрации"DEFAULT);
 			goto done;
 		}
 		if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME))
 			message->push_back(make_pair(id, getFrontLineRPL(SERVER_VERSION, RPL_VERSION) + "\n"));
 		else
 			debug(RED"[command_version] No such server"DEFAULT);
-	done;
+	done:
 		return (*message);
 	}
 //	vector< pair<int, string> > command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
@@ -304,7 +304,7 @@ private:
 			message->push_back(make_pair(id, getFrontLineRPL(getCurrentTime(), RPL_TIME)));
 		else
 			debug(RED"[command_time] No such server"DEFAULT);
-	done;
+	done:
 		return (*message);
 	}
 public:
