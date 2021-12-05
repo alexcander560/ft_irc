@@ -1,8 +1,10 @@
 #pragma once
 #include "../../general.hpp"
 #include "../../listen/support.hpp"
+#include "additions.hpp"
 //#include "../users/user.hpp"
 
+#define SERVER_NAME "DragonsCHAT"
 
 class MassegeHandler {
 private:
@@ -14,6 +16,14 @@ private:
 		string name = this->clients->find(user_id)->second.getUserName();
 		string ipaddress = this->clients->find(user_id)->second.getIp();
 		return (string(":") + user + string("!") + name + string("@") + ipaddress + string(" "));
+	}
+
+	const string	getFrontLineRPL(string value, string rpl, int user_id = -1)
+	{
+		if (user_id == -1)
+			user_id = id;
+		string user = this->clients->find(user_id)->second.getName();
+		return (":"SERVER_NAME" " + rpl + " test IRCat :");
 	}
 
 	typedef vector< pair<int, string> > (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, vector< pair<int, string> > *);
@@ -224,7 +234,11 @@ private:
 //	vector< pair<int, string> > command_version(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_admin(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_time(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+	vector< pair<int, string> > command_time(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
+	{
+		message->push_back(make_pair(id, getCurrentTime() + "")); //TODO
+		return (*message);
+	}
 public:
 	string				str_message;
 	int					id;
@@ -286,9 +300,9 @@ public:
 		if (res.first->second.registration())
 		{
 			debug("[handle_message] Новый пользователь зарегистрирован");
-			messages.push_back(make_pair(id, ":DragonsCHAT 375 " + res.first->second.getName() + " :- DragonsCHAT Message of the day -\n"));
-			messages.push_back(make_pair(id, ":DragonsCHAT 372 " + res.first->second.getName() + " :Регистрация пройдена\n"));
-			messages.push_back(make_pair(id, ":DragonsCHAT 376 " + res.first->second.getName() + " :End of /MOTD command\n"));
+			messages.push_back(make_pair(id, ":"SERVER_NAME" 375 " + res.first->second.getName() + " :- DragonsCHAT Message of the day -\n"));
+			messages.push_back(make_pair(id, ":"SERVER_NAME" 372 " + res.first->second.getName() + " :Регистрация пройдена\n"));
+			messages.push_back(make_pair(id, ":"SERVER_NAME" 376 " + res.first->second.getName() + " :End of /MOTD command\n"));
 		}
 		return (messages);
 	} 
