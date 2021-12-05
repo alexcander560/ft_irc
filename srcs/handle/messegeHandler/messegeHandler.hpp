@@ -13,9 +13,9 @@ private:
 	{
 		if (user_id == -1)
 			user_id = id;
-		string user = this->clients->find(user_id)->second.getName();
-		string name = this->clients->find(user_id)->second.getUserName();
-		string ipaddress = this->clients->find(user_id)->second.getIp();
+		string	user = this->clients->find(user_id)->second.getName();
+		string	name = this->clients->find(user_id)->second.getUserName();
+		string	ipaddress = this->clients->find(user_id)->second.getIp();
 		return (string(":") + user + string("!") + name + string("@") + ipaddress + string(" "));
 	}
 
@@ -23,8 +23,13 @@ private:
 	{
 		if (user_id == -1)
 			user_id = id;
+<<<<<<< HEAD
 		string user = this->clients->find(user_id)->second.getName();
 		return (":"SERVER_NAME" " + rpl + " " + user + " "SERVER_NAME" :" + value);
+=======
+		string	user = this->clients->find(user_id)->second.getName();
+		return (":"SERVER_NAME" " + rpl + " test IRCat :");
+>>>>>>> 2ad55b16cf62f36b1a5a2944573e1386569fc8f0
 	}
 
 	typedef vector< pair<int, string> > (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, vector< pair<int, string> > *);
@@ -61,7 +66,7 @@ private:
 				if (str_message[i] == ':' && flag == false)
 				{
 					temp = str_message.substr(i + 1, len);
-						break ;
+					break ;
 				}
 				flag = true;
 				temp += str_message[i];
@@ -73,7 +78,6 @@ private:
 	bool _parser_user(string str){
 		string	current_name("");
 		int		i = 0;
-
 		while (str[i])
 		{
 			if (str[i] == ',')
