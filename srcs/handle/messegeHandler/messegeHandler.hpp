@@ -28,7 +28,7 @@ private:
 		return (":"SERVER_NAME" " + rpl + " " + user + " "SERVER_NAME" :" + value);
 	}
 
-	typedef vector< pair<int, string> > (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, vector< pair<int, string> > *);
+	typedef void (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, vector< pair<int, string> > *);
 	map<string, Method> commands;
 	void _parser_param() {
 		int		len = str_message.size(), end = len - 1;
@@ -94,15 +94,13 @@ private:
 				debug(RED"[_parser_user] Двойнок ник " + current_name + DEFAULT);
 		return (true);
 	}
-	vector< pair<int, string> > command_pass(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
+	void command_pass(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		if (res->first->second.getStatus() == -1)
 			res->first->second.setPass(param, pass);
 		else
 			debug(RED"[handle_message] Вы уже зарегистрированы!" DEFAULT);
-
-		return *message;
 	}
-	vector< pair<int, string> > command_nick(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
+	void command_nick(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		if (lenparam != 2)
 			debug(RED"[handle_message] Неверное число аргументов для команды NICK" DEFAULT);
 		else {
@@ -117,20 +115,16 @@ private:
 			if (it1 == it2)
 				res->first->second.setNick(param);
 		}
-
-		return *message;
 	}
-	vector< pair<int, string> > command_user(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
+	void command_user(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		res->first->second.setData(param);
-		return *message;
 	}
-	vector< pair<int, string> > command_quit(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
+	void command_quit(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		clients->erase(id);
 		disconnect_by_id(this->id, this->clients_ivan, this->fds);
 		debug("Command QUIT was use for user");
-		return *message;
 	}
-	vector< pair<int, string> > command_privmsg(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
+	void command_privmsg(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		if (lenparam != 3)
 			debug(RED"[command_privmsg] PRIVMSG неверное число аргументов" DEFAULT);
 		else {
@@ -183,9 +177,8 @@ private:
 			else
 				debug(RED"[handle_message] Нельзя отправить сообщение до регистрации" DEFAULT);
 		}
-		return *message;
 	}
-	vector< pair<int, string> > command_away(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) //ГОТОВА 100%
+	void command_away(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) //ГОТОВА 100%
 	{
 		if (lenparam == 1)
 		{
@@ -199,9 +192,8 @@ private:
 		}
 		else
 			warning(RED"[command_away] Неверное число аргументов" DEFAULT);
-		return (*message);
 	}
-	vector< pair<int, string> > command_notice(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
+	void command_notice(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
 		if (lenparam == 3)
 		{
@@ -211,9 +203,8 @@ private:
 		}
 		else
 			debug(RED"[command_notice] Неверное число аргументов"DEFAULT);
-		return (*message);
 	}
-	vector< pair<int, string> > command_mode(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {
+	void command_mode(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {
 		if (lenparam == 2)
 		{
 			if (res->first->second.getStatus() == 1)
@@ -241,9 +232,8 @@ private:
 		}
 		else
 			debug(RED"[command_mode] Неверное число аргументов"DEFAULT);
-		return *message;
 	}
-	vector< pair<int, string> > command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {
+	void command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {
 		if (lenparam == 1)
 		{
 			if (res->first->second.getStatus() == 1)
@@ -257,55 +247,54 @@ private:
 		}
 		else
 			debug(RED"[command_info] Неверное число аргументов"DEFAULT);
-		return *message;
 	}
 
-//	vector< pair<int, string> > command_who(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_whois(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_whowas(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_topic(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_join(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_invite(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_kick(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_part(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_names(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_list(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_wallops(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_ping(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_pong(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_ison(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_userhost(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_who(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_whois(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_whowas(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_topic(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_join(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_invite(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_kick(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_part(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_names(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_list(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_wallops(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_ping(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_pong(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_ison(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_userhost(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 
-//	vector< pair<int, string> > command_version(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-	vector< pair<int, string> > command_version(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
+//	void command_version(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+	void command_version(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
 		if (res->first->second.getStatus() != 1)
 		{
 			debug(RED"[command_version] Нельзя запросить информацию до полной регистрации"DEFAULT);
-			goto done;
+			return ;
 		}
-		if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME))
+		if (lenparam > 2)
+			debug(RED"[command_version] arg error"DEFAULT);
+		else if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME))
 			message->push_back(make_pair(id, getFrontLineRPL(SERVER_VERSION, RPL_VERSION) + "\n"));
 		else
 			debug(RED"[command_version] No such server"DEFAULT);
-	done:
-		return (*message);
 	}
-//	vector< pair<int, string> > command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_admin(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-	vector< pair<int, string> > command_time(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
+//	void command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	void command_admin(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+	void command_time(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
 		if (res->first->second.getStatus() != 1)
 		{
-			debug(RED"[command_info] Нельзя запросить информацию до полной регистрации"DEFAULT);
-			goto done;
+			debug(RED"[command_time] Нельзя запросить информацию до полной регистрации"DEFAULT);
+			return ;
 		}
-		if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME))
+		if (lenparam > 2)
+			debug(RED"[command_time] arg error"DEFAULT);
+		else if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME))
 			message->push_back(make_pair(id, getFrontLineRPL(getCurrentTime(), RPL_TIME)));
 		else
 			debug(RED"[command_time] No such server"DEFAULT);
-	done:
-		return (*message);
 	}
 public:
 	string				str_message;
@@ -362,7 +351,7 @@ public:
 
 		if(lenparam > 0){
 			try {
-				messages = (this->*commands.at(param[0])) (&res, &messages);
+				(this->*commands.at(param[0]))(&res, &messages);
 			} catch(const std::exception & e) {
 				debug(RED"[handle_message] Неизвестная команда" DEFAULT);	
 			}
