@@ -251,7 +251,38 @@ private:
 //	void command_wallops(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	void command_ping(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	void command_pong(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	void command_ison(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message){}
+	void command_ison(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {
+		if (res->first->second.getStatus() != 1)
+		{
+			debug(RED"[command_ison] Нельзя запросить информацию до полной регистрации"DEFAULT);
+			return ;
+		}
+		if (lenparam == 1)
+		{
+			debug(RED"[command_ison] It's not enough to params"DEFAULT);
+			return ;
+		}
+		std::string line;
+		std::map<int, User>::iterator iter;
+		int			current = 1;
+		short		length = 0;
+		while (current < lenparam && length < 512)
+		{
+			length += param[current].length();
+			try
+			{
+				iter = getUserByName(clients, param[current]);
+				if (!line.empty())
+					line.append(" ");
+				line.append(param[current]);
+			}
+			catch (int zero) {
+				debug(RED"[command_ison] Пользователь с ником " + param[current] + " не найден"DEFAULT);
+			}
+			current++;
+		}
+		message->push_back(make_pair(id, getFrontLineRPL(line, RPL_ISON) + "\n"));
+	}
 	void command_userhost(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {
 		if (res->first->second.getStatus() != 1)
 		{
@@ -372,8 +403,9 @@ public:
 		commands["AWAY"] = &MassegeHandler::command_away;
 		commands["NOTICE"] = &MassegeHandler::command_notice;
 		commands["MODE"] = &MassegeHandler::command_mode;
-		commands["VERSION"] = &MassegeHandler::command_version;
+		commands["ISON"] = &MassegeHandler::command_ison;
 		commands["USERHOST"] = &MassegeHandler::command_userhost;
+		commands["VERSION"] = &MassegeHandler::command_version;
 		commands["TIME"] = &MassegeHandler::command_time;
 		commands["ADMIN"] = &MassegeHandler::command_admin;
 		commands["INFO"] = &MassegeHandler::command_info;
