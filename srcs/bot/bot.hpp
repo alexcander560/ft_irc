@@ -19,4 +19,4 @@ string	get_command_by_msg(std::string &msg);
 string	get_data_by_msg(std::string &msg);
 /* Вспомогательные функции. Пожалуйста, не надо нас ломать */
 
-string	handle_command(string line); /* Основаная команда для обработки. Отправляется params[2], например: 'GETIMAGE beautiful cat' */
+void	handle_command(string line, int id, string name, std::vector< std::pair<int, string> > *message); /* Основаная команда для обработки. Отправляется params[2], например: 'GETIMAGE beautiful cat' */

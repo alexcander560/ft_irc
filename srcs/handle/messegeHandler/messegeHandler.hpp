@@ -6,11 +6,13 @@
 
 class MassegeHandler {
 private:
-	const string	getFrontLine() const
+	const string	getFrontLine(int user_id = -1) const //Использовать с аргументом по умолчанию, когда хотим получить строку с данными ЭТОГО юзера. Подавать user_id в иных случаях
 	{
-		string user = this->clients->find(this->id)->second.getName();
-		string name = this->clients->find(this->id)->second.getUserName();
-		string ipaddress = this->clients->find(this->id)->second.getIp();
+		if (user_id == -1)
+			user_id = id;
+		string user = this->clients->find(user_id)->second.getName();
+		string name = this->clients->find(user_id)->second.getUserName();
+		string ipaddress = this->clients->find(user_id)->second.getIp();
 		return (string(":") + user + string("!") + name + string("@") + ipaddress + string(" "));
 	}
 
@@ -128,7 +130,7 @@ private:
 			{
 				if (param.at(1) == "bot") {	/* IVAN - FOR BOT */
 					debug("[handle_message] Calling bot with command");
-					message->push_back(make_pair(id, getFrontLine() + handle_command(param.at(2))));
+					handle_command(param.at(2), id, clients->find(id)->second.getName(), message);
 				}
 				else {
 					_parser_user(param[1]);
@@ -147,8 +149,16 @@ private:
 								else
 								{
 									debug("[handle_message] Пользователь найден, отправляю сообщение...");
-									//std::cout << "ааааааа Ж " << it1->first << endl;
 									message->push_back(make_pair(it1->first, getFrontLine() + param[0] + " " + *us1 + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n") );
+									message->push_back(make_pair(id, ":bot!DragonsCHAT@127.0.0.1 PRIVMSG imora :test\n"));
+
+									if (it1->second.getAwayMessage().first)
+									{
+										debug("Away automessage was add");
+										message->push_back(make_pair(id, getFrontLine(it1->first) + "PRIVMSG " + clients->find(id)->second.getName() + " :" + it1->second.getAwayMessage().second + "\n"));
+									}
+									else
+										debug("It's not need to send automessage");
 								}
 								break ;
 							}
@@ -164,28 +174,43 @@ private:
 
 		return *message;
 	}
-	// pair<int, string> command_away(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_notice(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_who(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_whois(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_whowas(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_mode(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_topic(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_join(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_invite(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_kick(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_part(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_names(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_list(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_wallops(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_ping(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_pong(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_ison(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_userhost(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_version(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_info(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_admin(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
-	// pair<int, string> command_time(pair<map<int, User>::iterator, bool> *res, pair<int, string> *message) {}
+	vector< pair<int, string> > command_away(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) //ГОТОВА 100%
+	{
+		if (lenparam == 1)
+		{
+			debug("Away message was unset");
+			clients->find(id)->second.setAwayMessage(make_pair(false, ""));
+		}
+		else if (lenparam == 2)
+		{
+			debug("Away message was set");
+			clients->find(id)->second.setAwayMessage(make_pair(true, param[1]));
+		}
+		else
+			warning(RED"[command_away] Неверное число аргументов" DEFAULT);
+		return (*message);
+	}
+//	vector< pair<int, string> > command_notice(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_who(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_whois(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_whowas(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_mode(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_topic(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_join(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_invite(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_kick(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_part(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_names(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_list(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_wallops(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_ping(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_pong(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_ison(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_userhost(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_version(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_admin(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+//	vector< pair<int, string> > command_time(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 public:
 	string				str_message;
 	int					id;
@@ -210,6 +235,7 @@ public:
 		commands["USER"] = &MassegeHandler::command_user;
 		commands["QUIT"] = &MassegeHandler::command_quit;
 		commands["PRIVMSG"] = &MassegeHandler::command_privmsg;
+		commands["AWAY"] = &MassegeHandler::command_away;
 	}
 	// Распечатка
 	void printMassege() {
@@ -245,9 +271,9 @@ public:
 		if (res.first->second.registration())
 		{
 			debug("[handle_message] Новый пользователь зарегистрирован");
-			messages.push_back(make_pair(id, ":IRDRAGONS 375 " + res.first->second.getName() + " :- IRDRAGONS Message of the day -\n"));
-			messages.push_back(make_pair(id, ":IRDRAGONS 372 " + res.first->second.getName() + " :Регистрация пройдена\n"));
-			messages.push_back(make_pair(id, ":IRDRAGONS 376 " + res.first->second.getName() + " :End of /MOTD command\n"));
+			messages.push_back(make_pair(id, ":DragonsCHAT 375 " + res.first->second.getName() + " :- DragonsCHAT Message of the day -\n"));
+			messages.push_back(make_pair(id, ":DragonsCHAT 372 " + res.first->second.getName() + " :Регистрация пройдена\n"));
+			messages.push_back(make_pair(id, ":DragonsCHAT 376 " + res.first->second.getName() + " :End of /MOTD command\n"));
 		}
 		return (messages);
 	} 

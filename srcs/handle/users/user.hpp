@@ -23,6 +23,7 @@ class User
 		int						_status;	// '-1' - не прошёл регистрацию, '1' - зарегестрирован
 		int						_id;		// Излишние данные; для удобства печати информации о пользователе
 		string 					_ip;
+		pair<bool, string>		_away_message; //Сообщение, устанавливаемое командой AWAY {MESSAGE} - служит для автоматического ответа при PRIVMSG к юзеру.
 
 	public:
 		// Конструктор
@@ -39,7 +40,9 @@ class User
 		const string	getServerName() const;
 		const string	getRealName() const;
 		const string 	getIp() const;
-		// Устанавливает пользователю имя (проверяет на валидность)
+		const pair<bool, string>	getAwayMessage() const;
+		void	setAwayMessage(pair<bool, string> away_message);
+	// Устанавливает пользователю имя (проверяет на валидность)
 		bool			setNick(vector<string> param);
 		// Проверяет ввёл ли пользователь верный пароль
 		bool			setPass(vector<string> param, const string pass_server);

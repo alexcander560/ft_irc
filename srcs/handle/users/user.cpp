@@ -10,6 +10,7 @@ User::User(int id, string ip)
 	_id = id;
 	_data.first._timeAfterPing = time(0);
 	_ip = ip;
+	_away_message = make_pair(false, "");
 }
 
 // Деструктор
@@ -30,6 +31,10 @@ const string	User::getRealName() const { return (_data.first._realname); }
 const string	User::getServerName() const { return (_data.first._servername); }
 
 const string 	User::getIp() const { return (_ip); }
+
+const pair<bool, string>	User::getAwayMessage() const { return (_away_message); }
+
+void		 	User::setAwayMessage(pair<bool, string> away_message) { _away_message = away_message; }
 
 // Устанавливает пользователю имя (проверяет на валидность)
 // Возвращает true, если ник успешно установлен, fasle если ник не валиден
