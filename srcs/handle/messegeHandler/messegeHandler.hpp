@@ -240,6 +240,22 @@ private:
 			debug(RED"[command_mode] Неверное число аргументов"DEFAULT);
 		return *message;
 	}
+	vector< pair<int, string> > command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {
+		if (lenparam == 1)
+		{
+			if (res->first->second.getStatus() == 1)
+			{
+				message->push_back(make_pair(id, getFrontLineRPL("describe\n", RPL_INFO)));
+				message->push_back(make_pair(id, getFrontLineRPL("IRC server based on TCP/IP protocol to rfc1459 standard\n", RPL_INFO)));
+				message->push_back(make_pair(id, getFrontLineRPL("End of /INFO list\n", RPL_ENDOFINFO)));
+			}
+			else
+				debug(RED"[command_info] Нельзя запросить информацию до полной регистрации"DEFAULT);
+		}
+		else
+			debug(RED"[command_info] Неверное число аргументов"DEFAULT);
+		return *message;
+	}
 
 //	vector< pair<int, string> > command_who(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_whois(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
@@ -257,7 +273,6 @@ private:
 //	vector< pair<int, string> > command_ison(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_userhost(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_version(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	vector< pair<int, string> > command_info(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	vector< pair<int, string> > command_admin(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 	vector< pair<int, string> > command_time(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
@@ -294,6 +309,7 @@ public:
 		commands["NOTICE"] = &MassegeHandler::command_notice;
 		commands["MODE"] = &MassegeHandler::command_mode;
 		commands["TIME"] = &MassegeHandler::command_time;
+		commands["INFO"] = &MassegeHandler::command_info;
 	}
 	// Распечатка
 	void printMassege() {
