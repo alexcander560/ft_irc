@@ -25,9 +25,10 @@ using 	std::set;
 # define BLUE		"\033[34m"
 # define AQUA		"\033[36m"
 
-#define DEBUG 1 //Дебажим? Для более обширных логов в FD = 1 (console write FD)
+# define DEBUG 1 //Дебажим? Для более обширных логов в FD = 1 (console write FD)
+# define SERVER_NAME "DragonsCHAT"
 
-#include "handle/users/user.hpp"
+# include "handle/users/user.hpp"
 // #include "handle/messegeHandler/messegeHandler.hpp"
 
 class User;
