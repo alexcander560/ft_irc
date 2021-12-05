@@ -25,7 +25,7 @@ private:
 		if (user_id == -1)
 			user_id = id;
 		string user = this->clients->find(user_id)->second.getName();
-		return (":"SERVER_NAME" " + rpl + " " + user + " "SERVER_NAME" :" + value);
+		return (":"SERVER_NAME" " + rpl + " " + user + " :" + value);
 	}
 
 	typedef void (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *, vector< pair<int, string> > *);
@@ -178,8 +178,7 @@ private:
 				debug(RED"[handle_message] Нельзя отправить сообщение до регистрации" DEFAULT);
 		}
 	}
-	void command_away(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) //ГОТОВА 100%
-	{
+	void command_away(pair<map<int, User>::iterator, bool> *res, vector< pair<int, string> > *message) {
 		if (lenparam == 1)
 		{
 			debug("[command_away] Away message was unset");
@@ -263,7 +262,36 @@ private:
 //	void command_ping(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	void command_pong(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
 //	void command_ison(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
-//	void command_userhost(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {}
+	void command_userhost(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message) {
+		if (res->first->second.getStatus() != 1)
+		{
+			debug(RED"[command_userhost] Нельзя запросить информацию до полной регистрации"DEFAULT);
+			return ;
+		}
+		if (lenparam == 1)
+		{
+			debug(RED"[command_userhost] It's not enough to params"DEFAULT);
+			return ;
+		}
+		std::string line;
+		std::map<int, User>::iterator iter;
+		int			current = 1;
+		while (current < lenparam && current < 1 + 5)
+		{
+			try
+			{
+				iter = getUserByName(clients, param[current]);
+				if (!line.empty())
+					line.append(" ");
+				line.append(param[current] + "=" + ((iter->second.getMode().s) ? "-" : "+") + "@" + iter->second.getIp());
+			}
+			catch (int zero) {
+				debug(RED"[command_userhost] Пользователь с ником " + param[current] + " не найден"DEFAULT);
+			}
+			current++;
+		}
+		message->push_back(make_pair(id, getFrontLineRPL(line, RPL_USERHOST) + "\n"));
+	}
 
 	void command_version(pair<map<int, User>::iterator, bool> *res,vector< pair<int, string> > *message)
 	{
@@ -341,6 +369,7 @@ public:
 		commands["NOTICE"] = &MassegeHandler::command_notice;
 		commands["MODE"] = &MassegeHandler::command_mode;
 		commands["VERSION"] = &MassegeHandler::command_version;
+		commands["USERHOST"] = &MassegeHandler::command_userhost;
 		commands["TIME"] = &MassegeHandler::command_time;
 		commands["ADMIN"] = &MassegeHandler::command_admin;
 		commands["INFO"] = &MassegeHandler::command_info;
