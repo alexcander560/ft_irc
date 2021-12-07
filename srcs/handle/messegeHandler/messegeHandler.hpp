@@ -237,17 +237,27 @@ private:
 		if (!command_base_check(1, res->first->second.getStatus(), true))
 			return ;
 		while (current < lenparam && length < 512) {
-			length += param[current].length();
-			try {
-				iter = getUserByName(clients, param[current]);
-				if (!line.empty())
-					line.append(" ");
-				line.append(param[current]);
+
+			bool flag = true;
+			for (map<int, User>::iterator begin = clients->begin(); begin != clients->end(); begin++) {
+				if (param[current] == begin->second.getName()) {
+					flag = false;
+					if (begin->second.getStatus() != 1)
+						debug(RED"[command_ison] Пользователь с ником " + param[current] + " не прошёл регистрацию"DEFAULT);
+					// else if (/*Что такое пользователь в сети, я уже хз*/)
+					// 	debug(RED"[command_ison] Пользователь с ником " + param[current] + " не в сети"DEFAULT);
+					else {
+						if (!line.empty())
+							line.append(" ");
+						line.append(param[current]);
+					}
+					break;
+				}
 			}
-			catch (int zero) {
+			if (flag)
 				debug(RED"[command_ison] Пользователь с ником " + param[current] + " не найден"DEFAULT);
-			}
 			current++;
+			length += param[current].length();
 		}
 		add_message(id, getFrontLineRPL(line, RPL_ISON) + "\n");
 	}
@@ -340,7 +350,7 @@ private:
 // void command_oper(pair<map<int, User>::iterator, bool> *res) {}
 // Возвращает список пользователей за исключением невидимых
 //	void command_who(pair<map<int, User>::iterator, bool> *res) {}
-// Возвращает разные статусы каждог опользователя
+// Возвращает разные статусы каждого опользователя
 //	void command_whois(pair<map<int, User>::iterator, bool> *res) {}
 // Возвращает информацию об имени пользователя, которое сейчас не используется
 //	void command_whowas(pair<map<int, User>::iterator, bool> *res) {}
