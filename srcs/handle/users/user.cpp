@@ -20,55 +20,49 @@ User::User(int id, string ip)
 // Деструктор
 User::~User(){}
 
-// Возвращает имя пользователя
-const string	User::getName() const { return (_nick.first); }
+// Все get
+const string				User::getName() const			{ return (_nick.first); }
+const int					User::getStatus() const			{ return (_status); }
+const string				User::getUserName() const		{ return (_data.first.username); }
+const string				User::getHostName() const		{ return (_data.first.hostname); }
+const string				User::getRealName() const		{ return (_data.first.realname); }
+const string				User::getServerName() const		{ return (_data.first.servername); }
+const string				User::getIp() const				{ return (_ip); }
+const userMode				User::getMode() const			{ return (_mode); }
+const pair<bool, string>	User::getAwayMessage() const	{ return (_away_message); }
+time_t						User::getTime() const			{ return (_data.first.timeAfterPing); }
 
-// Возвращает статус пользователя
-const int					User::getStatus() const { return (_status); }
-const string				User::getUserName() const { return (_data.first.username); }
-const string				User::getHostName() const { return (_data.first.hostname); }
-const string				User::getRealName() const { return (_data.first.realname); }
-const string				User::getServerName() const { return (_data.first.servername); }
-const string				User::getIp() const { return (_ip); }
-const userMode				User::getMode() const { return (_mode); }
-const pair<bool, string>	User::getAwayMessage() const { return (_away_message); }
-time_t						User::getTime() const { return (_data.first.timeAfterPing); }
-
-void						User::setAwayMessage(pair<bool, string> away_message) { _away_message = away_message; }
-void						User::setModeI(bool flag) { _mode.i = flag; }
-void						User::setModeS(bool flag) { _mode.s = flag; }
-void						User::setModeO(bool flag) { _mode.o = flag; }
-void						User::setModeW(bool flag) { _mode.w = flag; }
+// Все set
+void						User::setAwayMessage(pair<bool, string> away_message)	{ _away_message = away_message; }
+void						User::setModeI(bool flag)	{ _mode.i = flag; }
+void						User::setModeS(bool flag)	{ _mode.s = flag; }
+void						User::setModeO(bool flag)	{ _mode.o = flag; }
+void						User::setModeW(bool flag)	{ _mode.w = flag; }
 void						User::setTime(time_t time)	{_data.first.timeAfterPing = time; }
 
 // Устанавливает пользователю имя (проверяет на валидность)
 // Возвращает true, если ник успешно установлен, fasle если ник не валиден
-bool			User::setNick(vector<string> param)
-{
+bool			User::setNick(vector<string> param) {
 	int	len = param[1].size();
 
-	if (param[1] == "bot")
-	{
-		debug(RED"[setNick] Имя только для бота" DEFAULT);
+	if (param[1] == "bot") {
+		debug(RED"[setNick] Имя только для бота"DEFAULT);
 		return (false);
 	}
-	if (len > 9 || len <= 0)
-	{
-		debug(RED"[setNick] Неверная длина nick" DEFAULT);
+	if (len > 9 || len <= 0) {
+		debug(RED"[setNick] Неверная длина nick"DEFAULT);
 		return (false);
 	}
-	for (int i = 0; i < len; i++)
-	{
+	for (int i = 0; i < len; i++) {
 		if (!isalnum(param[1][i]) && param[1][i] != '-' && param[1][i] != '[' && param[1][i] != ']' &&
-		param[1][i] != '\\' && param[1][i] != '^' && param[1][i] != '{' && param[1][i] != '}')
-		{
-			debug(string(RED "[setNick] Запрещённый символ (")+ param[1][i] + ") в имени" DEFAULT);
+		param[1][i] != '\\' && param[1][i] != '^' && param[1][i] != '{' && param[1][i] != '}') {
+			debug(string(RED"[setNick] Запрещённый символ (")+ param[1][i] + ") в имени"DEFAULT);
 			return (false);
 		}
 	}
 	_nick.first = param[1];
 	_nick.second = true;
-	debug("[setNick] Ник успешно установлен");
+	debug(GREEN"[setNick] Ник успешно установлен"DEFAULT);
 	return (true);
 }
 
@@ -77,19 +71,17 @@ bool			User::setNick(vector<string> param)
 bool			User::setPass(vector<string> param, const string pass_server)
 {
 	debug("[setPass] Пароль сервера: (" + pass_server + ") Пароль клиента: (" + param[1] + ")");
-	if (param.size() == 2)
-	{
+	if (param.size() == 2) {
 		if (param[1] == pass_server)
 			_pass = true;
 		else
 			_pass = false;
 	}
-	else
-	{
+	else {
 		_pass = false;
 		debug(RED"[setPass] Неверное число аргументов" DEFAULT);
 	}
-	debug(_pass ? "[setPass] Введён верный пароль" : RED"[setPass] ПАРОЛЬ НЕВЕРНЫЙ" DEFAULT);
+	debug(_pass ? GREEN"[setPass] Введён верный пароль"DEFAULT : RED"[setPass] ПАРОЛЬ НЕВЕРНЫЙ" DEFAULT);
 	return (_pass);
 }
 
@@ -97,16 +89,14 @@ bool			User::setPass(vector<string> param, const string pass_server)
 // Возвращает true, если данные успешно установлены, fasle при провале
 bool			User::setData(vector<string> param)
 {
-	if (param.size() == 5)
-	{
+	if (param.size() == 5) {
 		_data.first.username = param[1];
 		_data.first.hostname = param[2];
 		_data.first.servername = param[3];
 		_data.first.realname = param[4];
 		_data.second = true;
 	}
-	else
-	{
+	else {
 		debug(RED"[setData] Неверное число парметров" DEFAULT);
 		return (false);
 	}
@@ -129,13 +119,13 @@ void			User::printUser() const
 	cout << "--------------------------------------------------\n";
 	cout << "USER ID: " << _id << endl;
 	cout << "USER STATUS: " << _status << endl;
+	cout << "AWAY: " << _away_message.second << "(" << _away_message.first << ")" << endl;
 	cout << "pass: ";
 	_pass ? cout << "Установлен\n" : cout << "Не установлен\n";
 	cout << "nick: ";
 	_nick.second ? cout << _nick.first << endl : cout << "Не установленно\n";
 	cout << "user: ";
-	if (_data.second)
-	{
+	if (_data.second) {
 		cout
 		<< "username:   [" << _data.first.username << "]" << endl
 		<< "      hostname:   [" << _data.first.hostname << "]" << endl
@@ -144,18 +134,16 @@ void			User::printUser() const
 	}
 	else
 		cout << "Не установленно" << endl;
-	cout << "ip: " << _ip << endl;
+	cout << "  ip: " << _ip << endl;
 	cout << "time: " << _data.first.timeAfterPing << endl;
 	cout
 	<< "mode: "
-	<< "  i(делает пользователя невидимым)              = " << _mode.i << endl
-	<< "        s(пользователь (не)получает NOTICE сообщения) = " << _mode.s << endl
-	<< "        o(флаг IRC-оператора)                         = " << _mode.o << endl
-	<< "        w(пользователь (не)получает WALLOPS сообщения)= " << _mode.w << endl;
+	<< "i(делает пользователя невидимым)              = " << _mode.i << endl
+	<< "      s(пользователь (не)получает NOTICE сообщения) = " << _mode.s << endl
+	<< "      o(флаг IRC-оператора)                         = " << _mode.o << endl
+	<< "      w(пользователь (не)получает WALLOPS сообщения)= " << _mode.w << endl;
 	cout << "--------------------------------------------------\n";
 }
 
-bool			operator == (const User &first, const User &second) // TODO: ALEX
-{
-	return (first.getName() == second.getName());
-}
+// Перегрузка оператора =
+bool			operator == (const User &first, const User &second) { return (first.getName() == second.getName()); }

@@ -3,9 +3,9 @@
 #define IS_COLOR_SET 0 //Set on TRUE for console; set on FALSE for Adium
 #define PREFIX ":bot!DragonsCHAT@127.0.0.1 PRIVMSG "
 
-int			_id;
-std::string	_name;
-std::vector< std::pair<int, std::string> >	*_message;
+int										_id;
+string									_name;
+vector< std::pair<int, string> >	*_message;
 
 void	setColor(string &lines, string color = DEFAULT)
 {
@@ -15,7 +15,7 @@ void	setColor(string &lines, string color = DEFAULT)
 
 void	addLine(string line, string color = "")
 {
-	std::string	def_color = DEFAULT;
+	string	def_color = DEFAULT;
 
 	if (!IS_COLOR_SET)
 	{
@@ -39,7 +39,7 @@ void	help_command(void)
 }
 
 /* Команда GETHASH */
-void	get_hash_command(std::string text)
+void	get_hash_command(string text)
 {
 	debug("[get_hash_command] Command GETHASH for bot was called");
 	if (text.empty())
@@ -47,13 +47,13 @@ void	get_hash_command(std::string text)
 		addLine("Oooops. Is empty!? I can not!!!", RED);
 		return ;
 	}
-	addLine("Your hash: " + std::string(crypt(text.c_str(), "openKey42")), COLOR_FOR_BOT);
+	addLine("Your hash: " + string(crypt(text.c_str(), "openKey42")), COLOR_FOR_BOT);
 }
 
 /* Команда GETIMAGE */
-void	get_image_command(std::string text)
+void	get_image_command(string text)
 {
-	std::string link;
+	string link;
 
 	debug("[get_image_command] Command GETIMAGE for bot was called");
 	if (text.empty())
@@ -65,7 +65,7 @@ void	get_image_command(std::string text)
 	{
 		link = get_link(text.c_str());
 	}
-	catch (std::string e)
+	catch (string e)
 	{
 		warning("[get_image_command] Cannot get image by name. Captcha in Yandex?");
 		warning(e.c_str());
@@ -86,8 +86,8 @@ void	not_found_command(void)
 /* Основная функция для бота. Обрабатывает строку, возвращает результат для отправки */
 void	handle_command(string line, int id, string name, std::vector< std::pair<int, string> > *message)
 {
-	std::string	command = get_command_by_msg(line);
-	std::string	text = get_data_by_msg(line);
+	string	command = get_command_by_msg(line);
+	string	text = get_data_by_msg(line);
 
 	_id = id;
 	_name = name;

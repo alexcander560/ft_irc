@@ -1,10 +1,10 @@
 #include "additions.hpp"
 
-const std::string	getCurrentTime()
+const string	getCurrentTime()
 {
 	time_t	now_time;
 	time(&now_time);
-	return (std::string(std::ctime(&now_time)));
+	return (string(ctime(&now_time)));
 }
 
 const time_t		getCurrentTimeForUser()
@@ -14,10 +14,10 @@ const time_t		getCurrentTimeForUser()
 	return (now_time);
 }
 
-std::map<int, User>::iterator getUserByName(std::map<int, User> *clients, std::string name)
+map<int, User>::iterator getUserByName(map<int, User> *clients, string name)
 {
-	std::map<int, User>::iterator begin = clients->begin();
-	std::map<int, User>::iterator end = clients->end();
+	map<int, User>::iterator begin = clients->begin();
+	map<int, User>::iterator end = clients->end();
 
 	while (begin != end)
 	{

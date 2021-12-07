@@ -8,6 +8,7 @@
 /* P.S. Драконы */
 
 /* Создание сокета под IPv4, TCP, и проверка функции на ошибки */
+
 static int	create_socket()
 {
 	int	socket_fd, nonblocking;
@@ -71,6 +72,7 @@ void	listen_clients(const int socket_fd)
 	map<int, string>		clients_ip;
 	map<int, User>			clients_map;		//структура данных со всеми пользователями
 	struct sockaddr_in		client_ip;			//содержится в том числе IP-address подключенного клиента
+	int 					count_step = 1;		// подсчёт шагов для дебагинга
 	
 
 	FD_ZERO(&fds);
@@ -95,8 +97,7 @@ void	listen_clients(const int socket_fd)
 					clients.insert(std::pair<int, std::string>(connection_fd, ""));
 					FD_SET(connection_fd, &fds);
 
-					std::cout	<< "DEBUG: [listen_clients] New connection with ID "
-									<< connection_fd << " was add" << std::endl;
+					std::cout	<< "DEBUG: [listen_clients] New connection with ID " << connection_fd << " was add" << endl;
 				}
 				else //Старое подключение - обработка
 				{
@@ -121,8 +122,15 @@ void	listen_clients(const int socket_fd)
 
 							// line = line.substr(0, line.size() - 1);
 							string line = clients.find(i)->second;
-							printf("ID [%d]: %s\n", i, line.c_str()); // Для команды: ВЫВОД НА СЕРВЕР
 
+							//==========Для подсчёта шагов=====================
+							cout.fill('=');
+							cout << BLUE"|" << setw(50) << "|\n" << "|" << setw(25) << "   ШАГ: " << count_step << "   " << setw(25 - (int)log10(count_step)) << "|\n|" << setw(50) << "|\n";
+							cout.fill(' ');
+							cout << DEFAULT;
+							count_step++;
+							//=================================================
+							printf("ID [%d]: %s\n", i, line.c_str()); // Для команды: ВЫВОД НА СЕРВЕР
 							try
 							{
 								debug("[listen_clients] ip_host= {" + clients_ip.find(i)->second + "}");
@@ -131,6 +139,7 @@ void	listen_clients(const int socket_fd)
 							catch (std::string e)
 							{
 								//TODO: FOR ALEX		Show message?		FOR ALEX
+								// Хз что тут надо делать
 							}
 							clear_by_id(i, clients);
 						}

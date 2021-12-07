@@ -1,12 +1,15 @@
 #pragma once
 
 #include <iostream>
+#include <iomanip>
+#include <cmath>
 #include <map>
 #include <vector>
 #include <set>
 #include "bot/bot.hpp"
 
 using	std::cout;
+using	std::setw;
 using	std::endl;
 using	std::string;
 using	std::pair;
@@ -26,7 +29,9 @@ using 	std::set;
 # define AQUA		"\033[36m"
 
 # define DEBUG 1 //Дебажим? Для более обширных логов в FD = 1 (console write FD)
+
 # define SERVER_NAME "DragonsCHAT"
+# define SERVER_VERSION "release (1.12.2)"
 
 # include "handle/users/user.hpp"
 // #include "handle/messegeHandler/messegeHandler.hpp"
