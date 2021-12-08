@@ -16,16 +16,13 @@ const time_t		getCurrentTimeForUser()
 
 map<int, User>::iterator getUserByName(map<int, User> *clients, string name)
 {
-	map<int, User>::iterator begin = clients->begin();
-	map<int, User>::iterator end = clients->end();
+	map<int, User>::iterator begin = clients->begin(), end = clients->end();
 
-	while (begin != end)
-	{
+	while (begin != end) {
 		if (begin->second.getName() == name)
-			goto done;
+			return (begin);
 		begin++;
 	}
 	throw (0);
-done:
 	return (begin);
 }

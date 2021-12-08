@@ -32,6 +32,7 @@ using 	std::set;
 
 # define SERVER_NAME "DragonsCHAT"
 # define SERVER_VERSION "release (1.12.2)"
+# define PASSWORD_ADMIN "lol"
 
 # include "handle/users/user.hpp"
 // #include "handle/messegeHandler/messegeHandler.hpp"

@@ -31,6 +31,47 @@ private:
 	// Для перебора массива с функциями
 	typedef void (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *);
 	map<string, Method> commands;
+	// Определяет подъодит ли строка под маску
+	int		check_mask(string str, string mask_base) {
+	bool	res = true, flag = false;
+	string	mask = "";
+	int		index = 0, len_str = str.size(), len_mask;
+
+	if (mask_base.find('*') == -1)
+		return (str == mask_base);
+	for (int i = 0; mask_base[i]; i++) {
+		if (mask_base[i] == '*' && i == 0)
+			mask += mask_base[i];
+		else if (mask_base[i] == '*' && mask_base[i - 1] != '*')
+			mask += mask_base[i];
+		else if (mask_base[i] != '*')
+			mask += mask_base[i];
+	}
+	len_mask = mask.size();
+	for (int i = 0; mask[i]; i++) {
+		if (mask[i] == '*' && (i != len_mask - 1)) {
+			flag = false;
+			i++;
+			while (index < len_str) {
+				if (mask[i] == str[index]) {
+					flag = true;
+					index++;
+					break ;
+				}
+				index++;
+			}
+			if (flag == false)
+				return (false);
+		}
+		else if (mask[i] != '*') {
+			if (mask[i] != str[index]) {
+				return (false);
+			}
+			index++;
+		}
+	}
+	return(res);
+}
 	// Разбивает строку на набор параметров
 	void	parser_param() {
 		int		len = str_message.size(), end = len - 1;
@@ -103,7 +144,7 @@ private:
 			return (false);
 		}
 		if (status != 1) {
-			debug(RED"[command_base_check] " + param[0] + "Нельзя выполнить до регистрации пользователя" DEFAULT);
+			debug(RED"[command_base_check] " + param[0] + " Нельзя выполнить до регистрации пользователя" DEFAULT);
 			return (false);
 		}
 		return (true);
@@ -216,7 +257,12 @@ private:
 				else if (param[2][1] == 's')
 					res->first->second.setModeS(param[2][0] == '+' ? true : false);
 				else if (param[2][1] == 'o')
-					res->first->second.setModeO(param[2][0] == '+' ? true : false);
+				{
+					if (param[2][0] == '-')
+						res->first->second.setModeO(false);
+					else
+						debug(RED"[command_mode] нельзя получить права оператора таким способом"DEFAULT);
+				}
 				else
 					debug(RED"[command_mode] флаг mode неверный {" + string(1, param[2][1]) + "}"DEFAULT);
 			}
@@ -225,9 +271,6 @@ private:
 			debug(RED"[command_mode] Имя пользователя введено неверно"DEFAULT);
 	}
 	// Возвращает список пользователей в сети
-	// У нас же он просто возвращет набор пользователей, которые есть
-	// Даже если пользователей не в сети, да даже если он не зарегистрирвоан, просто насрать
-	// Наверное ещё дубликаты надо выкидывать, но это неоднозначно
 	void	command_ison(pair<map<int, User>::iterator, bool> *res) {
 		string						line;
 		map<int, User>::iterator	iter;
@@ -244,8 +287,6 @@ private:
 					flag = false;
 					if (begin->second.getStatus() != 1)
 						debug(RED"[command_ison] Пользователь с ником " + param[current] + " не прошёл регистрацию"DEFAULT);
-					// else if (/*Что такое пользователь в сети, я уже хз*/)
-					// 	debug(RED"[command_ison] Пользователь с ником " + param[current] + " не в сети"DEFAULT);
 					else {
 						if (!line.empty())
 							line.append(" ");
@@ -262,7 +303,7 @@ private:
 		add_message(id, getFrontLineRPL(line, RPL_ISON) + "\n");
 	}
 	// Возвращает информацию о пользователях (максимум 5)
-	void command_userhost(pair<map<int, User>::iterator, bool> *res) {
+	void	command_userhost(pair<map<int, User>::iterator, bool> *res) {
 		string						line;
 		map<int, User>::iterator	iter;
 		int							current = 1;
@@ -285,7 +326,7 @@ private:
 		add_message(id, getFrontLineRPL(line, RPL_USERHOST) + "\n");
 	}
 	// Возвращает информацию о версии сервера
-	void command_version(pair<map<int, User>::iterator, bool> *res) {
+	void	command_version(pair<map<int, User>::iterator, bool> *res) {
 		if (res->first->second.getStatus() != 1) {
 			debug(RED"[command_version] Нельзя запросить информацию до полной регистрации"DEFAULT);
 			return ;
@@ -298,7 +339,7 @@ private:
 			debug(RED"[command_version] Имя сервера неверно"DEFAULT);
 	}
 	// Возвращает информацию о текущем сервере
-	void command_info(pair<map<int, User>::iterator, bool> *res) {
+	void	command_info(pair<map<int, User>::iterator, bool> *res) {
 		if (res->first->second.getStatus() != 1) {
 			debug(RED"[command_info] Нельзя запросить информацию до полной регистрации"DEFAULT);
 			return ;
@@ -314,7 +355,7 @@ private:
 			debug(RED"[command_info] Неверное число аргументов"DEFAULT);
 	}
 	// Возвращает информацию об администраторе
-	void command_admin(pair<map<int, User>::iterator, bool> *res) {
+	void	command_admin(pair<map<int, User>::iterator, bool> *res) {
 		if (res->first->second.getStatus() != 1) {
 			debug(RED"[command_admin] Нельзя запросить информацию до полной регистрации"DEFAULT);
 			return ;
@@ -331,7 +372,7 @@ private:
 			debug(RED"[command_admin] Имя сервера неверно"DEFAULT);
 	}
 	// Возвращает локальное время
-	void command_time(pair<map<int, User>::iterator, bool> *res) {
+	void	command_time(pair<map<int, User>::iterator, bool> *res) {
 		if (res->first->second.getStatus() != 1) {
 			debug(RED"[command_time] Нельзя запросить информацию до полной регистрации"DEFAULT);
 			return ;
@@ -343,17 +384,97 @@ private:
 		else
 			debug(RED"[command_time] Имя сервера неверно"DEFAULT);
 	}
-
-//=====================================================================================================================
-//=====================================================================================================================
-// Взятие операторских прав
-// void command_oper(pair<map<int, User>::iterator, bool> *res) {}
-// Возвращает список пользователей за исключением невидимых
-//	void command_who(pair<map<int, User>::iterator, bool> *res) {}
-// Возвращает разные статусы каждого опользователя
+	// Взятие операторских прав
+	void	command_oper(pair<map<int, User>::iterator, bool> *res) {
+		if (!command_base_check(3, res->first->second.getStatus()))
+				return ;
+		if (param[1] != res->first->second.getName()) {// Вот эта потом нужно будет поменять, наверное
+			debug(RED"[command_oper] Имя введено неверно"DEFAULT);
+			return ;
+		}
+		if (param[2] != PASSWORD_ADMIN) {
+			debug(RED"[command_oper] Пароль неверный"DEFAULT);
+			return ;
+		}
+		debug(GREEN"[command_oper] Вы стали IRC-оператором"DEFAULT);
+		res->first->second.setModeO(true);
+}
+	// Возвращает список пользователей по маске за исключением невидимых
+	void	command_who(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() != 1) {
+			debug(RED"[command_who] Нельзя запросить информацию до полной регистрации"DEFAULT);
+			return ;
+		}
+		if (lenparam != 2 && lenparam != 3) {
+			debug(RED"[command_who] Неверное число аргументов"DEFAULT);
+			return ;
+		}
+		if (lenparam == 3 && param[2] != "o") {
+			debug(RED"[command_who] Флаг установлен неправильно"DEFAULT);
+			return ;
+		}
+		for (map<int, User>::iterator it1 = clients->begin(); it1 != clients->end(); it1++) {
+			if (check_mask(it1->second.getName(), param[1])) {
+				debug(GREEN"[command_who] Найден пользователь подходящий под маску"DEFAULT);
+				if (it1->second.getStatus() != 1)
+					debug(RED"[command_who] Найденный пользователей не зарегестрирован"DEFAULT);
+				else if (it1->second.getMode().i == true)
+					debug(RED"[command_who] Найденный пользователей невидимый"DEFAULT);
+				else if (lenparam == 3 && it1->second.getMode().o == false)
+					debug(RED"[command_who] Найденный пользователей не IRC-оператор"DEFAULT);
+				else
+					add_message(id, ":"SERVER_NAME" "RPL_WHOREPLY" * "+ res->first->second.getName() + " " + res->first->second.getUserName() + " " +\
+					res->first->second.getIp() + " "SERVER_NAME" " + it1->second.getName() + " H: 0 " + res->first->second.getRealName() + "\n");
+			}
+		}
+		add_message(id, ":"SERVER_NAME" "RPL_ENDOFWHO" " + res->first->second.getName() + " " + res->first->second.getName()+ " :End of /WHO list\n");
+}
+	// Используется для проверки наличия активности клиента на другом конце
+	// Команду должен использовать сервер раз в какое-то время
+	void	command_ping(pair<map<int, User>::iterator, bool> *res) {
+		if (!command_base_check(2, res->first->second.getStatus()))
+			return ;
+		if (param[1] == SERVER_NAME)
+			add_message(id, ":" + (string)SERVER_NAME" " + "PONG :"SERVER_NAME"\n");
+		else
+			debug(RED"[command_ping] Имя сервера неверно"DEFAULT);
+	}
+	// Используется для проверки наличия активности клиента на другом конце
+	// Команда не посылает ответ пользователю, возможно она ещё что то должна делать
+	void command_pong(pair<map<int, User>::iterator, bool> *res) {
+		if (!command_base_check(2, res->first->second.getStatus()))
+			return ;
+		if (param[1] != SERVER_NAME)
+			debug(RED"[command_pong] Имя сервера неверно"DEFAULT);
+	}
+	//=====================================================================================================================
+	//=====================================================================================================================
+	// Команда отправляет сообщения всем IRC-операторам, находящимся в сети
+	void command_wallops(pair<map<int, User>::iterator, bool> *res) {
+		if (!command_base_check(2, res->first->second.getStatus()))
+				return ;
+		if (res->first->second.getMode().o == false) {
+			debug(RED"[command_wallops] Только оператор может пользоваться этой командой"DEFAULT);
+			return ;
+		}
+		for (map<int, User>::iterator it1 = clients->begin(); it1 != clients->end(); it1++) {
+			if (it1->second.getStatus() != 1)
+				debug(RED"[command_wallops] Пользователь " + it1->second.getName() + " не зарегестрирован"DEFAULT);
+			else if (it1->second.getMode().o == false)
+				debug(RED"[command_wallops] Пользователь " + it1->second.getName() + " не IRC-оператор"DEFAULT);
+			else if (it1->second.getMode().w == true)
+				debug(RED"[command_wallops] Пользователь " + it1->second.getName() + " отключил уведомления"DEFAULT);
+			else
+				add_message(it1->first, getFrontLine() + param[0] + " " + it1->second.getName() + " " + ((param[1][0] == ':') ? ("") : (":")) + param[1] + "\n");
+		}
+	}
+// Возвращает разные статусы каждого пользователя
 //	void command_whois(pair<map<int, User>::iterator, bool> *res) {}
 // Возвращает информацию об имени пользователя, которое сейчас не используется
 //	void command_whowas(pair<map<int, User>::iterator, bool> *res) {}
+//=====================================================================================================================
+//==================================== КАНАЛЫ =========================================================================
+//=====================================================================================================================
 // Используется для изменения или просмотра топика канала
 //	void command_topic(pair<map<int, User>::iterator, bool> *res) {}
 // Используется клиентом для входа на канал
@@ -368,12 +489,6 @@ private:
 //	void command_names(pair<map<int, User>::iterator, bool> *res) {}
 // Используется для вывода списка каналов и их топиков
 //	void command_list(pair<map<int, User>::iterator, bool> *res) {}
-// Команда отправляет сообщения всем IRC-операторам, находящимся в сети
-//	void command_wallops(pair<map<int, User>::iterator, bool> *res) {}
-// Используется для проверки наличия активности клиента на другом конце
-//	void command_ping(pair<map<int, User>::iterator, bool> *res) {}
-// Используется для проверки наличия активности клиента на другом конце
-//	void command_pong(pair<map<int, User>::iterator, bool> *res) {}
 //=====================================================================================================================
 //=====================================================================================================================
 
@@ -410,6 +525,11 @@ public:
 		commands["INFO"] = &MassegeHandler::command_info;
 		commands["ADMIN"] = &MassegeHandler::command_admin;
 		commands["TIME"] = &MassegeHandler::command_time;
+		commands["OPER"] = &MassegeHandler::command_oper;
+		commands["WHO"] = &MassegeHandler::command_who;
+		commands["PING"] = &MassegeHandler::command_ping;
+		commands["PONG"] = &MassegeHandler::command_pong;
+		commands["WALLOPS"] = &MassegeHandler::command_wallops;
 	}
 	// Распечатка
 	void	printMassege(){
