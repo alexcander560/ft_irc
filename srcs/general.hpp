@@ -36,6 +36,7 @@ using 	std::set;
 # define PASSWORD_ADMIN "lol"
 
 # include "handle/users/user.hpp"
+# include "handle/users/channel.hpp"
 // #include "handle/messegeHandler/messegeHandler.hpp"
 
 class User;
@@ -45,4 +46,4 @@ void	warning(string line);
 void	fatal(string line);
 void	debug(string line);
 
-vector< pair<int, string> >	handle_message(string str_message, int id, map<int, User> *clients_map, string pass, map<int, string> &clients, fd_set &fds, string ip);
+vector< pair<int, string> >	handle_message(string str_message, int id, map<int, User> *clients_map, string pass, map<int, string> &clients, fd_set &fds, string ip, vector<Channel> *channel);

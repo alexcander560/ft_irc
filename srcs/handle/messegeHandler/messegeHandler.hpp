@@ -538,10 +538,11 @@ public:
 	string						ip;
 	bool						is_notice;
 	vector< pair<int, string> >	messages;
+	vector<Channel>				*channel;
 	//====================================================================================================================================================
 	// Конструктор
-	MassegeHandler(int id, string str_message, map<int, User> *clients, string _pass, map<int, std::string> &clients_ivan, fd_set &fds, string ip):
-	id(id), str_message(str_message), clients(clients), pass(_pass), clients_ivan(clients_ivan), fds(fds), ip(ip), is_notice(false) {
+	MassegeHandler(int id, string str_message, map<int, User> *clients, string _pass, map<int, std::string> &clients_ivan, fd_set &fds, string ip, vector <Channel> *channel):
+	id(id), str_message(str_message), clients(clients), pass(_pass), clients_ivan(clients_ivan), fds(fds), ip(ip), channel(channel), is_notice(false) {
 		parser_param();
 		lenparam = param.size();
 		commands["PASS"] = &MassegeHandler::command_pass;
@@ -564,7 +565,17 @@ public:
 		commands["PONG"] = &MassegeHandler::command_pong;
 		commands["WALLOPS"] = &MassegeHandler::command_wallops;
 		commands["WHOIS"] = &MassegeHandler::command_whois;
-		//commands["WHOWAS"] = &MassegeHandler::command_whowas;
+		//commands["WHOWAS"] = &MassegeHandler::command_whowas; //скипаем
+		//================================================
+		//=======             КАНАЛЫ               =======
+		//================================================
+		//commands["TOPIC"] = &MassegeHandler::command_topic;
+		//commands["JOIN"] = &MassegeHandler::command_join;
+		//commands["INVITE"] = &MassegeHandler::command_invite;
+		//commands["KICK"] = &MassegeHandler::command_kick;
+		//commands["PART"] = &MassegeHandler::command_part;
+		//commands["NAMES"] = &MassegeHandler::command_names;
+		//commands["LIST"] = &MassegeHandler::command_list;
 	}
 	// Распечатка
 	void	printMassege(){
@@ -580,6 +591,9 @@ public:
 			debug(clients->size() ? "[printMassege] Печать всех пользователей" : "[handle_message] Нет пользователей");
 			for (map<int, User>::iterator it1 = clients->begin(); it1 != clients->end(); it1++)
 				it1->second.printUser();
+			debug(clients->size() ? "[printMassege] Печать всех каналов" : "[handle_message] Нет пользователей");
+			for (vector<Channel>::iterator it1 = channel->begin(); it1 != channel->end(); it1++)
+				it1->printChannel();
 			debug(lenparam ? "[printMassege] Аргументы: " + temp : RED"[handle_message] нет аргументов" DEFAULT);
 		}
 	}
@@ -601,6 +615,10 @@ public:
 			add_message(id, getFrontLineRPL("Регистрация пройдена\n", RPL_MOTD));
 			add_message(id, getFrontLineRPL("End of /MOTD command\n", RPL_ENDOFMOTD));
 		}
+		// for (int i = 0; i < 10; i++) {
+		// 	cout << YELLOW"Обработка..."DEFAULT << endl;
+		// 	usleep(1000000);
+		// }
 		return (messages);
 	}
 };

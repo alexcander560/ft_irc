@@ -13,7 +13,6 @@ static int	create_socket()
 {
 	int	socket_fd, nonblocking;
 
-
 	socket_fd = socket(PF_INET, SOCK_STREAM, TCP);
 	if (socket_fd == -1)
 		fatal(std::strerror(errno));
@@ -71,6 +70,7 @@ void	listen_clients(const int socket_fd)
 	map<int, std::string>	clients;
 	map<int, string>		clients_ip;
 	map<int, User>			clients_map;		//структура данных со всеми пользователями
+	vector<Channel>			channel;			//структура данных со всеми каналами
 	struct sockaddr_in		client_ip;			//содержится в том числе IP-address подключенного клиента
 	int 					count_step = 1;		// подсчёт шагов для дебагинга
 	
@@ -106,7 +106,7 @@ void	listen_clients(const int socket_fd)
 					if (bytes != 1) //Пользователь отключился. Удаляем из MAP
 					{
 						debug("[listen_clients] ip_host= {" + clients_ip.find(i)->second + "}");
-						send_message(handle_message("QUIT", i, &clients_map, "123", clients, fds, clients_ip.find(i)->second)); // ПОЛЬЗОВАТЕЛЬ ОТКЛЮЧИЛСЯ
+						send_message(handle_message("QUIT", i, &clients_map, "123", clients, fds, clients_ip.find(i)->second, &channel)); // ПОЛЬЗОВАТЕЛЬ ОТКЛЮЧИЛСЯ
 					}
 					else //Пользователь ввел данные, обрабатываем
 					{
@@ -134,7 +134,8 @@ void	listen_clients(const int socket_fd)
 							try
 							{
 								debug("[listen_clients] ip_host= {" + clients_ip.find(i)->second + "}");
-								send_message(handle_message(line, i, &clients_map, "123", clients, fds, clients_ip.find(i)->second)); // Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
+								// Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
+								send_message(handle_message(line, i, &clients_map, "123", clients, fds, clients_ip.find(i)->second, &channel));
 							}
 							catch (std::string e)
 							{
