@@ -1,4 +1,5 @@
 #include "user.hpp"
+#include "../messegeHandler/additions.hpp"
 
 // Конструктор
 User::User(int id, string ip)
@@ -9,6 +10,8 @@ User::User(int id, string ip)
 	_status = -1;
 	_id = id;
 	_data.first.timeAfterPing = time(0);
+	_data.first.timeStart = getCurrentTimeForUser();
+	_data.first.timeIdle = time(0);
 	_ip = ip;
 	_away_message = make_pair(false, "");
 	_mode.i = false;
@@ -30,15 +33,16 @@ const string				User::getServerName() const		{ return (_data.first.servername); 
 const string				User::getIp() const				{ return (_ip); }
 const userMode				User::getMode() const			{ return (_mode); }
 const pair<bool, string>	User::getAwayMessage() const	{ return (_away_message); }
-time_t						User::getTime() const			{ return (_data.first.timeAfterPing); }
-
+time_t						User::getTimePing() const		{ return (_data.first.timeAfterPing); }
+time_t						User::getTimeIdle() const		{ return (_data.first.timeIdle); }
 // Все set
 void						User::setAwayMessage(pair<bool, string> away_message)	{ _away_message = away_message; }
-void						User::setModeI(bool flag)	{ _mode.i = flag; }
-void						User::setModeS(bool flag)	{ _mode.s = flag; }
-void						User::setModeO(bool flag)	{ _mode.o = flag; }
-void						User::setModeW(bool flag)	{ _mode.w = flag; }
-void						User::setTime(time_t time)	{_data.first.timeAfterPing = time; }
+void						User::setModeI(bool flag)		{ _mode.i = flag; }
+void						User::setModeS(bool flag)		{ _mode.s = flag; }
+void						User::setModeO(bool flag)		{ _mode.o = flag; }
+void						User::setModeW(bool flag)		{ _mode.w = flag; }
+void						User::setTimePing(time_t time)	{ _data.first.timeAfterPing = time; }
+void						User::setTimeIdle(time_t time)	{ _data.first.timeIdle = time - _data.first.timeStart; }
 
 // Устанавливает пользователю имя (проверяет на валидность)
 // Возвращает true, если ник успешно установлен, fasle если ник не валиден
@@ -135,7 +139,8 @@ void			User::printUser() const
 	else
 		cout << "Не установленно" << endl;
 	cout << "  ip: " << _ip << endl;
-	cout << "time: " << _data.first.timeAfterPing << endl;
+	cout << "timePING: " << _data.first.timeAfterPing << endl;
+	cout << "timeIDLE: " << _data.first.timeIdle << endl;
 	cout
 	<< "mode: "
 	<< "i(делает пользователя невидимым)              = " << _mode.i << endl

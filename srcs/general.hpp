@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include <set>
+#include <stdlib.h>
 #include "bot/bot.hpp"
 
 using	std::cout;

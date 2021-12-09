@@ -3,6 +3,7 @@
 #include "../../listen/support.hpp"
 #include "additions.hpp"
 #include "../general/answers.hpp"
+
 //#include "../users/user.hpp"
 
 class MassegeHandler {
@@ -401,6 +402,8 @@ private:
 }
 	// Возвращает список пользователей по маске за исключением невидимых
 	void	command_who(pair<map<int, User>::iterator, bool> *res) {
+		bool	flag = false;
+
 		if (res->first->second.getStatus() != 1) {
 			debug(RED"[command_who] Нельзя запросить информацию до полной регистрации"DEFAULT);
 			return ;
@@ -425,9 +428,12 @@ private:
 				else
 					add_message(id, ":"SERVER_NAME" "RPL_WHOREPLY" * "+ res->first->second.getName() + " " + res->first->second.getUserName() + " " +\
 					res->first->second.getIp() + " "SERVER_NAME" " + it1->second.getName() + " H: 0 " + res->first->second.getRealName() + "\n");
+					flag = true;
 			}
 		}
-		add_message(id, ":"SERVER_NAME" "RPL_ENDOFWHO" " + res->first->second.getName() + " " + res->first->second.getName()+ " :End of /WHO list\n");
+		if (!flag)
+			add_message(id, ":"SERVER_NAME" "ERR_NOSUCHNICK" " + res->first->second.getName() + " " + param[1] + " :No such nick\n");
+		add_message(id, ":"SERVER_NAME" "RPL_ENDOFWHO" " + res->first->second.getName() + " " + param[1] + " :End of /WHO list\n");
 }
 	// Используется для проверки наличия активности клиента на другом конце
 	// Команду должен использовать сервер раз в какое-то время
@@ -468,10 +474,37 @@ private:
 				add_message(it1->first, getFrontLine() + param[0] + " " + it1->second.getName() + " " + ((param[1][0] == ':') ? ("") : (":")) + param[1] + "\n");
 		}
 	}
-// Возвращает разные статусы каждого пользователя
-//	void command_whois(pair<map<int, User>::iterator, bool> *res) {}
-// Возвращает информацию об имени пользователя, которое сейчас не используется
-//	void command_whowas(pair<map<int, User>::iterator, bool> *res) {}
+	// Возвращает разные статусы каждого пользователя
+	// std::to_string надо будет поменять
+	void command_whois(pair<map<int, User>::iterator, bool> *res) {
+		bool	flag = false;
+		
+		if (!command_base_check(2, res->first->second.getStatus()))
+				return ;
+		for (map<int, User>::iterator it1 = clients->begin(); it1 != clients->end(); it1++) {
+			if (check_mask(it1->second.getName(), param[1])) {
+				debug(GREEN"[command_who] Найден пользователь подходящий под маску"DEFAULT);
+				if (it1->second.getStatus() != 1)
+					debug(RED"[command_who] Найденный пользователей не зарегестрирован"DEFAULT);
+				else {
+					add_message(id, ":"SERVER_NAME" "RPL_WHOISUSER" " + res->first->second.getName() + " " + it1->second.getName() + " " +
+								res->first->second.getUserName() + " " + res->first->second.getIp() + " * :" + res->first->second.getRealName() + "\n");
+					add_message(id, ":"SERVER_NAME" "RPL_WHOISCHANNELS" " + res->first->second.getName() + " " + it1->second.getName() + " :\n");
+					add_message(id, ":"SERVER_NAME" "RPL_WHOISSERVER" " + res->first->second.getName() + " " + it1->second.getName() + " "
+								SERVER_NAME" :IRC server based on TCP/IP protocol to rfc1459 standard\n");
+					add_message(id, ":"SERVER_NAME" "RPL_WHOISIDLE" " + res->first->second.getName() + " " + it1->second.getName() + " " +
+					std::to_string(res->first->second.getTimeIdle()) + " " + std::to_string(getCurrentTimeForUser()) + " :seconds idle\n");
+					flag = true;
+				}
+			}
+		}
+		if (!flag)
+			add_message(id, ":"SERVER_NAME" "ERR_NOSUCHNICK" " + res->first->second.getName() + " " + param[1] + " :No such nick\n");
+		add_message(id, ":"SERVER_NAME" "RPL_ENDOFWHOIS" " + res->first->second.getName() + " " + param[1] + " :End of /WHOIS list\n");
+	}
+	// Возвращает информацию об имени пользователя, которое сейчас не используется
+	// Вот эта команда очень зашкварная, либо пишите сами, либо давайте её выкинем, нифиг она нужна
+	//	void command_whowas(pair<map<int, User>::iterator, bool> *res) {}
 //=====================================================================================================================
 //==================================== КАНАЛЫ =========================================================================
 //=====================================================================================================================
@@ -530,6 +563,8 @@ public:
 		commands["PING"] = &MassegeHandler::command_ping;
 		commands["PONG"] = &MassegeHandler::command_pong;
 		commands["WALLOPS"] = &MassegeHandler::command_wallops;
+		commands["WHOIS"] = &MassegeHandler::command_whois;
+		//commands["WHOWAS"] = &MassegeHandler::command_whowas;
 	}
 	// Распечатка
 	void	printMassege(){
@@ -549,11 +584,11 @@ public:
 		}
 	}
 	// Обработка
-	vector <pair<int, string> > message(){
+	vector <pair<int, string> > message() {
 		User									user(id, ip);
 		pair<map<int, User>::iterator, bool>	res = clients->insert(make_pair(id, user));
 
-		res.first->second.setTime(getCurrentTimeForUser());
+		res.first->second.setTimeIdle(getCurrentTimeForUser());
 		if(lenparam > 0){
 			try	{ (this->*commands.at(param[0]))(&res); }
 			catch(const std::exception & e)	{ debug(RED"[handle_message] Неизвестная команда" DEFAULT); }

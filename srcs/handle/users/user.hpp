@@ -9,6 +9,8 @@ struct	userData
 	string	servername;
 	string	realname;
 	time_t	timeAfterPing;
+	time_t	timeIdle;
+	time_t	timeStart;
 };
 
 struct	userMode
@@ -51,13 +53,16 @@ class User
 		const string				getIp() const;
 		const userMode				getMode() const;
 		const pair<bool, string>	getAwayMessage() const;
-		time_t						getTime() const;
+		time_t						getTimePing() const;
+		time_t						getTimeIdle() const;
+		// Устанавливает статус пользователя
 		void						setAwayMessage(pair<bool, string> away_message);
 		void						setModeI(bool flag);
 		void						setModeS(bool flag);
 		void						setModeO(bool flag);
 		void						setModeW(bool flag);
-		void						setTime(time_t time);
+		void						setTimePing(time_t time);
+		void						setTimeIdle(time_t time);
 		// Устанавливает пользователю имя (проверяет на валидность)
 		bool			setNick(vector<string> param);
 		// Проверяет ввёл ли пользователь верный пароль
