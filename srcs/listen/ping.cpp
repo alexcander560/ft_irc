@@ -14,6 +14,14 @@ void	ping_client(std::map<int, User> &users, const int &id)
 	send_message(messages);
 }
 
+void	kick_client(std::map<int, User> &users, const int &id)
+{
+	std::vector< std::pair<int, std::string> >	messages;
+
+	messages.push_back(make_pair(id, "QUIT"));
+	send_message(messages);
+}
+
 void	check_time(std::map<int, User> &users)
 {
 	std::map<int, User>::iterator begin = users.begin();
@@ -27,7 +35,10 @@ void	check_time(std::map<int, User> &users)
 		if (different > PING_SECOND && !begin->second.getIsPing())
 			ping_client(users, begin->first);
 		else if (different > PING_SECOND_KICK)
+		{
+			kick_client(users, begin->first);
 			std::cout << "User was kick" << std::endl; //TODO: KICK USER FOR TIMEOUT
+		}
 		begin++;
 	}
 }
