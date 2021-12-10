@@ -9,7 +9,7 @@ User::User(int id, string ip)
 	_data.second = false;
 	_status = -1;
 	_id = id;
-	_data.first.timeAfterPing = time(0);
+	_data.first.timeAfterPing = getCurrentTimeForUser();
 	_data.first.timeStart = getCurrentTimeForUser();
 	_data.first.timeIdle = time(0);
 	_ip = ip;
