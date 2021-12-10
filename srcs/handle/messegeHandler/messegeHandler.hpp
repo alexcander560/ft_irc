@@ -239,15 +239,18 @@ private:
 			if (flag)
 				debug(RED"[handle_message] Пользователь с таким ником не найден" DEFAULT);
 			//================== Каналы ====================================
-			// СООБЩЕНИЕ НЕ ДОЛЖНО ОТПРАВЛЯТЬСЯ САМОМУ СЕБЕ
 			flag = true;
 			for (vector<Channel>::iterator it1 = channel->begin(); it1 != channel->end(); it1++) {
 				if (it1->getName() == *us1) {
 					debug(GREEN"[handle_message] Канал найден, отправляем всем сообщение..." DEFAULT);
 					map<int, bool> temp_list = it1->getUserList();
 					for (map<int, bool>::iterator temp_iter = temp_list.begin(); temp_iter != temp_list.end(); temp_iter++) {
-						debug(GREEN"[handle_message] Отправляю сообщение..." DEFAULT);
-						add_message(temp_iter->first, getFrontLine() + param[0] + " " + *us1 + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n");
+						if (temp_iter->first != id) {
+							debug(GREEN"[handle_message] Отправляю сообщение..." DEFAULT);
+							add_message(temp_iter->first, getFrontLine() + param[0] + " " + *us1 + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n");
+						}
+						else
+							debug(RED"[handle_message] Сообщение самому себе НЕ отправлено" DEFAULT);
 					}
 					flag = false;
 					break ;
@@ -490,6 +493,8 @@ private:
 			return ;
 		if (param[1] != SERVER_NAME)
 			debug(RED"[command_pong] Имя сервера неверно"DEFAULT);
+		res->first->second.setTimePing(getCurrentTimeForUser());
+		res->first->second.setIsPing(false);
 	}
 	//=====================================================================================================================
 	//=====================================================================================================================
@@ -566,18 +571,49 @@ private:
 			int		count = 0;
 			for (vector<Channel>::iterator j = channel->begin(); j != channel->end(); j++, count++) {
 				if (channel_list[i] == j->getName()) {
-					debug(GREEN"[command_join] Канал " + channel_list[i] + " СУЩУСТВУЕТ, пытаюсь присоединиться..."DEFAULT);
-					if (count < pass_list.size())
-						j->addUser(id, pass_list[count]);
-					else
-						j->addUser(id);
 					flag = false;
+					debug(GREEN"[command_join] Канал " + channel_list[i] + " СУЩУСТВУЕТ, пытаюсь присоединиться..."DEFAULT);
+					if (count < pass_list.size()) {
+						if (j->addUser(id, pass_list[count]))
+							debug(RED"[command_join] Подключение удалось"DEFAULT);
+						else {
+							debug(RED"[command_join] Подключение не удалось"DEFAULT);
+							break ;
+						}
+					}
+					else {
+						if (j->addUser(id))
+							debug(RED"[command_join] Подключение удалось"DEFAULT);
+						else {
+							debug(RED"[command_join] Подключение не удалось"DEFAULT);
+							break ;
+						}
+					}
+					//==========================================
+					// Извлекаем набор юзеров канала
+					string temp_list_name = "";
+					map<int, bool> temp_list = j->getUserList();
+					for (map<int, bool>::iterator it_temp = temp_list.begin(); it_temp != temp_list.end(); it_temp++)
+						temp_list_name.size() == 0 ? temp_list_name += clients->find(it_temp->first)->second.getName() : temp_list_name += " " + clients->find(it_temp->first)->second.getName();
+					//=============
+					// Отправляем все нужные сообщения
+					add_message(id, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp() + " " + param[0] + " :" + channel_list[i] + "\n");
+					add_message(id, ":"SERVER_NAME" "RPL_NOTOPIC" " + res->first->second.getName() + " " + channel_list[i] + " :" + j->getTopic() + "\n");
+					add_message(id, ":"SERVER_NAME" "RPL_NAMREPLY" " + res->first->second.getName() + " = " + channel_list[i] + " :@" + temp_list_name + "\n");
+					add_message(id, ":"SERVER_NAME" "RPL_ENDOFNAMES" " + res->first->second.getName() + " " + channel_list[i] + " :End of /NAMES list\n");
+					//==========================================
 					break ;
 				}
 			}
 			if (flag) {
 				debug(GREEN"[command_join] Канал " + channel_list[i] + " НЕ СУЩУСТВУЕТ, пытаюсь создать..."DEFAULT);
 				channel->push_back(Channel(channel_list[i], id));
+				//=============
+				add_message(id, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp() + " " + param[0] + " :" + channel_list[i] + "\n");
+				add_message(id, ":"SERVER_NAME" "RPL_NOTOPIC" " + res->first->second.getName() + " " + channel_list[i] + " :No topic is set\n");
+				add_message(id, ":"SERVER_NAME" "RPL_NAMREPLY" " + res->first->second.getName() + " = " + channel_list[i] + " :@" + res->first->second.getName() + "\n");
+				add_message(id, ":"SERVER_NAME" "RPL_ENDOFNAMES" " + res->first->second.getName() + " " + channel_list[i] + " :End of /NAMES list\n");
+				//=============
 			}
 		}
 	}

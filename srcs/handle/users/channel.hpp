@@ -6,9 +6,10 @@ class Channel
 {	
 	private:
 		string	name;		// имя канала
+		string	topic;		// имя канала
 	// По хоршему надо что бы все переменные были приватными, но пофигу
 	public:
-		bool			flag_o;		// брать/давать привилегии операторов канала
+		//bool			flag_o;		// брать/давать привилегии операторов канала
 		//bool			flag_p;		// флаг приватности канала;
 		//bool			flag_s;		// флаг секретности канала
 		//bool			flag_i;		// флаг канала invite-only
@@ -26,7 +27,7 @@ class Channel
 		// Конструктор
 		Channel (string name, int id) {
 			this->name = name;
-			flag_o = false;
+			//flag_o = false;
 			//flag_p = false;
 			//flag_s = false;
 			//flag_i = false;
@@ -36,23 +37,36 @@ class Channel
 			//flag_l = false;
 			flag_k = false;
 			pass = "";
+			topic = "No topic is set";
 			user.insert(make_pair(id, true));
 		}
+		// Получить Id опера
+		int				getIdOper() {
+			for (map<int, bool>::iterator it = user.begin(); it != user.end(); it++)
+				if (it->second)
+					return it->first;
+			return -1;
+		}
+		// Получить массив юзеров
 		map<int, bool>	getUserList() { return user; }
 		// Добавить Юзера
 		bool			addUser(int	id, string pass = "") {
 			if (flag_k == false) {
 				if ((user.insert(make_pair(id, false))).second)
 					debug(GREEN"[addUser] Вы успешно присоединились"DEFAULT);
-				else
+				else {
 					debug(RED"[addUser] Вы уже находитесь в канале"DEFAULT);
+					return (false);
+				}
 			}
 			else if (pass == this->pass) {
 				user.insert(make_pair(id, false));
 				debug(GREEN"[addUser] Вы успешно присоединились, был введён верный пароль"DEFAULT);
 			}
-			else
+			else {
 				debug(GREEN"[addUser] В доступе отказано, пароль неверный"DEFAULT);
+				return (false);
+			}
 			return (true);
 		}
 		// Установить имя канала
@@ -82,7 +96,8 @@ class Channel
 			cout
 			<< "----------------------------------------" << endl
 			<< "NAME: " << name << endl
-			<< "o(" << flag_o << ")" << endl
+			<< "TOPIC: " << topic << endl
+			//<< "o(" << flag_o << ")" << endl
 			//<< "p(" << flag_p << ")" << endl
 			//<< "s(" << flag_s << ")" << endl
 			//<< "i(" << flag_i << ")" << endl
@@ -102,6 +117,8 @@ class Channel
 		}
 		// Возвращает имя канала
 		const string	getName() const { return name; }
+		// Возвращает топик канала
+		const string	getTopic() const { return topic; }
 		// Cвой дебаг, если у тебя есть вопросы что он тут делает, то я могу сказать одно
 		// это тебя волновать не должно, ещё вопросы?
 		void	debug(string line)
