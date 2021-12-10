@@ -32,10 +32,10 @@ class User
 		pair<userData, bool>	_data;
 		int						_status;	// '-1' - не прошёл регистрацию, '1' - зарегестрирован
 		int						_id;		// Излишние данные; для удобства печати информации о пользователе
-		string 					_ip;
+		string					_ip;
 		pair<bool, string>		_away_message; //Сообщение, устанавливаемое командой AWAY {MESSAGE} - служит для автоматического ответа при PRIVMSG к юзеру.
 		userMode				_mode;
-
+		bool					_is_ping;
 	public:
 		// Конструктор
 		User(int id, string ip);
@@ -55,6 +55,7 @@ class User
 		const pair<bool, string>	getAwayMessage() const;
 		time_t						getTimePing() const;
 		time_t						getTimeIdle() const;
+		time_t						getIsPing() const;
 		// Устанавливает статус пользователя
 		void						setAwayMessage(pair<bool, string> away_message);
 		void						setModeI(bool flag);
@@ -63,6 +64,7 @@ class User
 		void						setModeW(bool flag);
 		void						setTimePing(time_t time);
 		void						setTimeIdle(time_t time);
+		void						setIsPing(bool flag);
 		// Устанавливает пользователю имя (проверяет на валидность)
 		bool			setNick(vector<string> param);
 		// Проверяет ввёл ли пользователь верный пароль

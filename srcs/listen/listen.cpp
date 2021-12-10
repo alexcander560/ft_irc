@@ -63,7 +63,7 @@ static void	listen_socket(const int socket_fd)
 }
 
 /* Слушаем отдельного клиента - отдельную машину, если угодно */
-void	listen_clients(const int socket_fd)
+void	listen_clients(const int socket_fd, const string pass)
 {
 	int						connection_fd;
 	fd_set					fds, read_fds;
@@ -135,7 +135,7 @@ void	listen_clients(const int socket_fd)
 							{
 								debug("[listen_clients] ip_host= {" + clients_ip.find(i)->second + "}");
 								// Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
-								send_message(handle_message(line, i, &clients_map, "123", clients, fds, clients_ip.find(i)->second, &channel));
+								send_message(handle_message(line, i, &clients_map, pass, clients, fds, clients_ip.find(i)->second, &channel));
 							}
 							catch (std::string e)
 							{
@@ -152,7 +152,7 @@ void	listen_clients(const int socket_fd)
 }
 
 /* Главная функция для прослушивания. Запускает все второстепенные, является главным узлом целого блока */
-void	listen_messages(const int port)
+void	listen_messages(const int port, const std::string pass)
 {
 	int	socket_fd;
 
@@ -164,5 +164,5 @@ void	listen_messages(const int port)
 	debug("[listen_messages] bind_socket() successful");
 	listen_socket(socket_fd);
 	debug("[listen_messages] listen_socket() successful");
-	listen_clients(socket_fd);
+	listen_clients(socket_fd, pass);
 }

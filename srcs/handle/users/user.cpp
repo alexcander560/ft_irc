@@ -18,6 +18,7 @@ User::User(int id, string ip)
 	_mode.s = false;
 	_mode.o = false;
 	_mode.w = false;
+	_is_ping = false;
 }
 
 // Деструктор
@@ -35,6 +36,7 @@ const userMode				User::getMode() const			{ return (_mode); }
 const pair<bool, string>	User::getAwayMessage() const	{ return (_away_message); }
 time_t						User::getTimePing() const		{ return (_data.first.timeAfterPing); }
 time_t						User::getTimeIdle() const		{ return (_data.first.timeIdle); }
+time_t						User::getIsPing() const			{ return (_is_ping); }
 // Все set
 void						User::setAwayMessage(pair<bool, string> away_message)	{ _away_message = away_message; }
 void						User::setModeI(bool flag)		{ _mode.i = flag; }
@@ -43,6 +45,7 @@ void						User::setModeO(bool flag)		{ _mode.o = flag; }
 void						User::setModeW(bool flag)		{ _mode.w = flag; }
 void						User::setTimePing(time_t time)	{ _data.first.timeAfterPing = time; }
 void						User::setTimeIdle(time_t time)	{ _data.first.timeIdle = time - _data.first.timeStart; }
+void						User::setIsPing(bool flag)		{ _is_ping = flag; }
 
 // Устанавливает пользователю имя (проверяет на валидность)
 // Возвращает true, если ник успешно установлен, fasle если ник не валиден

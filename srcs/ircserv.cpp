@@ -12,12 +12,10 @@ int	main(int args_count, char **args)
 
 	if (args_count != 3)
 		stop("It's few to params");
-	port = std::atoi(args[2]);
+	port = std::atoi(args[1]);
 	if (port < 1024 || port > 49151)
 		stop("Wrong port");
-	if (strlen(args[1]) == 0)
-		stop("Empty password")
-#define PORT port
-#define PASSWORD args[1]
-	listen_messages(PORT);
+	if (strlen(args[2]) == 0)
+		stop("Empty password");
+	listen_messages(port, std::string(args[2]));
 }

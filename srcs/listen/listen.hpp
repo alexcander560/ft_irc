@@ -13,4 +13,4 @@
 
 #define TCP 6 //From 'man protocols' -  /etc/protocols
 
-void	listen_messages(const int port);
+void	listen_messages(const int port, const std::string pass);
