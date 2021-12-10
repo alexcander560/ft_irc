@@ -18,6 +18,7 @@ using	std::make_pair;
 using	std::map;
 using	std::vector;
 using 	std::set;
+using 	std::set;
 
 # define DEFAULT	"\033[0m"
 # define BOLD		"\033[1m"

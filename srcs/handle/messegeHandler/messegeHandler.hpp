@@ -34,45 +34,45 @@ private:
 	map<string, Method> commands;
 	// Определяет подъодит ли строка под маску
 	int		check_mask(string str, string mask_base) {
-	bool	res = true, flag = false;
-	string	mask = "";
-	int		index = 0, len_str = str.size(), len_mask;
+		bool	res = true, flag = false;
+		string	mask = "";
+		int		index = 0, len_str = str.size(), len_mask;
 
-	if (mask_base.find('*') == -1)
-		return (str == mask_base);
-	for (int i = 0; mask_base[i]; i++) {
-		if (mask_base[i] == '*' && i == 0)
-			mask += mask_base[i];
-		else if (mask_base[i] == '*' && mask_base[i - 1] != '*')
-			mask += mask_base[i];
-		else if (mask_base[i] != '*')
-			mask += mask_base[i];
-	}
-	len_mask = mask.size();
-	for (int i = 0; mask[i]; i++) {
-		if (mask[i] == '*' && (i != len_mask - 1)) {
-			flag = false;
-			i++;
-			while (index < len_str) {
-				if (mask[i] == str[index]) {
-					flag = true;
+		if (mask_base.find('*') == -1)
+			return (str == mask_base);
+		for (int i = 0; mask_base[i]; i++) {
+			if (mask_base[i] == '*' && i == 0)
+				mask += mask_base[i];
+			else if (mask_base[i] == '*' && mask_base[i - 1] != '*')
+				mask += mask_base[i];
+			else if (mask_base[i] != '*')
+				mask += mask_base[i];
+		}
+		len_mask = mask.size();
+		for (int i = 0; mask[i]; i++) {
+			if (mask[i] == '*' && (i != len_mask - 1)) {
+				flag = false;
+				i++;
+				while (index < len_str) {
+					if (mask[i] == str[index]) {
+						flag = true;
+						index++;
+						break ;
+					}
 					index++;
-					break ;
+				}
+				if (flag == false)
+					return (false);
+			}
+			else if (mask[i] != '*') {
+				if (mask[i] != str[index]) {
+					return (false);
 				}
 				index++;
 			}
-			if (flag == false)
-				return (false);
 		}
-		else if (mask[i] != '*') {
-			if (mask[i] != str[index]) {
-				return (false);
-			}
-			index++;
-		}
+		return(res);
 	}
-	return(res);
-}
 	// Разбивает строку на набор параметров
 	void	parser_param() {
 		int		len = str_message.size(), end = len - 1;
@@ -111,15 +111,15 @@ private:
 			param.push_back(temp);
 	}
 	// Разбивает набор юзеров на массив юзеров
-	bool	parser_user(string str) {
+	bool	parser_set(string str, set<string> *set) {
 		string	current_name("");
 		int		i = 0;
 
 		while (str[i]) {
 			if (str[i] == ',') {
 				if (current_name.size() > 0) {
-					if (!(user_list.insert(current_name)).second)
-						debug(RED"[parser_user] Двойнок ник");
+					if (!(set->insert(current_name)).second)
+						debug(RED"[parser_set] Двойной параметр");
 					current_name.clear();
 				}
 			}
@@ -128,8 +128,28 @@ private:
 			i++;
 		}
 		if (current_name.size() > 0)
-			if (!(user_list.insert(current_name)).second)
-				debug(RED"[parser_user] Двойнок ник " + current_name + DEFAULT);
+			if (!(set->insert(current_name)).second)
+				debug(RED"[parser_set] Двойнок ник " + current_name + DEFAULT);
+		return (true);
+	}
+	// Разбивает набор паролей на массив паролей
+	bool	parser_vector(string str, vector<string> *vec) {
+		string	current_name("");
+		int		i = 0;
+
+		while (str[i]) {
+			if (str[i] == ',') {
+				if (current_name.size() > 0) {
+					vec->push_back(current_name);
+					current_name.clear();
+				}
+			}
+			else
+				current_name.push_back(str[i]);
+			i++;
+		}
+		if (current_name.size() > 0)
+			vec->push_back(current_name);
 		return (true);
 	}	
 	// Базовая проверка команда на верное кол-во аргументов и регистрацию пользователя
@@ -190,7 +210,7 @@ private:
 			handle_command(param.at(2), id, clients->find(id)->second.getName(), &messages);
 			return ;
 		}
-		parser_user(param[1]);
+		parser_set(param[1], &user_list);
 		for (set<string>::iterator us1 = user_list.begin(); us1 != user_list.end(); us1++){
 			bool	flag = true;
 			for (map<int, User>::iterator it1 = clients->begin(); it1 != clients->end(); it1++) {
@@ -218,6 +238,34 @@ private:
 			}
 			if (flag)
 				debug(RED"[handle_message] Пользователь с таким ником не найден" DEFAULT);
+			//=================== ЗДЕСЬ ДОЛЖЕН БЫТЬ БЛОК ДЛЯ ПЕРЕБОРА КАНАЛОВ =========================
+			// bool	flag = true;
+			// for (map<int, User>::iterator it1 = с ->begin(); it1 != clients->end(); it1++) {
+			// 	if (it1->second.getName() == *us1) {
+			// 		if (it1->second.getStatus() != 1)
+			// 			debug(RED"[command_privmsg] Пользователь с таким ником не прошёл полную регистрацию"DEFAULT);
+			// 		else if (it1->second.getMode().s && param[0] == "NOTICE")
+			// 			debug(RED"[command_privmsg] У конечной точки стоит флаг +s. NOTICE не сработает!"DEFAULT);
+			// 		else
+			// 		{
+			// 			debug(GREEN"[command_privmsg] Пользователь найден, отправляю сообщение..."DEFAULT);
+			// 			add_message(it1->first, getFrontLine() + param[0] + " " + *us1 + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n");
+			// 			if (!is_notice && it1->second.getAwayMessage().first) {										/* Check AWAY - BEGIN */
+			// 				debug(GREEN"[command_privmsg] Away автоматическое сообщение было добавлено"DEFAULT);
+			// 				add_message(id, getFrontLine(it1->first) + param[0] + " " + clients->find(id)->second.getName() + " :" + it1->second.getAwayMessage().second + "\n");
+			// 			}
+			// 			else if (is_notice)
+			// 				debug("[command_privmsg] It's not need to send automessage, because it's notice");
+			// 			else
+			// 				debug("[command_privmsg] It's not need to send automessage");							/* Check AWAY - END */
+			// 		}
+			// 		flag = false;
+			// 		break ;
+			// 	}
+			// }
+			// if (flag)
+			// 	debug(RED"[handle_message] Пользователь с таким ником не найден" DEFAULT);
+			//=========================================================================================
 		}
 	}
 	// Устанавливает автоматический ответ на сообщение типа PRIVMSG
@@ -483,9 +531,9 @@ private:
 				return ;
 		for (map<int, User>::iterator it1 = clients->begin(); it1 != clients->end(); it1++) {
 			if (check_mask(it1->second.getName(), param[1])) {
-				debug(GREEN"[command_who] Найден пользователь подходящий под маску"DEFAULT);
+				debug(GREEN"[command_whois] Найден пользователь подходящий под маску"DEFAULT);
 				if (it1->second.getStatus() != 1)
-					debug(RED"[command_who] Найденный пользователей не зарегестрирован"DEFAULT);
+					debug(RED"[command_whois] Найденный пользователей не зарегестрирован"DEFAULT);
 				else {
 					add_message(id, ":"SERVER_NAME" "RPL_WHOISUSER" " + res->first->second.getName() + " " + it1->second.getName() + " " +
 								res->first->second.getUserName() + " " + res->first->second.getIp() + " * :" + res->first->second.getRealName() + "\n");
@@ -504,14 +552,47 @@ private:
 	}
 	// Возвращает информацию об имени пользователя, которое сейчас не используется
 	// Вот эта команда очень зашкварная, либо пишите сами, либо давайте её выкинем, нифиг она нужна
-	//	void command_whowas(pair<map<int, User>::iterator, bool> *res) {}
-//=====================================================================================================================
-//==================================== КАНАЛЫ =========================================================================
-//=====================================================================================================================
+	// void command_whowas(pair<map<int, User>::iterator, bool> *res) {}
+	//=====================================================================================================================
+	//==================================== КАНАЛЫ =========================================================================
+	//=====================================================================================================================
+	// Используется клиентом для входа на канал
+	void command_join(pair<map<int, User>::iterator, bool> *res) {
+		// Раскомментировать
+		// if (res->first->second.getStatus() != 1) {
+		//	debug(RED"[command_join] Нельзя запросить информацию до полной регистрации"DEFAULT);
+		//	return ;
+		// }
+		if (lenparam != 2 && lenparam != 3) {
+			debug(RED"[command_join] Неверное число аргументов"DEFAULT);
+			return ;
+		}
+		parser_vector(param[1], &channel_list);
+		if (lenparam == 3)
+			parser_vector(param[2], &pass_list);
+		//===============================================================	
+		for (int i = 0; i < channel_list.size(); i++) {
+			bool	flag = true;
+			int		count = 0;
+			for (vector<Channel>::iterator j = channel->begin(); j != channel->end(); j++, count++) {
+				if (channel_list[i] == j->getName()) {
+					debug(GREEN"[command_join] Канал " + channel_list[i] + " СУЩУСТВУЕТ, пытаюсь присоединиться..."DEFAULT);
+					if (count < pass_list.size())
+						j->addUser(id, pass_list[count]);
+					else
+						j->addUser(id);
+					flag = false;
+					break ;
+				}
+			}
+			if (flag) {
+				debug(GREEN"[command_join] Канал " + channel_list[i] + " НЕ СУЩУСТВУЕТ, пытаюсь создать..."DEFAULT);
+				channel->push_back(Channel(channel_list[i], id));
+			}
+		}
+	}
 // Используется для изменения или просмотра топика канала
 //	void command_topic(pair<map<int, User>::iterator, bool> *res) {}
-// Используется клиентом для входа на канал
-//	void command_join(pair<map<int, User>::iterator, bool> *res) {}
 // Используется для приглашения пользователей на канал
 //	void command_invite(pair<map<int, User>::iterator, bool> *res) {}
 // Исключает пользователя из канала может быть использована только оператором канала
@@ -535,9 +616,11 @@ public:
 	map<int, string>			&clients_ivan;
 	fd_set						&fds;
 	set<string>					user_list;
+	vector<string>				channel_list;
+	vector<string>				pass_list;
 	string						ip;
 	bool						is_notice;
-	vector< pair<int, string> >	messages;
+	vector<pair<int, string> >	messages;
 	vector<Channel>				*channel;
 	//====================================================================================================================================================
 	// Конструктор
@@ -570,7 +653,7 @@ public:
 		//=======             КАНАЛЫ               =======
 		//================================================
 		//commands["TOPIC"] = &MassegeHandler::command_topic;
-		//commands["JOIN"] = &MassegeHandler::command_join;
+		commands["JOIN"] = &MassegeHandler::command_join;
 		//commands["INVITE"] = &MassegeHandler::command_invite;
 		//commands["KICK"] = &MassegeHandler::command_kick;
 		//commands["PART"] = &MassegeHandler::command_part;
@@ -585,6 +668,12 @@ public:
 			temp += "(" + param[i] + ") ";
 		cout << "size user_list= " << user_list.size() << endl;
 		for (set<string>::iterator us1 = user_list.begin(); us1 != user_list.end(); us1++)
+			cout << "{" << *us1 << "}" << endl;
+		cout << "size channel_list= " << channel_list.size() << endl;
+		for (vector<string>::iterator us1 = channel_list.begin(); us1 != channel_list.end(); us1++)
+			cout << "{" << *us1 << "}" << endl;
+		cout << "size pass_list= " << pass_list.size() << endl;
+		for (vector<string>::iterator us1 = pass_list.begin(); us1 != pass_list.end(); us1++)
 			cout << "{" << *us1 << "}" << endl;
 		if (DEBUG)
 		{
