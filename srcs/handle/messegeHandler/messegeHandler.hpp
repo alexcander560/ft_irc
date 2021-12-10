@@ -238,34 +238,18 @@ private:
 			}
 			if (flag)
 				debug(RED"[handle_message] Пользователь с таким ником не найден" DEFAULT);
-			//=================== ЗДЕСЬ ДОЛЖЕН БЫТЬ БЛОК ДЛЯ ПЕРЕБОРА КАНАЛОВ =========================
-			// bool	flag = true;
-			// for (map<int, User>::iterator it1 = с ->begin(); it1 != clients->end(); it1++) {
-			// 	if (it1->second.getName() == *us1) {
-			// 		if (it1->second.getStatus() != 1)
-			// 			debug(RED"[command_privmsg] Пользователь с таким ником не прошёл полную регистрацию"DEFAULT);
-			// 		else if (it1->second.getMode().s && param[0] == "NOTICE")
-			// 			debug(RED"[command_privmsg] У конечной точки стоит флаг +s. NOTICE не сработает!"DEFAULT);
-			// 		else
-			// 		{
-			// 			debug(GREEN"[command_privmsg] Пользователь найден, отправляю сообщение..."DEFAULT);
-			// 			add_message(it1->first, getFrontLine() + param[0] + " " + *us1 + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n");
-			// 			if (!is_notice && it1->second.getAwayMessage().first) {										/* Check AWAY - BEGIN */
-			// 				debug(GREEN"[command_privmsg] Away автоматическое сообщение было добавлено"DEFAULT);
-			// 				add_message(id, getFrontLine(it1->first) + param[0] + " " + clients->find(id)->second.getName() + " :" + it1->second.getAwayMessage().second + "\n");
-			// 			}
-			// 			else if (is_notice)
-			// 				debug("[command_privmsg] It's not need to send automessage, because it's notice");
-			// 			else
-			// 				debug("[command_privmsg] It's not need to send automessage");							/* Check AWAY - END */
-			// 		}
-			// 		flag = false;
-			// 		break ;
-			// 	}
-			// }
-			// if (flag)
-			// 	debug(RED"[handle_message] Пользователь с таким ником не найден" DEFAULT);
-			//=========================================================================================
+			//================== Каналы ====================================
+			flag = true;
+			for (vector<Channel>::iterator it1 = channel->begin(); it1 != channel->end(); it1++) {
+				if (it1->getName() == *us1) {
+					debug(RED"[handle_message] Канал найден, отправляем всем сообщение..." DEFAULT);
+					flag = false;
+					break ;	
+				}
+			}
+			if (flag)
+				debug(RED"[handle_message] Канал с таким именем не найден" DEFAULT);
+			//==============================================================
 		}
 	}
 	// Устанавливает автоматический ответ на сообщение типа PRIVMSG
@@ -558,11 +542,11 @@ private:
 	//=====================================================================================================================
 	// Используется клиентом для входа на канал
 	void command_join(pair<map<int, User>::iterator, bool> *res) {
-		// Раскомментировать
-		// if (res->first->second.getStatus() != 1) {
-		//	debug(RED"[command_join] Нельзя запросить информацию до полной регистрации"DEFAULT);
-		//	return ;
-		// }
+		//Раскомментировать
+		if (res->first->second.getStatus() != 1) {
+			debug(RED"[command_join] Нельзя запросить информацию до полной регистрации"DEFAULT);
+			return ;
+		}
 		if (lenparam != 2 && lenparam != 3) {
 			debug(RED"[command_join] Неверное число аргументов"DEFAULT);
 			return ;
