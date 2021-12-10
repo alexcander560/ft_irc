@@ -15,6 +15,8 @@ int	main(int args_count, char **args)
 	port = std::atoi(args[2]);
 	if (port < 1024 || port > 49151)
 		stop("Wrong port");
+	if (strlen(args[1]) == 0)
+		stop("Empty password")
 #define PORT port
 #define PASSWORD args[1]
 	listen_messages(PORT);
