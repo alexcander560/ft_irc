@@ -83,6 +83,7 @@ void	listen_clients(const int socket_fd, const string pass)
 
 	while (true)
 	{
+		check_time(clients_map);
 		read_fds = fd_set(fds);
 		handle_select( select(FD_SETSIZE, &read_fds, NULL, NULL, NULL) );
 		for (int i = 0; i < FD_SETSIZE; i++)
