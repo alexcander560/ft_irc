@@ -574,16 +574,40 @@ private:
 					flag = false;
 					debug(GREEN"[command_join] Канал " + channel_list[i] + " СУЩУСТВУЕТ, пытаюсь присоединиться..."DEFAULT);
 					if (count < pass_list.size()) {
-						if (j->addUser(id, pass_list[count]))
+						if (j->addUser(id, pass_list[count])) {
 							debug(RED"[command_join] Подключение удалось"DEFAULT);
+							//===========
+							map<int, bool> temp_list = j->getUserList();
+							for (map<int, bool>::iterator temp_iter = temp_list.begin(); temp_iter != temp_list.end(); temp_iter++) {
+								if (temp_iter->first != id) {
+									debug(GREEN"[command_join] Отправляю сообщение..." DEFAULT);
+									add_message(temp_iter->first, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp() + " " + param[0] + " :" + channel_list[i] + "\n");
+								}
+								else
+									debug(RED"[command_join] Сообщение самому себе НЕ отправлено" DEFAULT);
+							}
+							//===========
+						}
 						else {
 							debug(RED"[command_join] Подключение не удалось"DEFAULT);
 							break ;
 						}
 					}
 					else {
-						if (j->addUser(id))
+						if (j->addUser(id)) {
 							debug(RED"[command_join] Подключение удалось"DEFAULT);
+							//===========
+							map<int, bool> temp_list = j->getUserList();
+							for (map<int, bool>::iterator temp_iter = temp_list.begin(); temp_iter != temp_list.end(); temp_iter++) {
+								if (temp_iter->first != id) {
+									debug(GREEN"[command_join] Отправляю сообщение..." DEFAULT);
+									add_message(temp_iter->first, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp() + " " + param[0] + " :" + channel_list[i] + "\n");
+								}
+								else
+									debug(RED"[command_join] Сообщение самому себе НЕ отправлено" DEFAULT);
+							}
+							//===========
+						}
 						else {
 							debug(RED"[command_join] Подключение не удалось"DEFAULT);
 							break ;
