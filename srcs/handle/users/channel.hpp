@@ -22,8 +22,7 @@ class Channel
 		bool			flag_k;		// установка пароля на канал
 		string			pass;		// пароль канала
 		// Набор пользователей в канале, является ли пользователь оператором
-		map<int, bool> user;
-
+		map<int, bool>	user;
 		// Конструктор
 		Channel (string name, int id) {
 			this->name = name;
@@ -39,6 +38,7 @@ class Channel
 			pass = "";
 			user.insert(make_pair(id, true));
 		}
+		map<int, bool>	getUserList() { return user; }
 		// Добавить Юзера
 		bool			addUser(int	id, string pass = "") {
 			if (flag_k == false) {

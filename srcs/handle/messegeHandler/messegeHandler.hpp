@@ -242,9 +242,11 @@ private:
 			flag = true;
 			for (vector<Channel>::iterator it1 = channel->begin(); it1 != channel->end(); it1++) {
 				if (it1->getName() == *us1) {
-					debug(RED"[handle_message] Канал найден, отправляем всем сообщение..." DEFAULT);
+					debug(GREEN"[handle_message] Канал найден, отправляем всем сообщение..." DEFAULT);
+					//map<int, bool> 
+
 					flag = false;
-					break ;	
+					break ;
 				}
 			}
 			if (flag)
