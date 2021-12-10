@@ -239,12 +239,16 @@ private:
 			if (flag)
 				debug(RED"[handle_message] Пользователь с таким ником не найден" DEFAULT);
 			//================== Каналы ====================================
+			// СООБЩЕНИЕ НЕ ДОЛЖНО ОТПРАВЛЯТЬСЯ САМОМУ СЕБЕ
 			flag = true;
 			for (vector<Channel>::iterator it1 = channel->begin(); it1 != channel->end(); it1++) {
 				if (it1->getName() == *us1) {
 					debug(GREEN"[handle_message] Канал найден, отправляем всем сообщение..." DEFAULT);
-					//map<int, bool> 
-
+					map<int, bool> temp_list = it1->getUserList();
+					for (map<int, bool>::iterator temp_iter = temp_list.begin(); temp_iter != temp_list.end(); temp_iter++) {
+						debug(GREEN"[handle_message] Отправляю сообщение..." DEFAULT);
+						add_message(temp_iter->first, getFrontLine() + param[0] + " " + *us1 + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n");
+					}
 					flag = false;
 					break ;
 				}
