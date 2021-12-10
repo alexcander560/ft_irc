@@ -17,7 +17,6 @@ static int	create_socket()
 	socket_fd = socket(PF_INET, SOCK_STREAM, TCP);
 	if (socket_fd == -1)
 		fatal(std::strerror(errno));
-	nonblocking = fcntl(socket_fd, F_SETFL, O_NONBLOCK);
 	if (nonblocking == -1)
 		fatal(std::strerror(errno));
 	return (socket_fd);
@@ -59,7 +58,10 @@ static void	listen_socket(const int socket_fd)
 
 	listen_value = listen(socket_fd, 42);
 	if (listen_value != -1)
+	{
+		fcntl(socket_fd, F_SETFL, O_NONBLOCK);
 		return ;
+	}
 	fatal(std::strerror(errno));
 }
 
@@ -83,10 +85,11 @@ void	listen_clients(const int socket_fd, const string pass)
 
 	while (true)
 	{
-		std::cout << "g\n";
-		check_time(clients_map);
+		if (check_time(&clients_map, pass, clients, fds, clients_ip, &channel))
+			continue ;
 		read_fds = fd_set(fds);
-		handle_select( select(FD_SETSIZE, &read_fds, NULL, NULL, NULL) );
+		struct timeval tv = {0, 10000};
+		handle_select( select(FD_SETSIZE, &read_fds, NULL, NULL, &tv) );
 		for (int i = 0; i < FD_SETSIZE; i++)
 		{
 			if (FD_ISSET(i, &read_fds))
@@ -109,7 +112,7 @@ void	listen_clients(const int socket_fd, const string pass)
 					if (bytes != 1) //Пользователь отключился. Удаляем из MAP
 					{
 						debug("[listen_clients] ip_host= {" + clients_ip.find(i)->second + "}");
-						send_message(handle_message("QUIT", i, &clients_map, "123", clients, fds, clients_ip.find(i)->second, &channel)); // ПОЛЬЗОВАТЕЛЬ ОТКЛЮЧИЛСЯ
+						send_message(handle_message("QUIT", i, &clients_map, pass, clients, fds, clients_ip.find(i)->second, &channel)); // ПОЛЬЗОВАТЕЛЬ ОТКЛЮЧИЛСЯ
 					}
 					else //Пользователь ввел данные, обрабатываем
 					{
