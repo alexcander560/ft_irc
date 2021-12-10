@@ -2,6 +2,7 @@
 
 #include "listen.hpp"
 #include "../general.hpp"
+#include "ping.hpp"
 
 /* Прослушивание порта и передача итогового сообщения в обработчик */
 /* Состоит из кучи проверок. Не пугаться */
@@ -79,7 +80,7 @@ void	listen_clients(const int socket_fd)
 	FD_SET(socket_fd, &fds);
 
 	debug("[listen_clients] Listening clients");
-	
+
 	while (true)
 	{
 		read_fds = fd_set(fds);
