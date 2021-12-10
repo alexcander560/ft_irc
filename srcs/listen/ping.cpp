@@ -3,11 +3,13 @@
 
 #define PING_SECOND 60
 
+#define PING_SECOND_KICK 80
+
 void	ping_client(std::map<int, User> &users, const int &id)
 {
 	std::vector< std::pair<int, std::string> >	messages;
 
-	//users.find(id)->second.
+	users.find(id)->second.setIsPing(true); //TODO ALSO IN PONG
 	messages.push_back(make_pair(id, "PING"));
 	send_message(messages);
 }
@@ -16,13 +18,16 @@ void	check_time(std::map<int, User> &users)
 {
 	std::map<int, User>::iterator begin = users.begin();
 	std::map<int, User>::iterator end = users.end();
-	t_time	current_time = getCurrentTimeForUser();
+	time_t	current_time = getCurrentTimeForUser();
 	double	different;
 
 	while (begin != end)
 	{
 		different = difftime(current_time, begin->second.getTimePing());
-		if (different > PING_SECOND)
+		if (different > PING_SECOND && !begin->second.getIsPing())
 			ping_client(users, begin->first);
+		else if (different > PING_SECOND_KICK)
+			std::cout << "User was kick" << std::endl; //TODO: KICK USER FOR TIMEOUT
+		begin++;
 	}
 }
