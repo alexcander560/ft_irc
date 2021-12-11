@@ -957,18 +957,18 @@ private:
 			add_error(ERR_NEEDMOREPARAMS, "KICK :Not enough parameters"); //ERR_NEEDMOREPARAMS
 			return ;
 		}
-		for (vector<Channel>::iterator it = channel->begin(); it < channel->size(); it++) {
+		for (vector<Channel>::iterator it = channel->begin(); it < channel->end(); it++) {
 			if (param[1] == it->getName()) {
 				map<int, bool>	temp_user = it->getUserList();
 
 				if (temp_user.find(id) != temp_user.end()) {
 					debug(RED"[command_kick] вы не в этом канале>"DEFAULT);
-					add_error(ERR_NOTONCHANNEL, CHANNEL_NAME" :You're not on that channel"); //ERR_NOTONCHANNEL //ЕСЛИ ТЫ НЕ В КАНАЛЕ
+					add_error(ERR_NOTONCHANNEL, param[1] + " :You're not on that channel"); //ERR_NOTONCHANNEL //ЕСЛИ ТЫ НЕ В КАНАЛЕ
 				}
 				else {
 					if (temp_user.find(id)->second == false) {
 						debug(RED"[command_kick] вы не админ"DEFAULT);
-						add_error(ERR_CHANOPRIVSNEEDED, CHANNEL_NAME" :You're not channel operator"); //ERR_CHANOPRIVSNEEDED //КАКОГО Х*Я? ТЫ НЕ ОПЕРАТОР
+						add_error(ERR_CHANOPRIVSNEEDED, param[1] + " :You're not channel operator"); //ERR_CHANOPRIVSNEEDED //КАКОГО Х*Я? ТЫ НЕ ОПЕРАТОР
 					}
 					else {
 						bool flag_client = true;
@@ -987,7 +987,8 @@ private:
 							// Такой клиент существует на сервере, но не факт что он есть в канале
 							if (temp_user.find(id_client) != temp_user.end()) {
 								for (map<int, bool>::iterator pedro = temp_user.begin(); pedro != temp_user.end(); pedro++) {
-									add_message(pedro->first, "");
+									add_message(this->id, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp()
+									+ " KICK " + param[1] + " " + param[2] + ((lenparam >= 4) ? (" :" + param[3]) : ("")) + "\n");
 								}
 								it->delUser(id_client);
 							}
@@ -1003,7 +1004,7 @@ private:
 			}
 		}
 		if (flag) {
-			add_error(ERR_NOSUCHCHANNEL, CHANNEL_NAME" :No such channel"); //ERR_NOSUCHCHANNEL //НЕТ ТАКОГО КАНАЛА
+			add_error(ERR_NOSUCHCHANNEL, param[1] + " :No such channel"); //ERR_NOSUCHCHANNEL //НЕТ ТАКОГО КАНАЛА
 			debug(RED"[command_kick] Канал не найден>"DEFAULT);
 		}
 	}
@@ -1020,12 +1021,12 @@ void command_list(pair<map<int, User>::iterator, bool> *res) {
 	}
 	add_message(id, ":"SERVER_NAME" "RPL_LISTSTART" " + res->first->second.getName() + " Channel :Users  Name\n");
 	if (lenparam > 1) {
-		parser_vector(param[1], channel_list);
+		parser_vector(param[1], &channel_list);
 		for (int count_channel = 0; count_channel < channel->size(); count_channel++) {
 			for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
 				if (channel_list[count_channel] == i->getName()) {
 					debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
-					add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + i->getCountUSer() + " :[+n]\n");
+					add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + std::to_string(i->getCountUSer()) + " :[+n]\n");
 					break ;
 				}
 			}
@@ -1084,10 +1085,10 @@ public:
 		//================================================
 		commands["TOPIC"] = &MassegeHandler::command_topic;
 		commands["JOIN"] = &MassegeHandler::command_join;
-		//commands["KICK"] = &MassegeHandler::command_kick;
+		commands["KICK"] = &MassegeHandler::command_kick;
 		//commands["PART"] = &MassegeHandler::command_part;
 		//commands["NAMES"] = &MassegeHandler::command_names;
-		//commands["LIST"] = &MassegeHandler::command_list;
+		commands["LIST"] = &MassegeHandler::command_list;
 	}
 	// Распечатка
 	void	printMassege(){
