@@ -2,9 +2,9 @@
 #include "../general.hpp"
 #include "../handle/messegeHandler/additions.hpp"
 
-#define PING_SECOND 600
+#define PING_SECOND 60000000
 
-#define PING_SECOND_KICK 720
+#define PING_SECOND_KICK 7200000000
 
 void	ping_client(std::map<int, User> &users, const int &id)
 {
