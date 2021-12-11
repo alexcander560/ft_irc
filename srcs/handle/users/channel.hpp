@@ -31,22 +31,12 @@ class Channel
 		// Добавить Юзера
 		bool			addUser(int	id, string pass = "") {
 			(void)pass;
-			//if (flag_k == false) {
-				if ((user.insert(make_pair(id, false))).second)
-					debug(GREEN"[addUser] Вы успешно присоединились"DEFAULT);
-				else {
-					debug(RED"[addUser] Вы уже находитесь в канале"DEFAULT);
-					return (false);
-				}
-			//}
-			// else if (pass == this->pass) {
-			// 	user.insert(make_pair(id, false));
-			// 	debug(GREEN"[addUser] Вы успешно присоединились, был введён верный пароль"DEFAULT);
-			// }
-			// else {
-			// 	debug(GREEN"[addUser] В доступе отказано, пароль неверный"DEFAULT);
-			// 	return (false);
-			// }
+			if ((user.insert(make_pair(id, false))).second)
+				debug(GREEN"[addUser] Вы успешно присоединились"DEFAULT);
+			else {
+				debug(RED"[addUser] Вы уже находитесь в канале"DEFAULT);
+				return (false);
+			}
 			return (true);
 		}
 		// Удалить Юзера
@@ -100,23 +90,10 @@ class Channel
 			cout
 			<< "----------------------------------------" << endl
 			<< "NAME: " << name << endl
-			<< "TOPIC: " << topic << endl
-			//<< "o(" << flag_o << ")" << endl
-			//<< "p(" << flag_p << ")" << endl
-			//<< "s(" << flag_s << ")" << endl
-			//<< "i(" << flag_i << ")" << endl
-			//<< "t(" << flag_t << ")" << endl
-			//<< "n(" << flag_n << ")" << endl
-			//<< "m(" << flag_m << ")" << endl
-			//<< "l(" << flag_t << ")" << endl
-			//<< "v(" << flag_v << ")" << endl
-			//<< "k(" << flag_k << ")" << " {" << pass << "}" << endl
+			<< "TOPIC: " << topic << endls
 			<< "ID USER(FLAG OPER) " << endl;
 			for (map<int, bool>::iterator i = user.begin() ; i != user.end(); i++)
 				cout << i->first << " (" << i->second << ")" << endl;
-			// cout << "Всего масок бана: " << ban_masks.size() << endl;
-			// for (set<string>::iterator i = ban_masks.begin(); i != ban_masks.end(); i++)
-			// 	cout << *i << endl;
 			cout << "----------------------------------------" << endl;
 		}
 		// Возвращает имя канала
@@ -124,8 +101,6 @@ class Channel
 		void			setTopic(string topic) { this->topic = topic; }
 		// Возвращает топик канала
 		const string	getTopic() const { return topic; }
-		// Cвой дебаг, если у тебя есть вопросы что он тут делает, то я могу сказать одно
-		// это тебя волновать не должно, ещё вопросы?
 		void	debug(string line)
 		{
 			if (DEBUG)
