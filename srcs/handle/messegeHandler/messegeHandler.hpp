@@ -40,6 +40,10 @@ private:
 							+ this->clients->find(this->id)->second.getName() + " " + str + "\n"));
 		debug("[add_error] Error for user was set");
 	}
+	void			add_unregister_error(void)
+	{
+		add_error(ERR_NOTREGISTERED, ":You have not registered");
+	}
 	void			add_auto_message(const string code, const string str)
 	/*
 	 * Example using:
@@ -238,6 +242,11 @@ private:
 	}
 	// Отправить сообщение (Пока не работает для каналов)
 	void	command_privmsg(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (lenparam < 2)
 		{
 			add_error(ERR_NORECIPIENT, ":No recipient given (PRIVMSG)"); //ERR_NORECIPIENT
@@ -316,6 +325,11 @@ private:
 	}
 	// Устанавливает автоматический ответ на сообщение типа PRIVMSG
 	void	command_away(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (lenparam == 1) {
 			debug("[command_away] Away message was unset");
 			clients->find(id)->second.setAwayMessage(make_pair(false, ""));
@@ -339,6 +353,11 @@ private:
 	// Да собственно говоря эта функция работает совсем неправильно,
 	// надо разбираться и исправлять
 	void	command_mode(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (!command_base_check(3, res->first->second.getStatus()))
 			return ;
 		if (param[1] == res->first->second.getName()) { // Вот эта потом нужно будет поменять, наверное
@@ -374,6 +393,11 @@ private:
 		int							current = 1;
 		short						length = 0;
 
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (lenparam != 2)
 		{
 			add_error(ERR_NEEDMOREPARAMS, "ISON :Not enough parameters"); //ERR_NEEDMOREPARAMS
@@ -410,6 +434,11 @@ private:
 		map<int, User>::iterator	iter;
 		int							current = 1;
 
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (lenparam != 2)
 		{
 			add_error(ERR_NEEDMOREPARAMS, "USERHOST :Not enough parameters"); //ERR_NEEDMOREPARAMS
@@ -434,6 +463,11 @@ private:
 	}
 	// Возвращает информацию о версии сервера
 	void	command_version(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (res->first->second.getStatus() != 1) {
 			debug(RED"[command_version] Нельзя запросить информацию до полной регистрации"DEFAULT);
 			return ;
@@ -450,6 +484,11 @@ private:
 	}
 	// Возвращает информацию о текущем сервере
 	void	command_info(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (res->first->second.getStatus() != 1) {
 			debug(RED"[command_info] Нельзя запросить информацию до полной регистрации"DEFAULT);
 			return ;
@@ -470,6 +509,11 @@ private:
 	}
 	// Возвращает информацию об администраторе
 	void	command_admin(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (res->first->second.getStatus() != 1) {
 			debug(RED"[command_admin] Нельзя запросить информацию до полной регистрации"DEFAULT);
 			return ;
@@ -491,6 +535,11 @@ private:
 	}
 	// Возвращает локальное время
 	void	command_time(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (res->first->second.getStatus() != 1) {
 			debug(RED"[command_time] Нельзя запросить информацию до полной регистрации"DEFAULT);
 			return ;
@@ -508,6 +557,11 @@ private:
 	}
 	// Взятие операторских прав
 	void	command_oper(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (lenparam < 3)
 		{
 			add_error(ERR_NEEDMOREPARAMS, "OPER :Not enough parameters"); //ERR_NEEDMOREPARAMS
@@ -532,6 +586,11 @@ private:
 	void	command_who(pair<map<int, User>::iterator, bool> *res) {
 		bool	flag = false;
 
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (res->first->second.getStatus() != 1) {
 			debug(RED"[command_who] Нельзя запросить информацию до полной регистрации"DEFAULT);
 			return ;
@@ -568,6 +627,11 @@ private:
 	// Используется для проверки наличия активности клиента на другом конце
 	// Команду должен использовать сервер раз в какое-то время
 	void	command_ping(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (lenparam != 2)
 		{
 			add_error(ERR_NOORIGIN, ":No origin specified"); //ERR_NOORIGIN
@@ -586,6 +650,11 @@ private:
 	// Используется для проверки наличия активности клиента на другом конце
 	// Команда не посылает ответ пользователю, возможно она ещё что то должна делать
 	void command_pong(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (lenparam < 2)
 		{
 			add_error(ERR_NOORIGIN, ":No origin specified"); //ERR_NOORIGIN
@@ -606,6 +675,11 @@ private:
 	//=====================================================================================================================
 	// Команда отправляет сообщения всем IRC-операторам, находящимся в сети
 	void command_wallops(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (lenparam < 2)
 		{
 			add_error(ERR_NEEDMOREPARAMS, "OPER :Not enough parameters"); //ERR_NEEDMOREPARAMS
@@ -631,6 +705,11 @@ private:
 	// Возвращает разные статусы каждого пользователя
 	// std::to_string надо будет поменять
 	void command_whois(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		bool	flag = false;
 
 		if (lenparam < 2 || param[1] != SERVER_NAME)
@@ -676,6 +755,11 @@ private:
 	// Используется клиентом для входа на канал
 	void command_join(pair<map<int, User>::iterator, bool> *res) {
 		//Раскомментировать
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		if (res->first->second.getStatus() != 1) {
 			debug(RED"[command_join] Нельзя запросить информацию до полной регистрации"DEFAULT);
 			return ;
@@ -761,7 +845,7 @@ private:
 				catch (conse int &e)
 				{
 					if (e == -1)
-						add_error(ERR_NOSUCHCHANNEL, param[1] + " :No such channel");
+						add_error(ERR_NOSUCHCHANNEL, param[1] + ":No such channel");
 				}
 				//=============
 				add_message(id, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp() + " " + param[0] + " :" + channel_list[i] + "\n");
@@ -774,6 +858,11 @@ private:
 	}
 // Используется для изменения или просмотра топика канала
 	void command_topic(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
 		bool flag = true;
 		if (res->first->second.getStatus() != 1) {
 			debug(RED"[command_topic] Нельзя запросить информацию до полной регистрации"DEFAULT);

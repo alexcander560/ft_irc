@@ -16,3 +16,9 @@ DEADLINE-TODO:
 4)Просматреть внимательно все комментарии и удалить всё ненужное!!!!
 
 Я устал
+
+
+IVAN-TODO:
+    - пробел PRIVMSG
+    - not registed 451
+    - USER && NICK && PASS - check error
