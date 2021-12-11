@@ -775,6 +775,8 @@ private:
 	//=====================================================================================================================
 	//==================================== КАНАЛЫ =========================================================================
 	//=====================================================================================================================
+	// Используется для приглашения пользователей на канал
+	//	void command_invite(pair<map<int, User>::iterator, bool> *res) {}
 	// Используется клиентом для входа на канал
 	void command_join(pair<map<int, User>::iterator, bool> *res) {
 		//Раскомментировать
@@ -912,8 +914,6 @@ private:
 		if (flag)
 			debug(RED"[command_topic] Имя канала не найдено"DEFAULT);
 	}
-// Используется для приглашения пользователей на канал
-//	void command_invite(pair<map<int, User>::iterator, bool> *res) {}
 // Исключает пользователя из канала может быть использована только оператором канала
 //	void command_kick(pair<map<int, User>::iterator, bool> *res) {}
 // Пользователь может покинуть каналы, которые он укажет в параметрах
@@ -973,7 +973,6 @@ public:
 		//================================================
 		commands["TOPIC"] = &MassegeHandler::command_topic;
 		commands["JOIN"] = &MassegeHandler::command_join;
-		//commands["INVITE"] = &MassegeHandler::command_invite;
 		//commands["KICK"] = &MassegeHandler::command_kick;
 		//commands["PART"] = &MassegeHandler::command_part;
 		//commands["NAMES"] = &MassegeHandler::command_names;
