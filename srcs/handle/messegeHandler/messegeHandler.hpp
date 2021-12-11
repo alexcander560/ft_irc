@@ -201,27 +201,50 @@ private:
 	}
 	// Установка пароля
 	void	command_pass(pair<map<int, User>::iterator, bool> *res) {
+		if (lenparam < 2)
+		{
+			add_error(ERR_NEEDMOREPARAMS, "PASS :Not enough parameters"); //ERR_NEEDMOREPARAMS
+			return ;
+		}
 		if (res->first->second.getStatus() == -1)
 			res->first->second.setPass(param, pass);
 		else
+		{
+			add_error(ERR_ALREADYREGISTRED, ":You may not reregister"); //ERR_ALREADYREGISTRED
 			debug(RED"[handle_message] Вы уже зарегистрированы!" DEFAULT);
+		}
 	}
 	// Установка имени
 	void	command_nick(pair<map<int, User>::iterator, bool> *res) {
 		if (lenparam != 2)
+		{
+			add_error(ERR_NONICKNAMEGIVEN, ":No nickname given"); //ERR_NONICKNAMEGIVEN
 			debug(RED"[handle_message] Неверное число аргументов для команды NICK"DEFAULT);
+		}
 		else {
 			for (map<int, User>::iterator it1 = clients->begin(); it1 != clients->end(); it1++) {
 				if (it1->second.getName() == param[1]) {
+					add_error(ERR_NICKCOLLISION, param[1] + " :Nickname collision KILL"); //ERR_NICKCOLLISION
 					debug(RED"[handle_message] Такой NICK уже есть"DEFAULT);
 					return ;
 				}
 			}
-			res->first->second.setNick(param);
+			if (res->first->second.setNick(param) == false) //Cat return FALSE on error characters
+				add_error(ERR_ERRONEUSNICKNAME, param[1] + " :Erroneus nickname"); //ERR_ERRONEUSNICKNAME
 		}
 	}
 	// Установка данных пользователя
 	void	command_user(pair<map<int, User>::iterator, bool> *res) {
+		if (lenparam != 5)
+		{
+			add_error(ERR_NEEDMOREPARAMS, "USER :Not enough parameters");
+			return ;
+		}
+		if (res->first->second.getStatus() == -1)
+		{
+			add_error(ERR_ALREADYREGISTRED, ":You may not reregister");
+			return ;
+		}
 		res->first->second.setData(param);
 	}
 	// Прерывает соединение
