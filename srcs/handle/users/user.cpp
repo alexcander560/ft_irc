@@ -78,7 +78,7 @@ bool			User::setNick(vector<string> param) {
 bool			User::setPass(vector<string> param, const string pass_server)
 {
 	debug("[setPass] Пароль сервера: (" + pass_server + ") Пароль клиента: (" + param[1] + ")");
-	if (param.size() == 2) {
+	if (param.size() >= 2) {
 		if (param[1] == pass_server)
 			_pass = true;
 		else

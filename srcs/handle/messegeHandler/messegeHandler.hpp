@@ -280,7 +280,7 @@ private:
 			add_error(ERR_NOTEXTTOSEND, ":No text to send"); //ERR_NOTEXTTOSEND
 			return ;
 		}
-		if (!command_base_check(3, res->first->second.getStatus()))
+		if (!command_base_check(3, res->first->second.getStatus(), true))
 			return ;
 		if (param[1] == "bot") {
 			debug(GREEN"[command_privmsg] Calling bot with command"DEFAULT);

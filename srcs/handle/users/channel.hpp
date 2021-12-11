@@ -42,9 +42,7 @@ class Channel
 			user.insert(make_pair(id, true));
 		}
 		// Вовзвращает кол-во юзеров в канале
-		int				getCountUSer() {
-			return user.size();
-		}
+		int				getCountUSer() { return user.size(); }
 		// Получить Id опера
 		int				getIdOper() {
 			for (map<int, bool>::iterator it = user.begin(); it != user.end(); it++)
