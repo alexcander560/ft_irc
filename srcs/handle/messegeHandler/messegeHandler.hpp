@@ -1210,7 +1210,7 @@ public:
 		if(lenparam > 0){
 			try	{ (this->*commands.at(param[0]))(&res); }
 			catch(const std::exception & e)	{
-				if (res->first->second.getStatus() == -1)
+				if (res.first->second.getStatus() == -1)
 					add_unregister_error();
 				else
 				{
