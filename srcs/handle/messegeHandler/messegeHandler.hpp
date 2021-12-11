@@ -782,7 +782,7 @@ private:
 					add_message(id, ":"SERVER_NAME" "RPL_WHOISSERVER" " + res->first->second.getName() + " " + it1->second.getName() + " "
 								SERVER_NAME" :IRC server based on TCP/IP protocol to rfc1459 standard\n");
 					add_message(id, ":"SERVER_NAME" "RPL_WHOISIDLE" " + res->first->second.getName() + " " + it1->second.getName() + " " +
-					std::to_string(res->first->second.getTimeIdle()) + " " + std::to_string(getCurrentTimeForUser()) + " :seconds idle\n");
+					int_to_string(res->first->second.getTimeIdle()) + " " + int_to_string(getCurrentTimeForUser()) + " :seconds idle\n");
 					flag = true;
 				}
 			}
@@ -1097,7 +1097,7 @@ void command_list(pair<map<int, User>::iterator, bool> *res) {
 	if (lenparam == 1) {
 		for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
 			debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
-			add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + std::to_string(i->getCountUSer()) + " :[+n]\n");
+			add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + int_to_string(i->getCountUSer()) + " :[+n]\n");
 		}
 	}
 	if (lenparam > 1) {
@@ -1111,7 +1111,7 @@ void command_list(pair<map<int, User>::iterator, bool> *res) {
 			for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
 				if (channel_list[count_channel] == i->getName()) {
 					debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
-					add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + std::to_string(i->getCountUSer()) + " :[+n]\n");
+					add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + int_to_string(i->getCountUSer()) + " :[+n]\n");
 					break ;
 				}
 			}
@@ -1210,8 +1210,13 @@ public:
 		if(lenparam > 0){
 			try	{ (this->*commands.at(param[0]))(&res); }
 			catch(const std::exception & e)	{
-				add_auto_message(ERR_UNKNOWNCOMMAND, ":Unknown command");
-				debug(RED"[handle_message] Неизвестная команда" DEFAULT);
+				if (res->first->second.getStatus() == -1)
+					add_unregister_error();
+				else
+				{
+					add_auto_message(ERR_UNKNOWNCOMMAND, ":Unknown command");
+					debug(RED"[handle_message] Неизвестная команда" DEFAULT);
+				}
 			}
 		}
 		else
