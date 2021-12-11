@@ -267,21 +267,22 @@ private:
 	void	command_privmsg(pair<map<int, User>::iterator, bool> *res) {
 		if (res->first->second.getStatus() == -1)
 		{
+			debug(RED"[command_base_check] " + param[0] + " Нельзя выполнить до регистрации пользователя" DEFAULT);
 			add_unregister_error();
 			return ;
 		}
 		if (lenparam < 2)
 		{
+			debug(RED"[command_base_check] " + param[0] + " слишком мало аргументов"DEFAULT);
 			add_error(ERR_NORECIPIENT, ":No recipient given (PRIVMSG)"); //ERR_NORECIPIENT
 			return ;
 		}
 		if (lenparam < 3)
 		{
+			debug(RED"[command_base_check] " + param[0] + " слишком мало аргументов"DEFAULT);
 			add_error(ERR_NOTEXTTOSEND, ":No text to send"); //ERR_NOTEXTTOSEND
 			return ;
 		}
-		if (!command_base_check(3, res->first->second.getStatus(), true))
-			return ;
 		if (param[1] == "bot") {
 			debug(GREEN"[command_privmsg] Calling bot with command"DEFAULT);
 			handle_command(param.at(2), id, clients->find(id)->second.getName(), &messages);
