@@ -961,8 +961,8 @@ private:
 			if (param[1] == it->getName()) {
 				map<int, bool>	temp_user = it->getUserList();
 
-				if (temp_user.find(id) != temp_user.end()) {
-					debug(RED"[command_kick] вы не в этом канале>"DEFAULT);
+				if (temp_user.find(id) == temp_user.end()) {
+					debug(RED"[command_kick] вы не в этом канале"DEFAULT);
 					add_error(ERR_NOTONCHANNEL, param[1] + " :You're not on that channel"); //ERR_NOTONCHANNEL //ЕСЛИ ТЫ НЕ В КАНАЛЕ
 				}
 				else {
@@ -981,16 +981,21 @@ private:
 							}
 						}
 						if (flag_client) {
-							debug(RED"[command_kick] такого клиента нет"DEFAULT);
+							debug(RED"[command_kick] Такого клиента нет"DEFAULT);
 							add_error(ERR_NOSUCHNICK, param[2] + " :No such nick/channel"); //ERR_NOSUCHNICK //Нет такого юзера
 						} else {
 							// Такой клиент существует на сервере, но не факт что он есть в канале
 							if (temp_user.find(id_client) != temp_user.end()) {
 								for (map<int, bool>::iterator pedro = temp_user.begin(); pedro != temp_user.end(); pedro++) {
-									add_message(this->id, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp()
+									add_message(pedro->first, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp()
 									+ " KICK " + param[1] + " " + param[2] + ((lenparam >= 4) ? (" :" + param[3]) : ("")) + "\n");
 								}
+								debug(GREEN"[command_kick] Удаляем пользователя из канала..."DEFAULT);
 								it->delUser(id_client);
+								if (it->getCountUSer() == 0) {
+									debug(GREEN"[command_kick] Удаляем канал..."DEFAULT);
+									channel->erase(it);
+								}
 							}
 							else {
 								debug(RED"[command_kick] такого клиента нет в канале"DEFAULT);
@@ -1020,7 +1025,18 @@ void command_list(pair<map<int, User>::iterator, bool> *res) {
 		return ;
 	}
 	add_message(id, ":"SERVER_NAME" "RPL_LISTSTART" " + res->first->second.getName() + " Channel :Users  Name\n");
+	if (lenparam == 1) {
+		for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
+			debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
+			add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + std::to_string(i->getCountUSer()) + " :[+n]\n");
+		}
+	}
 	if (lenparam > 1) {
+		if (lenparam >= 3 && param[2] != SERVER_NAME) {
+			debug(RED"[command_list] Имя сервера неверно"DEFAULT);
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server"); //ERR_NOSUCHSERVER
+			return ;
+		}
 		parser_vector(param[1], &channel_list);
 		for (int count_channel = 0; count_channel < channel->size(); count_channel++) {
 			for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
@@ -1085,7 +1101,7 @@ public:
 		//================================================
 		commands["TOPIC"] = &MassegeHandler::command_topic;
 		commands["JOIN"] = &MassegeHandler::command_join;
-		commands["KICK"] = &MassegeHandler::command_kick;
+		commands["KICK"] = &MassegeHandler::command_kick; ///ЕСЛИ ОПЕРАТОР УДАЛИТ САМ СЕБЯ И В КАНАЛЕ СТАНЕТ 0 ЮЗЕРОВ. ТО КАНАЛ ПОТРЁТСЯ
 		//commands["PART"] = &MassegeHandler::command_part;
 		//commands["NAMES"] = &MassegeHandler::command_names;
 		commands["LIST"] = &MassegeHandler::command_list;
