@@ -51,11 +51,6 @@ private:
 	 *     - add_auto_message("311", "<nick> <user> <host> * :<real name>");
 	*/
 	{
-		string	user = this->clients->find(id)->second.getName();
-		string	name = this->clients->find(id)->second.getUserName();
-		string	ipaddress = this->clients->find(id)->second.getIp();
-		//return (string(":") + user + string("!") + name + string("@") + ipaddress + string(" "));
-
 		 add_message(this->id, ":" SERVER_NAME " " + code + " "
 		 					  + this->clients->find(this->id)->second.getName() + " " + str + "\n");
 		debug("[add_auto_message] Error for user was set");
@@ -1016,7 +1011,29 @@ private:
 // Пользователь может покинуть каналы, которые он укажет в параметрах
 //	void command_part(pair<map<int, User>::iterator, bool> *res) {}
 // Пользователь может получить список всех пользователей, состоящих в канале
-//	void command_names(pair<map<int, User>::iterator, bool> *res) {}
+void command_names(pair<map<int, User>::iterator, bool> *res) {
+	if (res->first->second.getStatus() == -1)
+	{
+		add_unregister_error();
+		return ;
+	}
+	if (lenparam == 1) {
+		for (vector<Channel>::iterator it = channel->begin(); it != channel->end(); it++) {
+			string			temp = "";
+			map<int, bool>	user_temp = it->getUserList();
+			for (map<int, bool>::iterator pedro = user_temp.begin(); pedro != user_temp.end(); pedro++) {
+				if (!temp.size())
+					temp += " ";
+				temp += clients->find(pedro->first)->second.getName();
+			}
+			add_auto_message(RPL_NAMREPLY, "= " + it->getName() + " :@" + temp);
+		}
+		add_auto_message(RPL_ENDOFNAMES, "* :End of /NAMES list");
+	}
+	else {
+		
+	}
+}
 // Используется для вывода списка каналов и их топиков
 void command_list(pair<map<int, User>::iterator, bool> *res) {
 	if (res->first->second.getStatus() == -1)
@@ -1103,7 +1120,7 @@ public:
 		commands["JOIN"] = &MassegeHandler::command_join;
 		commands["KICK"] = &MassegeHandler::command_kick; ///ЕСЛИ ОПЕРАТОР УДАЛИТ САМ СЕБЯ И В КАНАЛЕ СТАНЕТ 0 ЮЗЕРОВ. ТО КАНАЛ ПОТРЁТСЯ
 		//commands["PART"] = &MassegeHandler::command_part;
-		//commands["NAMES"] = &MassegeHandler::command_names;
+		commands["NAMES"] = &MassegeHandler::command_names;
 		commands["LIST"] = &MassegeHandler::command_list;
 	}
 	// Распечатка
