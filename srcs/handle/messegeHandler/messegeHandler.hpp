@@ -221,10 +221,10 @@ private:
 		disconnect_by_id(this->id, this->clients_ivan, this->fds);
 		debug(GREEN"[command_quit] Команда QUIT использовалась для пользователя"DEFAULT);
 		// Пользователь должен выйти из всех каналов
-		for (vector<Channel>::iterator it = channel->begin(); it < channel->end(); it++) {
+		for (vector<Channel>::iterator it = channel->begin(); it != channel->end(); it++) {
 			it->delUser(id);
 		}
-		for (vector<Channel>::iterator it = channel->begin(); it < channel->end(); it++) {
+		for (vector<Channel>::iterator it = channel->begin(); it != channel->end(); it++) {
 			if (it->getCountUSer() == 0) {
 				channel->erase(it);
 				it = channel->begin();
@@ -606,12 +606,7 @@ private:
 			add_error(ERR_NOORIGIN, ":No origin specified");
 			return ;
 		}
-		if (param[1] == SERVER_NAME)
-			add_message(id, ":" + (string)SERVER_NAME" " + "PONG :"SERVER_NAME"\n");
-		else {
-			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server");
-			debug(RED"[command_ping] Имя сервера неверно"DEFAULT);
-		}
+		add_message(id, ":" + (string)SERVER_NAME" " + "PONG :" + param[1] + "\n");
 	}
 	// Используется для проверки наличия активности клиента на другом конце
 	void command_pong(pair<map<int, User>::iterator, bool> *res) {
@@ -840,7 +835,7 @@ private:
 			add_error(ERR_NEEDMOREPARAMS, "KICK :Not enough parameters");
 			return ;
 		}
-		for (vector<Channel>::iterator it = channel->begin(); it < channel->end(); it++) {
+		for (vector<Channel>::iterator it = channel->begin(); it != channel->end(); it++) {
 			if (param[1] == it->getName()) {
 				map<int, bool>	temp_user = it->getUserList();
 
@@ -921,7 +916,7 @@ void command_part(pair<map<int, User>::iterator, bool> *res) {
 					if (it->getCountUSer() == 0) {
 						debug(GREEN"[command_part] Канал удаляется..."DEFAULT);
 						channel->erase(it);
-						us = channel_list.begin();
+						it = channel->begin();
 					}
 					flag = false;
 					break ;
