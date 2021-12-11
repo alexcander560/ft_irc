@@ -240,7 +240,7 @@ private:
 			add_error(ERR_NEEDMOREPARAMS, "USER :Not enough parameters");
 			return ;
 		}
-		if (res->first->second.getStatus() == -1)
+		if (res->first->second.getStatus() == 1)
 		{
 			add_error(ERR_ALREADYREGISTRED, ":You may not reregister");
 			return ;
