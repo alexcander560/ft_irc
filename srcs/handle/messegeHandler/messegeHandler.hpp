@@ -29,6 +29,28 @@ private:
 	void			add_message(int id, string str) {
 		messages.push_back(make_pair(id, str));
 	}
+	void			add_error(const string error, const string str)
+	/*
+	 * Example using:
+	 *     - add_error("411", ":No recipients given");
+	 *     - add_error("412", ":No text to send");
+	*/
+	{
+		messages.push_back(make_pair(this->id, ":" SERVER_NAME " " + error + " "
+							+ this->clients->find(this->id)->second.getName() + " " + str + "\n"));
+		debug("[add_error] Error for user was set");
+	}
+	void			add_auto_message(const string code, const string str)
+	/*
+	 * Example using:
+	 *     - add_auto_message("306", ":You have been marked as being away");
+	 *     - add_auto_message("311", "<nick> <user> <host> * :<real name>");
+	*/
+	{
+		add_message(this->id, ":" SERVER_NAME " " + code + " "
+							  + this->clients->find(this->id)->second.getName() + " " + str + "\n");
+		debug("[add_auto_message] Error for user was set");
+	}
 	// Для перебора массива с функциями
 	typedef void (MassegeHandler::*Method) (pair<map<int, User>::iterator, bool> *);
 	map<string, Method> commands;
@@ -119,7 +141,10 @@ private:
 			if (str[i] == ',') {
 				if (current_name.size() > 0) {
 					if (!(set->insert(current_name)).second)
+					{
+						add_error(ERR_TOOMANYTARGETS, "Duplicate recipients. No message delivered"); //ERR_TOOMANYTARGETS
 						debug(RED"[parser_set] Двойной параметр");
+					}
 					current_name.clear();
 				}
 			}
@@ -203,6 +228,16 @@ private:
 	}
 	// Отправить сообщение (Пока не работает для каналов)
 	void	command_privmsg(pair<map<int, User>::iterator, bool> *res) {
+		if (lenparam < 2)
+		{
+			add_error(ERR_NORECIPIENT, ":No recipient given (PRIVMSG)"); //ERR_NORECIPIENT
+			return ;
+		}
+		if (lenparam < 3)
+		{
+			add_error(ERR_NOTEXTTOSEND, ":No text to send"); //ERR_NOTEXTTOSEND
+			return ;
+		}
 		if (!command_base_check(3, res->first->second.getStatus()))
 			return ;
 		if (param[1] == "bot") {
@@ -237,13 +272,21 @@ private:
 				}
 			}
 			if (flag)
+			{
+				add_error(ERR_NOSUCHNICK, param[1] + " :No such nick/channel"); //ERR_NOSUCHNICK
 				debug(RED"[handle_message] Пользователь с таким ником не найден" DEFAULT);
+			}
 			//================== Каналы ====================================
 			flag = true;
 			for (vector<Channel>::iterator it1 = channel->begin(); it1 != channel->end(); it1++) {
 				if (it1->getName() == *us1) {
-					debug(GREEN"[handle_message] Канал найден, отправляем всем сообщение..." DEFAULT);
 					map<int, bool> temp_list = it1->getUserList();
+					if (temp_list.find(this->id) == temp_list.end())
+					{
+						add_error(ERR_CANNOTSENDTOCHAN, ":Cannot send to channel"); //ERR_CANNOTSENDTOCHAN
+						continue ;
+					}
+					debug(GREEN"[handle_message] Канал найден, отправляем всем сообщение..." DEFAULT);
 					for (map<int, bool>::iterator temp_iter = temp_list.begin(); temp_iter != temp_list.end(); temp_iter++) {
 						if (temp_iter->first != id) {
 							debug(GREEN"[handle_message] Отправляю сообщение..." DEFAULT);
@@ -266,10 +309,12 @@ private:
 		if (lenparam == 1) {
 			debug("[command_away] Away message was unset");
 			clients->find(id)->second.setAwayMessage(make_pair(false, ""));
+			add_auto_message(RPL_UNAWAY, ":You have been marked as being away"); //RPL_UNAWAY
 		}
 		else if (lenparam == 2) {
 			debug("[command_away] Away message was set");
 			clients->find(id)->second.setAwayMessage(make_pair(true, param[1]));
+			add_auto_message(RPL_NOWAWAY, ":You are no longer marked as being away"); //RPL_NOWAWAY
 		}
 		else
 			warning(RED"[command_away] Неверное число аргументов"DEFAULT);
@@ -318,7 +363,12 @@ private:
 		map<int, User>::iterator	iter;
 		int							current = 1;
 		short						length = 0;
-		
+
+		if (lenparam != 2)
+		{
+			add_error(ERR_NEEDMOREPARAMS, "ISON :Not enough parameters"); //ERR_NEEDMOREPARAMS
+			return ;
+		}
 		if (!command_base_check(1, res->first->second.getStatus(), true))
 			return ;
 		while (current < lenparam && length < 512) {
@@ -350,6 +400,11 @@ private:
 		map<int, User>::iterator	iter;
 		int							current = 1;
 
+		if (lenparam != 2)
+		{
+			add_error(ERR_NEEDMOREPARAMS, "USERHOST :Not enough parameters"); //ERR_NEEDMOREPARAMS
+			return ;
+		}
 		if (!command_base_check(1, res->first->second.getStatus(), true))
 			return ;
 		while (current < lenparam && current < 6){
@@ -378,7 +433,10 @@ private:
 		else if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME))
 			add_message(id, getFrontLineRPL(SERVER_VERSION, RPL_VERSION) + "\n");
 		else
+		{
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server"); //ERR_NOSUCHSERVER
 			debug(RED"[command_version] Имя сервера неверно"DEFAULT);
+		}
 	}
 	// Возвращает информацию о текущем сервере
 	void	command_info(pair<map<int, User>::iterator, bool> *res) {
@@ -388,6 +446,10 @@ private:
 		}
 		if (lenparam > 2)
 			debug(RED"[command_info] Неверное число аргументов"DEFAULT);
+		else if (param[1] != SERVER_NAME)
+		{
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server"); //ERR_NOSUCHSERVER
+		}
 		else if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME)) {
 			add_message(id, getFrontLineRPL("describe\n", RPL_INFO));
 			add_message(id, getFrontLineRPL("IRC server based on TCP/IP protocol to rfc1459 standard\n", RPL_INFO));
@@ -404,6 +466,10 @@ private:
 		}
 		if (lenparam > 2)
 			debug(RED"[command_admin] Неверное число аргументов"DEFAULT);
+		else if (param[1] != SERVER_NAME)
+		{
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server"); //ERR_NOSUCHSERVER
+		}
 		else if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME)) {
 			add_message(id, getFrontLineRPL("", RPL_ADMINME) + "Information about administrators\n");
 			add_message(id, getFrontLineRPL("", RPL_ADMINLOC1) + "Names are Giganta Mother, Irena Mora, Free Milissa\n");
@@ -421,6 +487,10 @@ private:
 		}
 		if (lenparam > 2)
 			debug(RED"[command_time] Неверное число аргументов"DEFAULT);
+		else if (param[1] != SERVER_NAME)
+		{
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server"); //ERR_NOSUCHSERVER
+		}
 		else if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME))
 			add_message(id, getFrontLineRPL(getCurrentTime(), RPL_TIME));
 		else
@@ -428,6 +498,11 @@ private:
 	}
 	// Взятие операторских прав
 	void	command_oper(pair<map<int, User>::iterator, bool> *res) {
+		if (lenparam < 3)
+		{
+			add_error(ERR_NEEDMOREPARAMS, "OPER :Not enough parameters"); //ERR_NEEDMOREPARAMS
+			return ;
+		}
 		if (!command_base_check(3, res->first->second.getStatus()))
 				return ;
 		if (param[1] != res->first->second.getName()) {// Вот эта потом нужно будет поменять, наверное
@@ -435,9 +510,11 @@ private:
 			return ;
 		}
 		if (param[2] != PASSWORD_ADMIN) {
+			add_error(ERR_PASSWDMISMATCH, ":Password incorrect"); //ERR_PASSWDMISMATCH
 			debug(RED"[command_oper] Пароль неверный"DEFAULT);
 			return ;
 		}
+		add_auto_message(RPL_YOUREOPER, ":You are now an IRC operator"); //RPL_YOUREOPER
 		debug(GREEN"[command_oper] Вы стали IRC-оператором"DEFAULT);
 		res->first->second.setModeO(true);
 }
@@ -463,7 +540,9 @@ private:
 				if (it1->second.getStatus() != 1)
 					debug(RED"[command_who] Найденный пользователей не зарегестрирован"DEFAULT);
 				else if (it1->second.getMode().i == true)
+				{
 					debug(RED"[command_who] Найденный пользователей невидимый"DEFAULT);
+				}
 				else if (lenparam == 3 && it1->second.getMode().o == false)
 					debug(RED"[command_who] Найденный пользователей не IRC-оператор"DEFAULT);
 				else
@@ -479,20 +558,37 @@ private:
 	// Используется для проверки наличия активности клиента на другом конце
 	// Команду должен использовать сервер раз в какое-то время
 	void	command_ping(pair<map<int, User>::iterator, bool> *res) {
+		if (lenparam != 2)
+		{
+			add_error(ERR_NOORIGIN, ":No origin specified"); //ERR_NOORIGIN
+			return ;
+		}
 		if (!command_base_check(2, res->first->second.getStatus()))
 			return ;
 		if (param[1] == SERVER_NAME)
 			add_message(id, ":" + (string)SERVER_NAME" " + "PONG :"SERVER_NAME"\n");
 		else
+		{
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server"); //ERR_NOSUCHSERVER
 			debug(RED"[command_ping] Имя сервера неверно"DEFAULT);
+		}
 	}
 	// Используется для проверки наличия активности клиента на другом конце
 	// Команда не посылает ответ пользователю, возможно она ещё что то должна делать
 	void command_pong(pair<map<int, User>::iterator, bool> *res) {
+		if (lenparam < 2)
+		{
+			add_error(ERR_NOORIGIN, ":No origin specified"); //ERR_NOORIGIN
+			return ;
+		}
 		if (!command_base_check(2, res->first->second.getStatus()))
 			return ;
 		if (param[1] != SERVER_NAME)
+		{
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server"); //ERR_NOSUCHSERVER
 			debug(RED"[command_pong] Имя сервера неверно"DEFAULT);
+			return ;
+		}
 		res->first->second.setTimePing(getCurrentTimeForUser());
 		res->first->second.setIsPing(false);
 	}
@@ -500,6 +596,11 @@ private:
 	//=====================================================================================================================
 	// Команда отправляет сообщения всем IRC-операторам, находящимся в сети
 	void command_wallops(pair<map<int, User>::iterator, bool> *res) {
+		if (lenparam < 2)
+		{
+			add_error(ERR_NEEDMOREPARAMS, "OPER :Not enough parameters"); //ERR_NEEDMOREPARAMS
+			return ;
+		}
 		if (!command_base_check(2, res->first->second.getStatus()))
 				return ;
 		if (res->first->second.getMode().o == false) {
@@ -521,7 +622,18 @@ private:
 	// std::to_string надо будет поменять
 	void command_whois(pair<map<int, User>::iterator, bool> *res) {
 		bool	flag = false;
-		
+
+		if (lenparam < 2 || param[1] != SERVER_NAME)
+		{
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server"); //ERR_NOSUCHSERVER
+			debug("[command_whois] Wrong server name");
+			return ;
+		}
+		if (lenparam < 3)
+		{
+			add_error(ERR_NONICKNAMEGIVEN, "No nickname given"); //ERR_NONICKNAMEGIVEN
+			return ;
+		}
 		if (!command_base_check(2, res->first->second.getStatus()))
 				return ;
 		for (map<int, User>::iterator it1 = clients->begin(); it1 != clients->end(); it1++) {
@@ -559,6 +671,7 @@ private:
 			return ;
 		}
 		if (lenparam != 2 && lenparam != 3) {
+			add_error(ERR_NEEDMOREPARAMS, "JOIN :Not enough parameters"); //ERR_NEEDMOREPARAMS
 			debug(RED"[command_join] Неверное число аргументов"DEFAULT);
 			return ;
 		}
@@ -631,7 +744,15 @@ private:
 			}
 			if (flag) {
 				debug(GREEN"[command_join] Канал " + channel_list[i] + " НЕ СУЩУСТВУЕТ, пытаюсь создать..."DEFAULT);
-				channel->push_back(Channel(channel_list[i], id));
+				try
+				{
+					channel->push_back(Channel(channel_list[i], id));
+				}
+				catch (conse int &e)
+				{
+					if (e == -1)
+						add_error(ERR_NOSUCHCHANNEL, param[1] + " :No such channel");
+				}
 				//=============
 				add_message(id, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp() + " " + param[0] + " :" + channel_list[i] + "\n");
 				add_message(id, ":"SERVER_NAME" "RPL_NOTOPIC" " + res->first->second.getName() + " " + channel_list[i] + " :No topic is set\n");
@@ -678,26 +799,26 @@ public:
 	id(id), str_message(str_message), clients(clients), pass(_pass), clients_ivan(clients_ivan), fds(fds), ip(ip), channel(channel), is_notice(false) {
 		parser_param();
 		lenparam = param.size();
-		commands["PASS"] = &MassegeHandler::command_pass;
-		commands["NICK"] = &MassegeHandler::command_nick;
-		commands["USER"] = &MassegeHandler::command_user;
-		commands["QUIT"] = &MassegeHandler::command_quit;
-		commands["PRIVMSG"] = &MassegeHandler::command_privmsg;
-		commands["AWAY"] = &MassegeHandler::command_away;
-		commands["NOTICE"] = &MassegeHandler::command_notice;
-		commands["MODE"] = &MassegeHandler::command_mode;
-		commands["ISON"] = &MassegeHandler::command_ison;
-		commands["USERHOST"] = &MassegeHandler::command_userhost;
-		commands["VERSION"] = &MassegeHandler::command_version;
-		commands["INFO"] = &MassegeHandler::command_info;
-		commands["ADMIN"] = &MassegeHandler::command_admin;
-		commands["TIME"] = &MassegeHandler::command_time;
-		commands["OPER"] = &MassegeHandler::command_oper;
-		commands["WHO"] = &MassegeHandler::command_who;
-		commands["PING"] = &MassegeHandler::command_ping;
-		commands["PONG"] = &MassegeHandler::command_pong;
-		commands["WALLOPS"] = &MassegeHandler::command_wallops;
-		commands["WHOIS"] = &MassegeHandler::command_whois;
+		commands["PASS"] = &MassegeHandler::command_pass; //Response OK
+		commands["NICK"] = &MassegeHandler::command_nick; //Response OK
+		commands["USER"] = &MassegeHandler::command_user; //Response OK
+		commands["QUIT"] = &MassegeHandler::command_quit; //Response OK
+		commands["PRIVMSG"] = &MassegeHandler::command_privmsg; //Response OK
+		commands["AWAY"] = &MassegeHandler::command_away; //Response OK
+		commands["NOTICE"] = &MassegeHandler::command_notice; //Response OK
+		commands["MODE"] = &MassegeHandler::command_mode; //Response OK
+		commands["ISON"] = &MassegeHandler::command_ison; //Response OK
+		commands["USERHOST"] = &MassegeHandler::command_userhost; //Response OK
+		commands["VERSION"] = &MassegeHandler::command_version; //Response OK
+		commands["INFO"] = &MassegeHandler::command_info; //Response OK
+		commands["ADMIN"] = &MassegeHandler::command_admin; //Response OK
+		commands["TIME"] = &MassegeHandler::command_time; //Response OK
+		commands["OPER"] = &MassegeHandler::command_oper; //Response OK
+		commands["WHO"] = &MassegeHandler::command_who; //Response OK
+		commands["PING"] = &MassegeHandler::command_ping; //Response OK
+		commands["PONG"] = &MassegeHandler::command_pong; //Reponse OK
+		commands["WALLOPS"] = &MassegeHandler::command_wallops; //Response OK
+		commands["WHOIS"] = &MassegeHandler::command_whois; //Response OK
 		//commands["WHOWAS"] = &MassegeHandler::command_whowas; //скипаем
 		//================================================
 		//=======             КАНАЛЫ               =======

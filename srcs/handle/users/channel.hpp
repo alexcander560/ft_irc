@@ -26,7 +26,8 @@ class Channel
 		map<int, bool>	user;
 		// Конструктор
 		Channel (string name, int id) {
-			this->name = name;
+			if (setName(name) == false)
+				throw (-1);
 			//flag_o = false;
 			//flag_p = false;
 			//flag_s = false;
