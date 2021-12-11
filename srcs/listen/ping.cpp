@@ -1,6 +1,6 @@
 #include "ping.hpp"
 #include "../general.hpp"
-#include "../handle/messegeHandler/add*itions.hpp"
+#include "../handle/messegeHandler/additions.hpp"
 
 #define PING_SECOND 600
 
