@@ -56,8 +56,8 @@ private:
 		string	ipaddress = this->clients->find(id)->second.getIp();
 		//return (string(":") + user + string("!") + name + string("@") + ipaddress + string(" "));
 
-		// add_message(this->id, ":" SERVER_NAME " " + code + " "
-		// 					  + this->clients->find(this->id)->second.getName() + " " + str + "\n");
+		 add_message(this->id, ":" SERVER_NAME " " + code + " "
+		 					  + this->clients->find(this->id)->second.getName() + " " + str + "\n");
 		debug("[add_auto_message] Error for user was set");
 	}
 	// Для перебора массива с функциями
@@ -426,7 +426,8 @@ private:
 					debug(RED"[command_mode] флаг mode неверный {" + string(1, param[2][1]) + "}"DEFAULT);
 					return ;
 				}
-				add_auto_message("MODE", param[2]);
+				add_message(this->id, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp()
+							+ " MODE " + res->first->second.getName() + " " + param[1] + "\n");
 			}
 		}
 		else {
