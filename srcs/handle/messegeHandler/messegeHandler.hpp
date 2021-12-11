@@ -200,6 +200,16 @@ private:
 		clients->erase(id);
 		disconnect_by_id(this->id, this->clients_ivan, this->fds);
 		debug(GREEN"[command_quit] Команда QUIT использовалась для пользователя"DEFAULT);
+		// Пользователь должен выйти из всех каналов
+		for (vector<Channel>::iterator it = channel->begin(); it < channel->end(); it++) {
+			it->delUser(id);
+		}
+		for (vector<Channel>::iterator it = channel->begin(); it < channel->end(); it++) {
+			if (it->getCountUSer() == 0) {
+				channel->erase(it);
+				it = channel->begin();
+			}
+		}
 	}
 	// Отправить сообщение (Пока не работает для каналов)
 	void	command_privmsg(pair<map<int, User>::iterator, bool> *res) {
@@ -642,7 +652,33 @@ private:
 		}
 	}
 // Используется для изменения или просмотра топика канала
-//	void command_topic(pair<map<int, User>::iterator, bool> *res) {}
+	void command_topic(pair<map<int, User>::iterator, bool> *res) {
+		bool flag = true;
+		if (res->first->second.getStatus() != 1) {
+			debug(RED"[command_topic] Нельзя запросить информацию до полной регистрации"DEFAULT);
+			return ;
+		}
+		if (lenparam != 2 && lenparam != 3) {
+			debug(RED"[command_join] Неверное число аргументов"DEFAULT);
+			return ;
+		}
+		for (vector<Channel>::iterator it = channel->begin(); it != channel->end(); it++) {
+			if (it->getName() == param[1]) {
+				if (lenparam == 2) {
+					debug(GREEN"[command_topic] Канал найден, выводим топик"DEFAULT);
+				}
+				else {
+					debug(GREEN"[command_topic] Канал найден, меняем"DEFAULT);
+					it->setTopic(param[2]);
+				}
+				add_message(id, ":"SERVER_NAME" "RPL_TOPIC" " + res->first->second.getName() + " " + param[1] + " :" + it->getTopic() + "\n");
+				flag = false;
+				break ;
+			}
+		}
+		if (flag)
+			debug(RED"[command_topic] Имя канала не найдено"DEFAULT);
+	}
 // Используется для приглашения пользователей на канал
 //	void command_invite(pair<map<int, User>::iterator, bool> *res) {}
 // Исключает пользователя из канала может быть использована только оператором канала
@@ -702,7 +738,7 @@ public:
 		//================================================
 		//=======             КАНАЛЫ               =======
 		//================================================
-		//commands["TOPIC"] = &MassegeHandler::command_topic;
+		commands["TOPIC"] = &MassegeHandler::command_topic;
 		commands["JOIN"] = &MassegeHandler::command_join;
 		//commands["INVITE"] = &MassegeHandler::command_invite;
 		//commands["KICK"] = &MassegeHandler::command_kick;

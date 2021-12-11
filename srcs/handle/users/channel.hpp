@@ -40,6 +40,10 @@ class Channel
 			topic = "No topic is set";
 			user.insert(make_pair(id, true));
 		}
+		// Вовзвращает кол-во юзеров в канале
+		int				getCountUSer() {
+			return user.size();
+		}
 		// Получить Id опера
 		int				getIdOper() {
 			for (map<int, bool>::iterator it = user.begin(); it != user.end(); it++)
@@ -68,6 +72,11 @@ class Channel
 				return (false);
 			}
 			return (true);
+		}
+		// Удалить Юзера
+		void			delUser(int	id) {
+			debug(GREEN"[addUser] Пытаюсь удалить юзера..."DEFAULT);
+			user.erase(id);
 		}
 		// Установить имя канала
 		bool			setName(const string name) {
@@ -117,6 +126,7 @@ class Channel
 		}
 		// Возвращает имя канала
 		const string	getName() const { return name; }
+		void			setTopic(string topic) { this->topic = topic; }
 		// Возвращает топик канала
 		const string	getTopic() const { return topic; }
 		// Cвой дебаг, если у тебя есть вопросы что он тут делает, то я могу сказать одно
