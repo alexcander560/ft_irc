@@ -842,7 +842,7 @@ private:
 				{
 					channel->push_back(Channel(channel_list[i], id));
 				}
-				catch (conse int &e)
+				catch (const int &e)
 				{
 					if (e == -1)
 						add_error(ERR_NOSUCHCHANNEL, param[1] + ":No such channel");
