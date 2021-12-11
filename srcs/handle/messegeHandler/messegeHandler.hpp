@@ -870,7 +870,10 @@ private:
 				catch (const int &e)
 				{
 					if (e == -1)
+					{
 						add_error(ERR_NOSUCHCHANNEL, param[1] + ":No such channel");
+						break ;
+					}
 				}
 				//=============
 				add_message(id, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp() + " " + param[0] + " :" + channel_list[i] + "\n");

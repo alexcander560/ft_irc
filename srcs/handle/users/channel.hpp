@@ -90,7 +90,7 @@ class Channel
 				return (false);
 			}
 			else {
-				if (name.find('\r') || name.find('\n') || name.find(' ') || name.find('\0') || name.find(',')) {
+				if (name.find('\r') != -1 || name.find('\n') != -1 || name.find(' ') != -1 || name.find('\0') != -1 || name.find(',') != -1) {
 					debug(RED"[setName] В имени канала есть запрещённый символ"DEFAULT);
 					return (false);
 				}
