@@ -991,6 +991,7 @@ private:
 								if (it->getCountUSer() == 0) {
 									debug(GREEN"[command_kick] Удаляем канал..."DEFAULT);
 									channel->erase(it);
+									it = channel->begin();
 								}
 							}
 							else {
@@ -1011,12 +1012,44 @@ private:
 	}
 // Пользователь может покинуть каналы, которые он укажет в параметрах
 void command_part(pair<map<int, User>::iterator, bool> *res) {
+	if (res->first->second.getStatus() == -1) {
+		add_unregister_error();
+		return ;
+	}
+	if (lenparam >= 2) {
+		parser_vector(param[1], &channel_list);
+		for (vector<string>::iterator us = channel_list.begin(); us != channel_list.end(); us++) {
+			bool	flag = true;
 
+			for (vector<Channel>::iterator it = channel->begin(); it != channel->end(); it++ ) {
+				if (*us == it->getName()) {
+					if (it->delUser(id) == false) {
+						debug(RED"[command_part] Вы не в канале"DEFAULT);
+						add_error(ERR_NOTONCHANNEL, *us + " :You're not on that channel"); //ERR_NOTONCHANNEL //ЕСЛИ ТЫ НЕ В КАНАЛЕ
+					}
+					else {
+						debug(GREEN"[command_part] Вы покидаете канал"DEFAULT);
+						add_message(id, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp() + " PART :" + it->getName() + "\n");
+					}
+					if (it->getCountUSer() == 0) {
+						debug(GREEN"[command_part] Канал удаляется..."DEFAULT);
+						channel->erase(it);
+						us = channel_list.begin();
+					}
+					flag = false;
+					break ;
+				}
+			}
+			if (flag) {
+				debug(RED"[command_part] Такого канала нет"DEFAULT);
+				add_error(ERR_NOSUCHCHANNEL, *us + " :No such channel"); //ERR_NOSUCHCHANNEL //НЕТ ТАКОГО КАНАЛА
+			}
+		}
+	}
 }
 // Пользователь может получить список всех пользователей, состоящих в канале
 void command_names(pair<map<int, User>::iterator, bool> *res) {
-	if (res->first->second.getStatus() == -1)
-	{
+	if (res->first->second.getStatus() == -1) {
 		add_unregister_error();
 		return ;
 	}

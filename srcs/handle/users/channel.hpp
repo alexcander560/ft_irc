@@ -74,9 +74,11 @@ class Channel
 			return (true);
 		}
 		// Удалить Юзера
-		void			delUser(int	id) {
+		bool		delUser(int	id) {
 			int		size_start, size_end;
 			bool	flag = false;
+			int		old_size = user.size(), size_new;
+			bool	res = false;
 
 			debug(GREEN"[addUser] Пытаюсь удалить юзера..."DEFAULT);
 			size_start = user.size();
@@ -88,8 +90,12 @@ class Channel
 				}
 			}
 			user.erase(id);
+			size_new = user.size();
+			if (old_size != size_new)
+				res = true;
 			if (flag == true)
 				user.begin()->second = true;
+			return (res);
 		}
 		// Установить имя канала
 		bool			setName(const string name) {
