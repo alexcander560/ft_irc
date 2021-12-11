@@ -1214,7 +1214,7 @@ public:
 					add_unregister_error();
 				else
 				{
-					add_auto_message(ERR_UNKNOWNCOMMAND, ":Unknown command");
+					add_auto_message(ERR_UNKNOWNCOMMAND, param[0] + " :Unknown command");
 					debug(RED"[handle_message] Неизвестная команда" DEFAULT);
 				}
 			}
