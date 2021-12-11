@@ -1176,7 +1176,10 @@ public:
 		res.first->second.setTimeIdle(getCurrentTimeForUser());
 		if(lenparam > 0){
 			try	{ (this->*commands.at(param[0]))(&res); }
-			catch(const std::exception & e)	{ debug(RED"[handle_message] Неизвестная команда" DEFAULT); }
+			catch(const std::exception & e)	{
+				add_auto_message(ERR_UNKNOWNCOMMAND, ":Unknown command");
+				debug(RED"[handle_message] Неизвестная команда" DEFAULT);
+			}
 		}
 		else
 			debug(RED"[handle_message] в строке слишком мало параметров" DEFAULT);
