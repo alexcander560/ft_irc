@@ -101,7 +101,8 @@ void	listen_clients(const int socket_fd, const string pass)
 					clients.insert(std::pair<int, std::string>(connection_fd, ""));
 					FD_SET(connection_fd, &fds);
 
-					std::cout	<< "DEBUG: [listen_clients] New connection with ID " << connection_fd << " was add" << endl;
+					if (DEBUG)
+						std::cout	<< "DEBUG: [listen_clients] New connection with ID " << connection_fd << " was add" << endl;
 				}
 				else //Старое подключение - обработка
 				{

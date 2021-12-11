@@ -1063,17 +1063,16 @@ public:
 		debug("[printMassege] Cообщение получено {" + str_message + "}");
 		for (int i = 0; i < lenparam; i++)
 			temp += "(" + param[i] + ") ";
-		cout << "size user_list= " << user_list.size() << endl;
-		for (set<string>::iterator us1 = user_list.begin(); us1 != user_list.end(); us1++)
-			cout << "{" << *us1 << "}" << endl;
-		cout << "size channel_list= " << channel_list.size() << endl;
-		for (vector<string>::iterator us1 = channel_list.begin(); us1 != channel_list.end(); us1++)
-			cout << "{" << *us1 << "}" << endl;
-		cout << "size pass_list= " << pass_list.size() << endl;
-		for (vector<string>::iterator us1 = pass_list.begin(); us1 != pass_list.end(); us1++)
-			cout << "{" << *us1 << "}" << endl;
-		if (DEBUG)
-		{
+		if (DEBUG) {
+			cout << "[printMassege] size user_list= " << user_list.size() << endl;
+			for (set<string>::iterator us1 = user_list.begin(); us1 != user_list.end(); us1++)
+				cout << "{" << *us1 << "}" << endl;
+			cout << "[printMassege] size channel_list= " << channel_list.size() << endl;
+			for (vector<string>::iterator us1 = channel_list.begin(); us1 != channel_list.end(); us1++)
+				cout << "{" << *us1 << "}" << endl;
+			cout << "[printMassege] size pass_list= " << pass_list.size() << endl;
+			for (vector<string>::iterator us1 = pass_list.begin(); us1 != pass_list.end(); us1++)
+				cout << "{" << *us1 << "}" << endl;
 			debug(clients->size() ? "[printMassege] Печать всех пользователей" : "[handle_message] Нет пользователей");
 			for (map<int, User>::iterator it1 = clients->begin(); it1 != clients->end(); it1++)
 				it1->second.printUser();

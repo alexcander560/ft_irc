@@ -90,7 +90,7 @@ class Channel
 			cout
 			<< "----------------------------------------" << endl
 			<< "NAME: " << name << endl
-			<< "TOPIC: " << topic << endls
+			<< "TOPIC: " << topic << endl
 			<< "ID USER(FLAG OPER) " << endl;
 			for (map<int, bool>::iterator i = user.begin() ; i != user.end(); i++)
 				cout << i->first << " (" << i->second << ")" << endl;
