@@ -88,8 +88,8 @@ void	listen_clients(const int socket_fd, const string pass)
 		if (check_time(&clients_map, pass, clients, fds, clients_ip, &channel))
 			continue ;
 		read_fds = fd_set(fds);
-		struct timeval tv = {0, 10000};
-		handle_select( select(FD_SETSIZE, &read_fds, NULL, NULL, &tv) );
+		struct timeval timeout = {0, 10000};
+		handle_select( select(FD_SETSIZE, &read_fds, NULL, NULL, &timeout) );
 		for (int i = 0; i < FD_SETSIZE; i++)
 		{
 			if (FD_ISSET(i, &read_fds))

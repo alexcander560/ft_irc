@@ -1,16 +1,17 @@
 #include "ping.hpp"
+#include "../general.hpp"
 #include "../handle/messegeHandler/additions.hpp"
 
-#define PING_SECOND 10000
+#define PING_SECOND 600
 
-#define PING_SECOND_KICK 15000
+#define PING_SECOND_KICK 720
 
 void	ping_client(std::map<int, User> &users, const int &id)
 {
 	std::vector< std::pair<int, std::string> >	messages;
 
 	users.find(id)->second.setIsPing(true);
-	messages.push_back(make_pair(id, "PING\n"));
+	messages.push_back(make_pair(id, "PING :" SERVER_NAME "\n"));
 	send_message(messages);
 }
 
