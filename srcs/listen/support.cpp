@@ -8,7 +8,7 @@
 /* Отправить сообщение для пользователя по его ID */
 void	send_message(vector< pair<int, string> > message)
 {
-	size_t									send_value;
+	int									send_value;
 	pair<int, string>						value;
 	vector< pair<int, string> >::iterator	begin = message.begin(), end = message.end();
 

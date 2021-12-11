@@ -25,15 +25,15 @@ User::User(int id, string ip)
 User::~User(){}
 
 // Все get
-const string				User::getName() const			{ return (_nick.first); }
-const int					User::getStatus() const			{ return (_status); }
-const string				User::getUserName() const		{ return (_data.first.username); }
-const string				User::getHostName() const		{ return (_data.first.hostname); }
-const string				User::getRealName() const		{ return (_data.first.realname); }
-const string				User::getServerName() const		{ return (_data.first.servername); }
-const string				User::getIp() const				{ return (_ip); }
-const userMode				User::getMode() const			{ return (_mode); }
-const pair<bool, string>	User::getAwayMessage() const	{ return (_away_message); }
+string				User::getName() const			{ return (_nick.first); }
+int					User::getStatus() const			{ return (_status); }
+string				User::getUserName() const		{ return (_data.first.username); }
+string				User::getHostName() const		{ return (_data.first.hostname); }
+string				User::getRealName() const		{ return (_data.first.realname); }
+string				User::getServerName() const		{ return (_data.first.servername); }
+string				User::getIp() const				{ return (_ip); }
+userMode				User::getMode() const			{ return (_mode); }
+pair<bool, string>	User::getAwayMessage() const	{ return (_away_message); }
 time_t						User::getTimePing() const		{ return (_data.first.timeAfterPing); }
 time_t						User::getTimeIdle() const		{ return (_data.first.timeIdle); }
 time_t						User::getIsPing() const			{ return (_is_ping); }

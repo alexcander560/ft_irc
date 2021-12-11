@@ -1,14 +1,14 @@
 #include "additions.hpp"
 #include <sstream>
 
-const string	getCurrentTime()
+string	getCurrentTime()
 {
 	time_t	now_time;
 	time(&now_time);
 	return (string(ctime(&now_time)));
 }
 
-const time_t		getCurrentTimeForUser()
+time_t		getCurrentTimeForUser()
 {
 	time_t	now_time;
 	time(&now_time);

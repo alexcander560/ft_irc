@@ -12,12 +12,10 @@
 
 static int	create_socket()
 {
-	int	socket_fd, nonblocking;
+	int	socket_fd;
 
 	socket_fd = socket(PF_INET, SOCK_STREAM, TCP);
 	if (socket_fd == -1)
-		fatal(std::strerror(errno));
-	if (nonblocking == -1)
 		fatal(std::strerror(errno));
 	return (socket_fd);
 }

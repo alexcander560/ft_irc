@@ -32,7 +32,7 @@ int		check_mask(string str, string mask_base) {
 	string	mask = "";
 	int		index = 0, len_str = str.size(), len_mask;
 
-	if (mask_base.find('*') == -1)
+	if (mask_base.find('*') == std::string::npos)
 		return (str == mask_base);
 	for (int i = 0; mask_base[i]; i++) {
 		if (mask_base[i] == '*' && i == 0)

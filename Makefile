@@ -12,7 +12,7 @@ OBJFILES = *.o
 all: $(NAME)
 
 $(NAME): $(CPPFILES) $(HPPFILES)
-	@clang++ -c $(CPPFILES)
+	@clang++ -Wall -Wextra -Werror -c $(CPPFILES)
 	@clang++ $(OBJFILES) -o $(NAME) -lcurl -std=c++98
 
 clean:

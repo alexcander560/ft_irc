@@ -6,7 +6,7 @@
 /* Из 'GETIMAGE прекрасный котик' возвращает 'GETIMAGE' */
 string	get_command_by_msg(std::string &msg)
 {
-	int	position = 0;
+	size_t	position = 0;
 	string	command(msg);
 
 	while (position < command.size() && command[position] == ' ')
@@ -21,7 +21,7 @@ string	get_command_by_msg(std::string &msg)
 /* Из 'GETIMAGE прекрасный котик' возвращает 'прекрасный котик' */
 string	get_data_by_msg(std::string &msg)
 {
-	int	position = 0;
+	size_t	position = 0;
 	string	command(msg);
 
 	while (position < command.size() && command[position] == ' ')

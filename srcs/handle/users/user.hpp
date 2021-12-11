@@ -43,16 +43,16 @@ class User
 		~User();
 
 		// Возвращает имя пользователя
-		const string				getName() const;
+		string				getName() const;
 		// Возвращает статус пользователя
-		const int					getStatus() const;
-		const string				getUserName() const;
-		const string				getHostName() const;
-		const string				getServerName() const;
-		const string				getRealName() const;
-		const string				getIp() const;
-		const userMode				getMode() const;
-		const pair<bool, string>	getAwayMessage() const;
+		int					getStatus() const;
+		string				getUserName() const;
+		string				getHostName() const;
+		string				getServerName() const;
+		string				getRealName() const;
+		string				getIp() const;
+		userMode				getMode() const;
+		pair<bool, string>	getAwayMessage() const;
 		time_t						getTimePing() const;
 		time_t						getTimeIdle() const;
 		time_t						getIsPing() const;

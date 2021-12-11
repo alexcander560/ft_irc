@@ -54,6 +54,7 @@ class Channel
 		map<int, bool>	getUserList() { return user; }
 		// Добавить Юзера
 		bool			addUser(int	id, string pass = "") {
+			(void)pass;
 			//if (flag_k == false) {
 				if ((user.insert(make_pair(id, false))).second)
 					debug(GREEN"[addUser] Вы успешно присоединились"DEFAULT);
@@ -74,10 +75,11 @@ class Channel
 		}
 		// Удалить Юзера
 		void			delUser(int	id) {
-			int		size_start = user.size(), size_end;
+			int		size_start, size_end;
 			bool	flag = false;
 
 			debug(GREEN"[addUser] Пытаюсь удалить юзера..."DEFAULT);
+			size_start = user.size();
 			size_end = user.size();
 			if (user.find(id) != user.end()) {
 				if (user.find(id)->second == true) {
@@ -102,7 +104,7 @@ class Channel
 				return (false);
 			}
 			else {
-				if (name.find('\r') != -1 || name.find('\n') != -1 || name.find(' ') != -1 || name.find('\0') != -1 || name.find(',') != -1) {
+				if (name.find('\r') != std::string::npos || name.find('\n') != std::string::npos || name.find(' ') != std::string::npos|| name.find('\0') != std::string::npos || name.find(',') != std::string::npos) {
 					debug(RED"[setName] В имени канала есть запрещённый символ"DEFAULT);
 					return (false);
 				}

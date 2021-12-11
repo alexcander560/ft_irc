@@ -64,7 +64,7 @@ private:
 		string	mask = "";
 		int		index = 0, len_str = str.size(), len_mask;
 
-		if (mask_base.find('*') == -1)
+		if (mask_base.find('*') == std::string::npos)
 			return (str == mask_base);
 		for (int i = 0; mask_base[i]; i++) {
 			if (mask_base[i] == '*' && i == 0)
@@ -249,6 +249,7 @@ private:
 	}
 	// Прерывает соединение
 	void	command_quit(pair<map<int, User>::iterator, bool> *res) {
+		(void)res;
 		clients->erase(id);
 		disconnect_by_id(this->id, this->clients_ivan, this->fds);
 		debug(GREEN"[command_quit] Команда QUIT использовалась для пользователя"DEFAULT);
@@ -819,9 +820,9 @@ private:
 		if (lenparam == 3)
 			parser_vector(param[2], &pass_list);
 		//===============================================================	
-		for (int i = 0; i < channel_list.size(); i++) {
+		for (size_t i = 0; i < channel_list.size(); i++) {
 			bool	flag = true;
-			int		count = 0;
+			size_t	count = 0;
 			for (vector<Channel>::iterator j = channel->begin(); j != channel->end(); j++, count++) {
 				if (channel_list[i] == j->getName()) {
 					flag = false;
@@ -1055,7 +1056,7 @@ void command_list(pair<map<int, User>::iterator, bool> *res) {
 			return ;
 		}
 		parser_vector(param[1], &channel_list);
-		for (int count_channel = 0; count_channel < channel->size(); count_channel++) {
+		for (size_t count_channel = 0; count_channel < channel->size(); count_channel++) {
 			for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
 				if (channel_list[count_channel] == i->getName()) {
 					debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
@@ -1089,7 +1090,7 @@ public:
 	//====================================================================================================================================================
 	// Конструктор
 	MassegeHandler(int id, string str_message, map<int, User> *clients, string _pass, map<int, std::string> &clients_ivan, fd_set &fds, string ip, vector <Channel> *channel):
-	id(id), str_message(str_message), clients(clients), pass(_pass), clients_ivan(clients_ivan), fds(fds), ip(ip), channel(channel), is_notice(false) {
+	str_message(str_message), id(id), clients(clients), pass(_pass), clients_ivan(clients_ivan), fds(fds), ip(ip), is_notice(false), channel(channel) {
 		parser_param();
 		lenparam = param.size();
 		commands["PASS"] = &MassegeHandler::command_pass; //Response OK

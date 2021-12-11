@@ -17,6 +17,7 @@ void	ping_client(std::map<int, User> &users, const int &id)
 
 void	kick_client(std::map<int, User> &users, const int &id)
 {
+	(void)users;
 	std::vector< std::pair<int, std::string> >	messages;
 
 	messages.push_back(make_pair(id, "QUIT"));
