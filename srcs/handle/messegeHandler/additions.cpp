@@ -1,4 +1,5 @@
 #include "additions.hpp"
+#include <sstream>
 
 const string	getCurrentTime()
 {
@@ -25,4 +26,11 @@ map<int, User>::iterator getUserByName(map<int, User> *clients, string name)
 	}
 	throw (0);
 	return (begin);
+}
+
+std::string	int_to_string(size_t number)
+{
+	std::ostringstream stream_for_convert;
+	stream_for_convert << number;
+	return (stream_for_convert.str());
 }
