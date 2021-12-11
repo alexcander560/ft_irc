@@ -15,6 +15,10 @@ $(NAME): $(CPPFILES) $(HPPFILES)
 	@clang++ -Wall -Wextra -Werror -c $(CPPFILES)
 	@clang++ $(OBJFILES) -o $(NAME) -lcurl -std=c++98
 
+bonus: $(CPPFILES) $(HPPFILES)
+	@clang++ -Wall -Wextra -Werror -c $(CPPFILES)
+	@clang++ $(OBJFILES) -o $(NAME) -lcurl -std=c++98
+
 clean:
 	@rm -rf $(OBJFILES)
 	@rm -rf *.hpp.gch
