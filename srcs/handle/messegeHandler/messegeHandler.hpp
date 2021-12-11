@@ -51,8 +51,13 @@ private:
 	 *     - add_auto_message("311", "<nick> <user> <host> * :<real name>");
 	*/
 	{
-		add_message(this->id, ":" SERVER_NAME " " + code + " "
-							  + this->clients->find(this->id)->second.getName() + " " + str + "\n");
+		string	user = this->clients->find(id)->second.getName();
+		string	name = this->clients->find(id)->second.getUserName();
+		string	ipaddress = this->clients->find(id)->second.getIp();
+		//return (string(":") + user + string("!") + name + string("@") + ipaddress + string(" "));
+
+		// add_message(this->id, ":" SERVER_NAME " " + code + " "
+		// 					  + this->clients->find(this->id)->second.getName() + " " + str + "\n");
 		debug("[add_auto_message] Error for user was set");
 	}
 	// Для перебора массива с функциями
@@ -291,60 +296,64 @@ private:
 		parser_set(param[1], &user_list);
 		for (set<string>::iterator us1 = user_list.begin(); us1 != user_list.end(); us1++){
 			bool	flag = true;
-			for (map<int, User>::iterator it1 = clients->begin(); it1 != clients->end(); it1++) {
-				if (it1->second.getName() == *us1) {
-					if (it1->second.getStatus() != 1)
-						debug(RED"[command_privmsg] Пользователь с таким ником не прошёл полную регистрацию"DEFAULT);
-					else if (it1->second.getMode().s && param[0] == "NOTICE")
-						debug(RED"[command_privmsg] У конечной точки стоит флаг +s. NOTICE не сработает!"DEFAULT);
-					else
-					{
-						debug(GREEN"[command_privmsg] Пользователь найден, отправляю сообщение..."DEFAULT);
-						add_message(it1->first, getFrontLine() + param[0] + " " + *us1 + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n");
-						if (!is_notice && it1->second.getAwayMessage().first) {										/* Check AWAY - BEGIN */
-							debug(GREEN"[command_privmsg] Away автоматическое сообщение было добавлено"DEFAULT);
-							add_message(id, getFrontLine(it1->first) + param[0] + " " + clients->find(id)->second.getName() + " :" + it1->second.getAwayMessage().second + "\n");
-						}
-						else if (is_notice)
-							debug("[command_privmsg] It's not need to send automessage, because it's notice");
+			if (param[1][0] != '#' && param[1][0] != '&') {
+				for (map<int, User>::iterator it1 = clients->begin(); it1 != clients->end(); it1++) {
+					if (it1->second.getName() == *us1) {
+						if (it1->second.getStatus() != 1)
+							debug(RED"[command_privmsg] Пользователь с таким ником не прошёл полную регистрацию"DEFAULT);
+						else if (it1->second.getMode().s && param[0] == "NOTICE")
+							debug(RED"[command_privmsg] У конечной точки стоит флаг +s. NOTICE не сработает!"DEFAULT);
 						else
-							debug("[command_privmsg] It's not need to send automessage");							/* Check AWAY - END */
+						{
+							debug(GREEN"[command_privmsg] Пользователь найден, отправляю сообщение..."DEFAULT);
+							add_message(it1->first, getFrontLine() + param[0] + " " + *us1 + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n");
+							if (!is_notice && it1->second.getAwayMessage().first) {										/* Check AWAY - BEGIN */
+								debug(GREEN"[command_privmsg] Away автоматическое сообщение было добавлено"DEFAULT);
+								add_message(id, getFrontLine(it1->first) + param[0] + " " + clients->find(id)->second.getName() + " :" + it1->second.getAwayMessage().second + "\n");
+							}
+							else if (is_notice)
+								debug("[command_privmsg] It's not need to send automessage, because it's notice");
+							else
+								debug("[command_privmsg] It's not need to send automessage");							/* Check AWAY - END */
+						}
+						flag = false;
+						break ;
 					}
-					flag = false;
-					break ;
+				}
+				if (flag)
+				{
+					add_error(ERR_NOSUCHNICK, param[1] + " :No such nick/channel"); //ERR_NOSUCHNICK
+					debug(RED"[handle_message] Пользователь с таким ником не найден" DEFAULT);
 				}
 			}
-			if (flag)
-			{
-				add_error(ERR_NOSUCHNICK, param[1] + " :No such nick/channel"); //ERR_NOSUCHNICK
-				debug(RED"[handle_message] Пользователь с таким ником не найден" DEFAULT);
-			}
-			//================== Каналы ====================================
-			flag = true;
-			for (vector<Channel>::iterator it1 = channel->begin(); it1 != channel->end(); it1++) {
-				if (it1->getName() == *us1) {
-					map<int, bool> temp_list = it1->getUserList();
-					if (temp_list.find(this->id) == temp_list.end())
-					{
-						add_error(ERR_CANNOTSENDTOCHAN, ":Cannot send to channel"); //ERR_CANNOTSENDTOCHAN
-						continue ;
-					}
-					debug(GREEN"[handle_message] Канал найден, отправляем всем сообщение..." DEFAULT);
-					for (map<int, bool>::iterator temp_iter = temp_list.begin(); temp_iter != temp_list.end(); temp_iter++) {
-						if (temp_iter->first != id) {
-							debug(GREEN"[handle_message] Отправляю сообщение..." DEFAULT);
-							add_message(temp_iter->first, getFrontLine() + param[0] + " " + *us1 + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n");
+			else {
+				//================== Каналы ====================================
+				flag = true;
+				for (vector<Channel>::iterator it1 = channel->begin(); it1 != channel->end(); it1++) {
+					if (it1->getName() == *us1) {
+						map<int, bool> temp_list = it1->getUserList();
+						if (temp_list.find(this->id) == temp_list.end())
+						{
+							add_error(ERR_CANNOTSENDTOCHAN, ":Cannot send to channel"); //ERR_CANNOTSENDTOCHAN
+							continue ;
 						}
-						else
-							debug(RED"[handle_message] Сообщение самому себе НЕ отправлено" DEFAULT);
+						debug(GREEN"[handle_message] Канал найден, отправляем всем сообщение..." DEFAULT);
+						for (map<int, bool>::iterator temp_iter = temp_list.begin(); temp_iter != temp_list.end(); temp_iter++) {
+							if (temp_iter->first != id) {
+								debug(GREEN"[handle_message] Отправляю сообщение..." DEFAULT);
+								add_message(temp_iter->first, getFrontLine() + param[0] + " " + *us1 + " " + ((param[2][0] == ':') ? ("") : (":")) + param[2] + "\n");
+							}
+							else
+								debug(RED"[handle_message] Сообщение самому себе НЕ отправлено" DEFAULT);
+						}
+						flag = false;
+						break ;
 					}
-					flag = false;
-					break ;
 				}
+				if (flag)
+					debug(RED"[handle_message] Канал с таким именем не найден" DEFAULT);
+				//==============================================================
 			}
-			if (flag)
-				debug(RED"[handle_message] Канал с таким именем не найден" DEFAULT);
-			//==============================================================
 		}
 	}
 	// Устанавливает автоматический ответ на сообщение типа PRIVMSG
@@ -380,15 +389,24 @@ private:
 		if (res->first->second.getStatus() == -1)
 		{
 			add_unregister_error();
+			debug(RED"[command_mode] " + param[0] + " Нельзя выполнить до регистрации пользователя" DEFAULT);
 			return ;
 		}
-		if (!command_base_check(3, res->first->second.getStatus()))
+		if (lenparam < 3)
+		{
+			add_error(RPL_UMODEIS, "+is");
+			debug(RED"[command_base_check] " + param[0] + " слишком мало аргументов"DEFAULT);
 			return ;
+		}
 		if (param[1] == res->first->second.getName()) { // Вот эта потом нужно будет поменять, наверное
-			if (param[2].size() != 2)
+			if (param[2].size() != 2) {
+				add_error(ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag");
 				debug(RED"[command_mode] Строка с параметрами неверной длины"DEFAULT);
-			else if (param[2][0] != '+' && param[2][0] != '-')
+			}
+			else if (param[2][0] != '+' && param[2][0] != '-') {
+				add_error(ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag");
 				debug(RED"[command_mode] Знак mode неверный {" + string(1, param[1][0]) + "}"DEFAULT);
+			}
 			else {
 				if (param[2][1] == 'i')
 					res->first->second.setModeI(param[2][0] == '+' ? true : false);
@@ -403,12 +421,18 @@ private:
 					else
 						debug(RED"[command_mode] нельзя получить права оператора таким способом"DEFAULT);
 				}
-				else
+				else {
+					add_error(ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag");
 					debug(RED"[command_mode] флаг mode неверный {" + string(1, param[2][1]) + "}"DEFAULT);
+					return ;
+				}
+				add_auto_message("MODE", param[2]);
 			}
 		}
-		else
+		else {
+			add_error(ERR_USERSDONTMATCH, ":Cannot change mode for other users");
 			debug(RED"[command_mode] Имя пользователя введено неверно"DEFAULT);
+		}
 	}
 	// Возвращает список пользователей в сети
 	void	command_ison(pair<map<int, User>::iterator, bool> *res) {
