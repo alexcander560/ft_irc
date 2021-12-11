@@ -20,9 +20,9 @@ class Channel
 		//bool			flag_b;		// установка маски бана
 		//set <string>	ban_masks;	// маска бана
 		//bool			flag_v;		// брать/давать возможность голоса при модерируемом режиме
-		bool			flag_k;		// установка пароля на канал
-		string			pass;		// пароль канала
-		// Набор пользователей в канале, является ли пользователь оператором
+		//bool			flag_k;		// установка пароля на канал
+		//string			pass;		// пароль канала
+		// Набор пользователей в канале, порядок вхождения на канал
 		map<int, bool>	user;
 		// Конструктор
 		Channel (string name, int id) {
@@ -36,8 +36,8 @@ class Channel
 			//flag_n = false;
 			//flag_m = false;
 			//flag_l = false;
-			flag_k = false;
-			pass = "";
+			//flag_k = false;
+			//pass = "";
 			topic = "No topic is set";
 			user.insert(make_pair(id, true));
 		}
@@ -54,28 +54,40 @@ class Channel
 		map<int, bool>	getUserList() { return user; }
 		// Добавить Юзера
 		bool			addUser(int	id, string pass = "") {
-			if (flag_k == false) {
+			//if (flag_k == false) {
 				if ((user.insert(make_pair(id, false))).second)
 					debug(GREEN"[addUser] Вы успешно присоединились"DEFAULT);
 				else {
 					debug(RED"[addUser] Вы уже находитесь в канале"DEFAULT);
 					return (false);
 				}
-			}
-			else if (pass == this->pass) {
-				user.insert(make_pair(id, false));
-				debug(GREEN"[addUser] Вы успешно присоединились, был введён верный пароль"DEFAULT);
-			}
-			else {
-				debug(GREEN"[addUser] В доступе отказано, пароль неверный"DEFAULT);
-				return (false);
-			}
+			//}
+			// else if (pass == this->pass) {
+			// 	user.insert(make_pair(id, false));
+			// 	debug(GREEN"[addUser] Вы успешно присоединились, был введён верный пароль"DEFAULT);
+			// }
+			// else {
+			// 	debug(GREEN"[addUser] В доступе отказано, пароль неверный"DEFAULT);
+			// 	return (false);
+			// }
 			return (true);
 		}
 		// Удалить Юзера
 		void			delUser(int	id) {
+			int		size_start = user.size(), size_end;
+			bool	flag = false;
+
 			debug(GREEN"[addUser] Пытаюсь удалить юзера..."DEFAULT);
+			size_end = user.size();
+			if (user.find(id) != user.end()) {
+				if (user.find(id)->second == true) {
+					debug(GREEN"[addUser] Оператор будет удалён..."DEFAULT);
+					flag = true;
+				}
+			}
 			user.erase(id);
+			if (flag == true)
+				user.begin()->second = true;
 		}
 		// Установить имя канала
 		bool			setName(const string name) {
@@ -114,7 +126,7 @@ class Channel
 			//<< "m(" << flag_m << ")" << endl
 			//<< "l(" << flag_t << ")" << endl
 			//<< "v(" << flag_v << ")" << endl
-			<< "k(" << flag_k << ")" << " {" << pass << "}" << endl
+			//<< "k(" << flag_k << ")" << " {" << pass << "}" << endl
 			<< "ID USER(FLAG OPER) " << endl;
 			for (map<int, bool>::iterator i = user.begin() ; i != user.end(); i++)
 				cout << i->first << " (" << i->second << ")" << endl;

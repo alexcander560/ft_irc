@@ -943,13 +943,95 @@ private:
 			debug(RED"[command_topic] Имя канала не найдено"DEFAULT);
 	}
 // Исключает пользователя из канала может быть использована только оператором канала
-//	void command_kick(pair<map<int, User>::iterator, bool> *res) {}
+	void command_kick(pair<map<int, User>::iterator, bool> *res) {
+		int flag = true;
+
+		if (res->first->second.getStatus() == -1)
+		{
+			add_unregister_error();
+			return ;
+		}
+		if (lenparam < 3)
+		{
+			add_error(ERR_NEEDMOREPARAMS, "KICK :Not enough parameters"); //ERR_NEEDMOREPARAMS
+			return ;
+		}
+		for (vector<Channel>::iterator it = channel->begin(); it < channel->size(); it++) {
+			if (param[1] == it->getName()) {
+				map<int, bool>	temp_user = it->getUserList();
+
+				if (temp_user.find(id) != temp_user.end()) {
+					debug(RED"[command_kick] вы не в этом канале>"DEFAULT);
+					add_error(ERR_NOTONCHANNEL, CHANNEL_NAME" :You're not on that channel"); //ERR_NOTONCHANNEL //ЕСЛИ ТЫ НЕ В КАНАЛЕ
+				}
+				else {
+					if (temp_user.find(id)->second == false) {
+						debug(RED"[command_kick] вы не админ"DEFAULT);
+						add_error(ERR_CHANOPRIVSNEEDED, CHANNEL_NAME" :You're not channel operator"); //ERR_CHANOPRIVSNEEDED //КАКОГО Х*Я? ТЫ НЕ ОПЕРАТОР
+					}
+					else {
+						bool flag_client = true;
+						int	id_client = -1;
+						for (map<int, User>::iterator j = clients->begin(); j != clients->end(); j++) {
+							if (j->second.getName() == param[2]) {
+								id_client = j->first;
+								flag_client = false;
+								break ;
+							}
+						}
+						if (flag_client) {
+							debug(RED"[command_kick] такого клиента нет"DEFAULT);
+							add_error(ERR_NOSUCHNICK, param[2] + " :No such nick/channel"); //ERR_NOSUCHNICK //Нет такого юзера
+						} else {
+							// Такой клиент существует на сервере, но не факт что он есть в канале
+							if (temp_user.find(id_client) != temp_user.end()) {
+								for (map<int, bool>::iterator pedro = temp_user.begin(); pedro != temp_user.end(); pedro++) {
+									add_message(pedro->first, "");
+								}
+								it->delUser(id_client);
+							}
+							else {
+								debug(RED"[command_kick] такого клиента нет в канале"DEFAULT);
+								add_error(ERR_NOSUCHNICK, param[2] + " :No such nick/channel"); //ERR_NOSUCHNICK //Нет такого юзера
+							}
+						}
+					}
+				}
+				flag = false;
+				break ;
+			}
+		}
+		if (flag) {
+			add_error(ERR_NOSUCHCHANNEL, CHANNEL_NAME" :No such channel"); //ERR_NOSUCHCHANNEL //НЕТ ТАКОГО КАНАЛА
+			debug(RED"[command_kick] Канал не найден>"DEFAULT);
+		}
+	}
 // Пользователь может покинуть каналы, которые он укажет в параметрах
 //	void command_part(pair<map<int, User>::iterator, bool> *res) {}
 // Пользователь может получить список всех пользователей, состоящих в канале
 //	void command_names(pair<map<int, User>::iterator, bool> *res) {}
 // Используется для вывода списка каналов и их топиков
-//	void command_list(pair<map<int, User>::iterator, bool> *res) {}
+void command_list(pair<map<int, User>::iterator, bool> *res) {
+	if (res->first->second.getStatus() == -1)
+	{
+		add_unregister_error();
+		return ;
+	}
+	add_message(id, ":"SERVER_NAME" "RPL_LISTSTART" " + res->first->second.getName() + " Channel :Users  Name\n");
+	if (lenparam > 1) {
+		parser_vector(param[1], channel_list);
+		for (int count_channel = 0; count_channel < channel->size(); count_channel++) {
+			for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
+				if (channel_list[count_channel] == i->getName()) {
+					debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
+					add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + i->getCountUSer() + " :[+n]\n");
+					break ;
+				}
+			}
+		}
+	}
+	add_message(id, ":"SERVER_NAME" "RPL_LISTEND" " + res->first->second.getName() + " :End of /LIST\n");
+}
 //=====================================================================================================================
 //=====================================================================================================================
 
