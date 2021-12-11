@@ -1177,8 +1177,13 @@ public:
 		if(lenparam > 0){
 			try	{ (this->*commands.at(param[0]))(&res); }
 			catch(const std::exception & e)	{
-				add_auto_message(ERR_UNKNOWNCOMMAND, ":Unknown command");
-				debug(RED"[handle_message] Неизвестная команда" DEFAULT);
+				if (res->first->second.getStatus() == -1)
+					add_unregister_error();
+				else
+				{
+					add_auto_message(ERR_UNKNOWNCOMMAND, ":Unknown command");
+					debug(RED"[handle_message] Неизвестная команда" DEFAULT);
+				}
 			}
 		}
 		else
