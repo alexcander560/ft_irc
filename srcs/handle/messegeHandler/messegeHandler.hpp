@@ -327,8 +327,6 @@ private:
 			clients->find(id)->second.setAwayMessage(make_pair(true, param[1]));
 			add_auto_message(RPL_NOWAWAY, ":You have been marked as being away"); //RPL_NOWAWAY
 		}
-		else
-			warning(RED"[command_away] Неверное число аргументов"DEFAULT);
 	}
 	// PRIVMSG без добавления автоматического ответа при режиме +s
 	void	command_notice(pair<map<int, User>::iterator, bool> *res) {
