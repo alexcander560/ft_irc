@@ -572,6 +572,7 @@ private:
 			return ;
 		}
 		if (lenparam != 2 && lenparam != 3) {
+			add_error(ERR_NEEDMOREPARAMS, "WHO :Not enough parameters");
 			debug(RED"[command_who] Неверное число аргументов"DEFAULT);
 			return ;
 		}
@@ -640,6 +641,7 @@ private:
 			return ;
 		}
 		if (res->first->second.getMode().o == false) {
+			add_error(ERR_NOPRIVILEGES, ":Permission Denied- You're not an IRC operator");
 			debug(RED"[command_wallops] Только оператор может пользоваться этой командой"DEFAULT);
 			return ;
 		}
