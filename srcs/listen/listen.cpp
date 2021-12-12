@@ -136,17 +136,9 @@ void	listen_clients(const int socket_fd, const string pass)
 							count_step++;
 							//=================================================
 							printf("ID [%d]: %s\n", i, line.c_str()); // Для команды: ВЫВОД НА СЕРВЕР
-							try
-							{
-								debug("[listen_clients] ip_host= {" + clients_ip.find(i)->second + "}");
-								// Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
-								send_message(handle_message(line, i, &clients_map, pass, clients, fds, clients_ip.find(i)->second, &channel));
-							}
-							catch (std::string e)
-							{
-								//TODO: FOR ALEX		Show message?		FOR ALEX
-								// Хз что тут надо делать
-							}
+							debug("[listen_clients] ip_host= {" + clients_ip.find(i)->second + "}");
+							// Для команды: ОТПРАВКА ПОЛЬЗОВАТЕЛЮ СООБЩЕНИЯ
+							send_message(handle_message(line, i, &clients_map, pass, clients, fds, clients_ip.find(i)->second, &channel));
 							clear_by_id(i, clients);
 						}
 					}
