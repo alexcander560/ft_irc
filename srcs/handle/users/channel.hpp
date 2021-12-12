@@ -46,12 +46,12 @@ class Channel
 			int		old_size = user.size(), size_new;
 			bool	res = false;
 
-			debug(GREEN"[addUser] Пытаюсь удалить юзера..."DEFAULT);
+			debug(GREEN"[delUser] Пытаюсь удалить юзера..."DEFAULT);
 			size_start = user.size();
 			size_end = user.size();
 			if (user.find(id) != user.end()) {
 				if (user.find(id)->second == true) {
-					debug(GREEN"[addUser] Оператор будет удалён..."DEFAULT);
+					debug(GREEN"[delUser] Оператор будет удалён..."DEFAULT);
 					flag = true;
 				}
 			}
