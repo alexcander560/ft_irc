@@ -169,15 +169,13 @@ private:
 	// Если указан последний необязательный параметр, то функция будет проверять услвоие по-другому
 	// Установка пароля
 	void	command_pass(pair<map<int, User>::iterator, bool> *res) {
-		if (lenparam < 2)
-		{
+		if (lenparam < 2) {
 			add_error(ERR_NEEDMOREPARAMS, "PASS :Not enough parameters"); //ERR_NEEDMOREPARAMS
 			return ;
 		}
 		if (res->first->second.getStatus() == -1)
 			res->first->second.setPass(param, pass);
-		else
-		{
+		else {
 			add_error(ERR_ALREADYREGISTRED, ":You may not reregister"); //ERR_ALREADYREGISTRED
 			debug(RED"[handle_message] Вы уже зарегистрированы!" DEFAULT);
 		}
@@ -609,7 +607,7 @@ private:
 		add_message(id, ":" + (string)SERVER_NAME" " + "PONG :" + param[1] + "\n");
 	}
 	// Используется для проверки наличия активности клиента на другом конце
-	void command_pong(pair<map<int, User>::iterator, bool> *res) {
+	void	command_pong(pair<map<int, User>::iterator, bool> *res) {
 		if (res->first->second.getStatus() == -1) {
 			add_unregister_error();
 			return ;
@@ -627,7 +625,7 @@ private:
 		res->first->second.setIsPing(false);
 	}
 	// Команда отправляет сообщения всем IRC-операторам, находящимся в сети
-	void command_wallops(pair<map<int, User>::iterator, bool> *res) {
+	void	command_wallops(pair<map<int, User>::iterator, bool> *res) {
 		if (res->first->second.getStatus() == -1) {
 			add_unregister_error();
 			return ;
@@ -652,7 +650,7 @@ private:
 		}
 	}
 	// Возвращает разные статусы каждого пользователя
-	void command_whois(pair<map<int, User>::iterator, bool> *res) {
+	void	command_whois(pair<map<int, User>::iterator, bool> *res) {
 		bool	flag = false;
 
 		if (res->first->second.getStatus() == -1) {
@@ -690,7 +688,7 @@ private:
 		add_message(id, ":"SERVER_NAME" "RPL_ENDOFWHOIS" " + res->first->second.getName() + " " + param[1] + " :End of /WHOIS list\n");
 	}
 	// Используется клиентом для входа на канал
-	void command_join(pair<map<int, User>::iterator, bool> *res) {
+	void	command_join(pair<map<int, User>::iterator, bool> *res) {
 		if (res->first->second.getStatus() == -1) {
 			add_unregister_error();
 			return ;
@@ -791,8 +789,8 @@ private:
 			}
 		}
 	}
-// Используется для изменения или просмотра топика канала
-	void command_topic(pair<map<int, User>::iterator, bool> *res) {
+	// Используется для изменения или просмотра топика канала
+	void	command_topic(pair<map<int, User>::iterator, bool> *res) {
 		if (res->first->second.getStatus() == -1) {
 			add_unregister_error();
 			return ;
@@ -823,8 +821,8 @@ private:
 		if (flag)
 			debug(RED"[command_topic] Имя канала не найдено"DEFAULT);
 	}
-// Исключает пользователя из канала может быть использована только оператором канала
-	void command_kick(pair<map<int, User>::iterator, bool> *res) {
+	// Исключает пользователя из канала может быть использована только оператором канала
+	void	command_kick(pair<map<int, User>::iterator, bool> *res) {
 		int flag = true;
 
 		if (res->first->second.getStatus() == -1) {
@@ -894,116 +892,116 @@ private:
 			debug(RED"[command_kick] Канал не найден>"DEFAULT);
 		}
 	}
-// Пользователь может покинуть каналы, которые он укажет в параметрах
-void command_part(pair<map<int, User>::iterator, bool> *res) {
-	if (res->first->second.getStatus() == -1) {
-		add_unregister_error();
-		return ;
-	}
-	if (lenparam >= 2) {
-		parser_vector(param[1], &channel_list);
-		for (vector<string>::iterator us = channel_list.begin(); us != channel_list.end(); us++) {
-			bool	flag = true;
-
-			for (vector<Channel>::iterator it = channel->begin(); it != channel->end(); it++ ) {
-				if (*us == it->getName()) {
-					if (it->delUser(id) == false) {
-						debug(RED"[command_part] Вы не в канале"DEFAULT);
-						add_error(ERR_NOTONCHANNEL, *us + " :You're not on that channel"); //ERR_NOTONCHANNEL //если ты не в конале
-					}
-					else {
-						debug(GREEN"[command_part] Вы покидаете канал"DEFAULT);
-						add_message(id, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp() + " PART :" + it->getName() + "\n");
-					}
-					if (it->getCountUSer() == 0) {
-						debug(GREEN"[command_part] Канал удаляется..."DEFAULT);
-						channel->erase(it);
-						if (channel->size() == 0)
-							break ;
-						it = channel->begin();
-					}
-					flag = false;
-					break ;
-				}
-			}
-			if (flag) {
-				debug(RED"[command_part] Такого канала нет"DEFAULT);
-				add_error(ERR_NOSUCHCHANNEL, *us + " :No such channel"); //ERR_NOSUCHCHANNEL //нет такого конала
-			}
-		}
-	}
-}
-// Пользователь может получить список всех пользователей, состоящих в канале
-void command_names(pair<map<int, User>::iterator, bool> *res) {
-	if (res->first->second.getStatus() == -1) {
-		add_unregister_error();
-		return ;
-	}
-	if (lenparam == 1) {
-		for (vector<Channel>::iterator it = channel->begin(); it != channel->end(); it++) {
-			string			temp = "";
-			map<int, bool>	user_temp = it->getUserList();
-			for (map<int, bool>::iterator pedro = user_temp.begin(); pedro != user_temp.end(); pedro++) {
-				if (temp.size())
-					temp += " ";
-				temp += clients->find(pedro->first)->second.getName();
-			}
-			add_auto_message(RPL_NAMREPLY, "= " + it->getName() + " :@" + temp);
-		}
-	}
-	else {
-		parser_vector(param[1], &channel_list);
-		for (vector<string>::iterator us = channel_list.begin(); us != channel_list.end(); us++) {
-			for (vector<Channel>::iterator it = channel->begin(); it != channel->end(); it++) {
-				if (it->getName() == *us) {
-					string			temp = "";
-					map<int, bool>	user_temp = it->getUserList();
-
-					for (map<int, bool>::iterator pedro = user_temp.begin(); pedro != user_temp.end(); pedro++) {
-						if (temp.size())
-							temp += " ";
-						temp += clients->find(pedro->first)->second.getName();
-					}
-					add_auto_message(RPL_NAMREPLY, "= " + it->getName() + " :@" + temp);
-					break ;
-				}
-			}
-		}
-	}
-	add_auto_message(RPL_ENDOFNAMES, "* :End of /NAMES list");
-}
-// Используется для вывода списка каналов и их топиков
-void command_list(pair<map<int, User>::iterator, bool> *res) {
-	if (res->first->second.getStatus() == -1) {
-		add_unregister_error();
-		return ;
-	}
-	add_message(id, ":"SERVER_NAME" "RPL_LISTSTART" " + res->first->second.getName() + " Channel :Users  Name\n");
-	if (lenparam == 1) {
-		for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
-			debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
-			add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + int_to_string(i->getCountUSer()) + " :[+n]\n");
-		}
-	}
-	if (lenparam > 1) {
-		if (lenparam >= 3 && param[2] != SERVER_NAME) {
-			debug(RED"[command_list] Имя сервера неверно"DEFAULT);
-			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server");
+	// Пользователь может покинуть каналы, которые он укажет в параметрах
+	void	command_part(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1) {
+			add_unregister_error();
 			return ;
 		}
-		parser_vector(param[1], &channel_list);
-		for (size_t count_channel = 0; count_channel < channel->size(); count_channel++) {
-			for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
-				if (channel_list[count_channel] == i->getName()) {
-					debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
-					add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + int_to_string(i->getCountUSer()) + " :[+n]\n");
-					break ;
+		if (lenparam >= 2) {
+			parser_vector(param[1], &channel_list);
+			for (vector<string>::iterator us = channel_list.begin(); us != channel_list.end(); us++) {
+				bool	flag = true;
+
+				for (vector<Channel>::iterator it = channel->begin(); it != channel->end(); it++ ) {
+					if (*us == it->getName()) {
+						if (it->delUser(id) == false) {
+							debug(RED"[command_part] Вы не в канале"DEFAULT);
+							add_error(ERR_NOTONCHANNEL, *us + " :You're not on that channel"); //ERR_NOTONCHANNEL //если ты не в конале
+						}
+						else {
+							debug(GREEN"[command_part] Вы покидаете канал"DEFAULT);
+							add_message(id, ":" + res->first->second.getName() + "!" + res->first->second.getUserName() + "@" + res->first->second.getIp() + " PART :" + it->getName() + "\n");
+						}
+						if (it->getCountUSer() == 0) {
+							debug(GREEN"[command_part] Канал удаляется..."DEFAULT);
+							channel->erase(it);
+							if (channel->size() == 0)
+								break ;
+							it = channel->begin();
+						}
+						flag = false;
+						break ;
+					}
+				}
+				if (flag) {
+					debug(RED"[command_part] Такого канала нет"DEFAULT);
+					add_error(ERR_NOSUCHCHANNEL, *us + " :No such channel"); //ERR_NOSUCHCHANNEL //нет такого конала
 				}
 			}
 		}
 	}
-	add_message(id, ":"SERVER_NAME" "RPL_LISTEND" " + res->first->second.getName() + " :End of /LIST\n");
-}
+	// Пользователь может получить список всех пользователей, состоящих в канале
+	void	command_names(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1) {
+			add_unregister_error();
+			return ;
+		}
+		if (lenparam == 1) {
+			for (vector<Channel>::iterator it = channel->begin(); it != channel->end(); it++) {
+				string			temp = "";
+				map<int, bool>	user_temp = it->getUserList();
+				for (map<int, bool>::iterator pedro = user_temp.begin(); pedro != user_temp.end(); pedro++) {
+					if (temp.size())
+						temp += " ";
+					temp += clients->find(pedro->first)->second.getName();
+				}
+				add_auto_message(RPL_NAMREPLY, "= " + it->getName() + " :@" + temp);
+			}
+		}
+		else {
+			parser_vector(param[1], &channel_list);
+			for (vector<string>::iterator us = channel_list.begin(); us != channel_list.end(); us++) {
+				for (vector<Channel>::iterator it = channel->begin(); it != channel->end(); it++) {
+					if (it->getName() == *us) {
+						string			temp = "";
+						map<int, bool>	user_temp = it->getUserList();
+
+						for (map<int, bool>::iterator pedro = user_temp.begin(); pedro != user_temp.end(); pedro++) {
+							if (temp.size())
+								temp += " ";
+							temp += clients->find(pedro->first)->second.getName();
+						}
+						add_auto_message(RPL_NAMREPLY, "= " + it->getName() + " :@" + temp);
+						break ;
+					}
+				}
+			}
+		}
+		add_auto_message(RPL_ENDOFNAMES, "* :End of /NAMES list");
+	}
+	// Используется для вывода списка каналов и их топиков
+	void	command_list(pair<map<int, User>::iterator, bool> *res) {
+		if (res->first->second.getStatus() == -1) {
+			add_unregister_error();
+			return ;
+		}
+		add_message(id, ":"SERVER_NAME" "RPL_LISTSTART" " + res->first->second.getName() + " Channel :Users  Name\n");
+		if (lenparam == 1) {
+			for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
+				debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
+				add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + int_to_string(i->getCountUSer()) + " :[+n]\n");
+			}
+		}
+		if (lenparam > 1) {
+			if (lenparam >= 3 && param[2] != SERVER_NAME) {
+				debug(RED"[command_list] Имя сервера неверно"DEFAULT);
+				add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server");
+				return ;
+			}
+			parser_vector(param[1], &channel_list);
+			for (size_t count_channel = 0; count_channel < channel->size(); count_channel++) {
+				for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
+					if (channel_list[count_channel] == i->getName()) {
+						debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
+						add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + int_to_string(i->getCountUSer()) + " :[+n]\n");
+						break ;
+					}
+				}
+			}
+		}
+		add_message(id, ":"SERVER_NAME" "RPL_LISTEND" " + res->first->second.getName() + " :End of /LIST\n");
+	}
 //=====================================================================================================================
 //=====================================================================================================================
 
