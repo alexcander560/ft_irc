@@ -624,7 +624,7 @@ private:
 			return ;
 		}
 		if (param[1] != SERVER_NAME) {
-			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server");
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME " :No such server");
 			debug(RED"[command_pong] Имя сервера неверно"DEFAULT);
 			return ;
 		}
@@ -665,7 +665,7 @@ private:
 			return ;
 		}
 		if (lenparam < 2 || param[1] != SERVER_NAME) {
-			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server");
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME " :No such server");
 			debug("[command_whois] Wrong server name");
 			return ;
 		}
@@ -783,7 +783,7 @@ private:
 				}
 				catch (const int &e) {
 					if (e == -1) {
-						add_error(ERR_NOSUCHCHANNEL, param[1] + ":No such channel");
+						add_error(ERR_NOSUCHCHANNEL, param[1] + " :No such channel");
 						break ;
 					}
 				}
@@ -993,7 +993,7 @@ void command_list(pair<map<int, User>::iterator, bool> *res) {
 	if (lenparam > 1) {
 		if (lenparam >= 3 && param[2] != SERVER_NAME) {
 			debug(RED"[command_list] Имя сервера неверно"DEFAULT);
-			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server");
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME " :No such server");
 			return ;
 		}
 		parser_vector(param[1], &channel_list);
