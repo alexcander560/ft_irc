@@ -215,9 +215,6 @@ private:
 	// Прерывает соединение
 	void	command_quit(pair<map<int, User>::iterator, bool> *res) {
 		(void)res;
-		clients->erase(id);
-		disconnect_by_id(this->id, this->clients_ivan, this->fds);
-		debug(GREEN"[command_quit] Команда QUIT использовалась для пользователя"DEFAULT);
 		// Пользователь должен выйти из всех каналов
 		for (vector<Channel>::iterator it = channel->begin(); it != channel->end(); it++) {
 			it->delUser(id);
@@ -228,6 +225,9 @@ private:
 				it = channel->begin();
 			}
 		}
+		clients->erase(id);
+		disconnect_by_id(this->id, this->clients_ivan, this->fds);
+		debug(GREEN"[command_quit] Команда QUIT использовалась для пользователя"DEFAULT);
 	}
 	// Отправить сообщение
 	void	command_privmsg(pair<map<int, User>::iterator, bool> *res) {
