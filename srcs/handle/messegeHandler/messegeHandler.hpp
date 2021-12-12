@@ -1106,6 +1106,7 @@ public:
 			add_message(id, getFrontLineRPL("- " + (string)SERVER_NAME + " Message of the day -\n", RPL_MOTDSTART));
 			add_message(id, getFrontLineRPL("Регистрация пройдена\n", RPL_MOTD));
 			add_message(id, getFrontLineRPL("End of /MOTD command\n", RPL_ENDOFMOTD));
+			add_message(id, ":bot!" SERVER_NAME "@127.0.0.1 PRIVMSG " + res.first->second.getName() + " :Я - бот. Привет!\n");
 		}
 		return (messages);
 	}
