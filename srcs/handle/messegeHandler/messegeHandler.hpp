@@ -525,8 +525,8 @@ private:
 		}
 		if (lenparam > 2)
 			debug(RED"[command_time] Неверное число аргументов"DEFAULT);
-		else if (param[1] != SERVER_NAME) {
-			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server"); //ERR_NOSUCHSERVER
+		else if (lenparam == 2 && param[1] != SERVER_NAME) {
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME " :No such server"); //ERR_NOSUCHSERVER
 		}
 		else if (lenparam == 1 || (lenparam == 2 && param[1] == SERVER_NAME))
 			add_message(id, getFrontLineRPL(getCurrentTime(), RPL_TIME));
