@@ -395,13 +395,18 @@ private:
 			add_unregister_error();
 			return ;
 		}
-		if (lenparam != 2) {
+		if (lenparam < 2) {
 			add_error(ERR_NEEDMOREPARAMS, "ISON :Not enough parameters"); //ERR_NEEDMOREPARAMS
 			return ;
 		}
 		while (current < lenparam && length < 512) {
 			bool	flag = true;
-
+			if (param[current] == "bot")
+			{
+				if (!line.empty())
+					line.append(" ");
+				line.append("bot");
+			}
 			for (map<int, User>::iterator begin = clients->begin(); begin != clients->end(); begin++) {
 				if (param[current] == begin->second.getName()) {
 					flag = false;
@@ -432,7 +437,7 @@ private:
 			add_unregister_error();
 			return ;
 		}
-		if (lenparam != 2) {
+		if (lenparam < 2) {
 			add_error(ERR_NEEDMOREPARAMS, "USERHOST :Not enough parameters"); //ERR_NEEDMOREPARAMS
 			return ;
 		}
@@ -511,7 +516,7 @@ private:
 			add_message(id, getFrontLineRPL("", RPL_ADMINME) + "Information about administrators\n");
 			add_message(id, getFrontLineRPL("", RPL_ADMINLOC1) + "Names are Giganta Mother, Irena Mora, Free Milissa\n");
 			add_message(id, getFrontLineRPL("", RPL_ADMINLOC2) + "Usernames are gmother, imora, fmilissa\n");
-			add_message(id, getFrontLineRPL("", RPL_ADMINEMAIL) + "Email are gmother@student.21-school.ru, imorastudent.21-school.ru, fmilissastudent.21-school.ru\n");
+			add_message(id, getFrontLineRPL("", RPL_ADMINEMAIL) + "Email are gmother@student.21-school.ru, imora@student.21-school.ru, fmilissa@student.21-school.ru\n");
 		}
 		else
 			debug(RED"[command_admin] Имя сервера неверно"DEFAULT);
@@ -544,6 +549,7 @@ private:
 			return ;
 		}
 		if (param[1] != res->first->second.getName()) {
+			add_error(ERR_NOSUCHNICK, param[1] + " :No such nick/channel"); //ERR_NOSUCHN
 			debug(RED"[command_oper] Имя введено неверно"DEFAULT);
 			return ;
 		}
@@ -617,7 +623,7 @@ private:
 			return ;
 		}
 		if (param[1] != SERVER_NAME) {
-			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server");
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME " :No such server");
 			debug(RED"[command_pong] Имя сервера неверно"DEFAULT);
 			return ;
 		}
@@ -658,7 +664,7 @@ private:
 			return ;
 		}
 		if (lenparam < 2 || param[1] != SERVER_NAME) {
-			add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server");
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME " :No such server");
 			debug("[command_whois] Wrong server name");
 			return ;
 		}
@@ -776,7 +782,7 @@ private:
 				}
 				catch (const int &e) {
 					if (e == -1) {
-						add_error(ERR_NOSUCHCHANNEL, param[1] + ":No such channel");
+						add_error(ERR_NOSUCHCHANNEL, param[1] + " :No such channel");
 						break ;
 					}
 				}
@@ -970,10 +976,32 @@ private:
 		}
 		add_auto_message(RPL_ENDOFNAMES, "* :End of /NAMES list");
 	}
+<<<<<<< HEAD
 	// Используется для вывода списка каналов и их топиков
 	void	command_list(pair<map<int, User>::iterator, bool> *res) {
 		if (res->first->second.getStatus() == -1) {
 			add_unregister_error();
+=======
+	add_auto_message(RPL_ENDOFNAMES, "* :End of /NAMES list");
+}
+// Используется для вывода списка каналов и их топиков
+void command_list(pair<map<int, User>::iterator, bool> *res) {
+	if (res->first->second.getStatus() == -1) {
+		add_unregister_error();
+		return ;
+	}
+	add_message(id, ":"SERVER_NAME" "RPL_LISTSTART" " + res->first->second.getName() + " Channel :Users  Name\n");
+	if (lenparam == 1) {
+		for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
+			debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
+			add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + int_to_string(i->getCountUSer()) + " :[+n]\n");
+		}
+	}
+	if (lenparam > 1) {
+		if (lenparam >= 3 && param[2] != SERVER_NAME) {
+			debug(RED"[command_list] Имя сервера неверно"DEFAULT);
+			add_error(ERR_NOSUCHSERVER, SERVER_NAME " :No such server");
+>>>>>>> 5301b44d469a37673d0d74ffc9410cba572795fe
 			return ;
 		}
 		add_message(id, ":"SERVER_NAME" "RPL_LISTSTART" " + res->first->second.getName() + " Channel :Users  Name\n");
@@ -1104,6 +1132,7 @@ public:
 			add_message(id, getFrontLineRPL("- " + (string)SERVER_NAME + " Message of the day -\n", RPL_MOTDSTART));
 			add_message(id, getFrontLineRPL("Регистрация пройдена\n", RPL_MOTD));
 			add_message(id, getFrontLineRPL("End of /MOTD command\n", RPL_ENDOFMOTD));
+			add_message(id, ":bot!" SERVER_NAME "@127.0.0.1 PRIVMSG " + res.first->second.getName() + " :Я - бот. Привет!\n");
 		}
 		return (messages);
 	}
