@@ -397,7 +397,7 @@ private:
 			add_unregister_error();
 			return ;
 		}
-		if (lenparam != 2) {
+		if (lenparam < 2) {
 			add_error(ERR_NEEDMOREPARAMS, "ISON :Not enough parameters"); //ERR_NEEDMOREPARAMS
 			return ;
 		}
@@ -434,7 +434,7 @@ private:
 			add_unregister_error();
 			return ;
 		}
-		if (lenparam != 2) {
+		if (lenparam < 2) {
 			add_error(ERR_NEEDMOREPARAMS, "USERHOST :Not enough parameters"); //ERR_NEEDMOREPARAMS
 			return ;
 		}
