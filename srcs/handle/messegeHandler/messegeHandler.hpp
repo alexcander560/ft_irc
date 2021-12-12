@@ -672,7 +672,7 @@ private:
 			return ;
 		}
 		for (map<int, User>::iterator it1 = clients->begin(); it1 != clients->end(); it1++) {
-			if (check_mask(it1->second.getName(), param[1])) {
+			if (check_mask(it1->second.getName(), param[2])) {
 				debug(GREEN"[command_whois] Найден пользователь подходящий под маску"DEFAULT);
 				if (it1->second.getStatus() != 1)
 					debug(RED"[command_whois] Найденный пользователей не зарегестрирован"DEFAULT);
