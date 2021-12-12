@@ -518,7 +518,7 @@ private:
 			add_message(id, getFrontLineRPL("", RPL_ADMINME) + "Information about administrators\n");
 			add_message(id, getFrontLineRPL("", RPL_ADMINLOC1) + "Names are Giganta Mother, Irena Mora, Free Milissa\n");
 			add_message(id, getFrontLineRPL("", RPL_ADMINLOC2) + "Usernames are gmother, imora, fmilissa\n");
-			add_message(id, getFrontLineRPL("", RPL_ADMINEMAIL) + "Email are gmother@student.21-school.ru, imorastudent.21-school.ru, fmilissastudent.21-school.ru\n");
+			add_message(id, getFrontLineRPL("", RPL_ADMINEMAIL) + "Email are gmother@student.21-school.ru, imora@student.21-school.ru, fmilissa@student.21-school.ru\n");
 		}
 		else
 			debug(RED"[command_admin] Имя сервера неверно"DEFAULT);
