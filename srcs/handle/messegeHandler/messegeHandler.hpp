@@ -551,6 +551,7 @@ private:
 			return ;
 		}
 		if (param[1] != res->first->second.getName()) {
+			add_error(ERR_NOSUCHNICK, param[1] + " :No such nick/channel"); //ERR_NOSUCHN
 			debug(RED"[command_oper] Имя введено неверно"DEFAULT);
 			return ;
 		}
