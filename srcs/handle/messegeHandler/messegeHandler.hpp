@@ -320,12 +320,12 @@ private:
 		if (lenparam == 1) {
 			debug("[command_away] Away message was unset");
 			clients->find(id)->second.setAwayMessage(make_pair(false, ""));
-			add_auto_message(RPL_UNAWAY, ":You have been marked as being away"); //RPL_UNAWAY
+			add_auto_message(RPL_UNAWAY, ":You are no longer marked as being away"); //RPL_UNAWAY
 		}
 		else if (lenparam == 2) {
 			debug("[command_away] Away message was set");
 			clients->find(id)->second.setAwayMessage(make_pair(true, param[1]));
-			add_auto_message(RPL_NOWAWAY, ":You are no longer marked as being away"); //RPL_NOWAWAY
+			add_auto_message(RPL_NOWAWAY, ":You have been marked as being away"); //RPL_NOWAWAY
 		}
 		else
 			warning(RED"[command_away] Неверное число аргументов"DEFAULT);
