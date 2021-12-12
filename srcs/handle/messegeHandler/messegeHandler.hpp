@@ -976,32 +976,10 @@ private:
 		}
 		add_auto_message(RPL_ENDOFNAMES, "* :End of /NAMES list");
 	}
-<<<<<<< HEAD
 	// Используется для вывода списка каналов и их топиков
-	void	command_list(pair<map<int, User>::iterator, bool> *res) {
+	void command_list(pair<map<int, User>::iterator, bool> *res) {
 		if (res->first->second.getStatus() == -1) {
 			add_unregister_error();
-=======
-	add_auto_message(RPL_ENDOFNAMES, "* :End of /NAMES list");
-}
-// Используется для вывода списка каналов и их топиков
-void command_list(pair<map<int, User>::iterator, bool> *res) {
-	if (res->first->second.getStatus() == -1) {
-		add_unregister_error();
-		return ;
-	}
-	add_message(id, ":"SERVER_NAME" "RPL_LISTSTART" " + res->first->second.getName() + " Channel :Users  Name\n");
-	if (lenparam == 1) {
-		for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
-			debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
-			add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + int_to_string(i->getCountUSer()) + " :[+n]\n");
-		}
-	}
-	if (lenparam > 1) {
-		if (lenparam >= 3 && param[2] != SERVER_NAME) {
-			debug(RED"[command_list] Имя сервера неверно"DEFAULT);
-			add_error(ERR_NOSUCHSERVER, SERVER_NAME " :No such server");
->>>>>>> 5301b44d469a37673d0d74ffc9410cba572795fe
 			return ;
 		}
 		add_message(id, ":"SERVER_NAME" "RPL_LISTSTART" " + res->first->second.getName() + " Channel :Users  Name\n");
@@ -1014,21 +992,35 @@ void command_list(pair<map<int, User>::iterator, bool> *res) {
 		if (lenparam > 1) {
 			if (lenparam >= 3 && param[2] != SERVER_NAME) {
 				debug(RED"[command_list] Имя сервера неверно"DEFAULT);
-				add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server");
+				add_error(ERR_NOSUCHSERVER, SERVER_NAME " :No such server");
 				return ;
 			}
-			parser_vector(param[1], &channel_list);
-			for (size_t count_channel = 0; count_channel < channel->size(); count_channel++) {
+			add_message(id, ":"SERVER_NAME" "RPL_LISTSTART" " + res->first->second.getName() + " Channel :Users  Name\n");
+			if (lenparam == 1) {
 				for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
-					if (channel_list[count_channel] == i->getName()) {
-						debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
-						add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + int_to_string(i->getCountUSer()) + " :[+n]\n");
-						break ;
+					debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
+					add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + int_to_string(i->getCountUSer()) + " :[+n]\n");
+				}
+			}
+			if (lenparam > 1) {
+				if (lenparam >= 3 && param[2] != SERVER_NAME) {
+					debug(RED"[command_list] Имя сервера неверно"DEFAULT);
+					add_error(ERR_NOSUCHSERVER, SERVER_NAME ":No such server");
+					return ;
+				}
+				parser_vector(param[1], &channel_list);
+				for (size_t count_channel = 0; count_channel < channel->size(); count_channel++) {
+					for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
+						if (channel_list[count_channel] == i->getName()) {
+							debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
+							add_message(id, ":"SERVER_NAME" "RPL_LIST" " + res->first->second.getName() + " " + i->getName() + " " + int_to_string(i->getCountUSer()) + " :[+n]\n");
+							break ;
+						}
 					}
 				}
 			}
+			add_message(id, ":"SERVER_NAME" "RPL_LISTEND" " + res->first->second.getName() + " :End of /LIST\n");
 		}
-		add_message(id, ":"SERVER_NAME" "RPL_LISTEND" " + res->first->second.getName() + " :End of /LIST\n");
 	}
 //=====================================================================================================================
 //=====================================================================================================================
