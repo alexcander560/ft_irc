@@ -404,7 +404,11 @@ private:
 		while (current < lenparam && length < 512) {
 			bool	flag = true;
 			if (param[current] == "bot")
+			{
+				if (!line.empty())
+					line.append(" ");
 				line.append("bot");
+			}
 			for (map<int, User>::iterator begin = clients->begin(); begin != clients->end(); begin++) {
 				if (param[current] == begin->second.getName()) {
 					flag = false;
