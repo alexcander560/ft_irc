@@ -1045,32 +1045,32 @@ public:
 	str_message(str_message), id(id), clients(clients), pass(_pass), clients_ivan(clients_ivan), fds(fds), ip(ip), is_notice(false), channel(channel) {
 		parser_param();
 		lenparam = param.size();
-		commands["PASS"] = &MassegeHandler::command_pass;
-		commands["NICK"] = &MassegeHandler::command_nick;
-		commands["USER"] = &MassegeHandler::command_user;
-		commands["QUIT"] = &MassegeHandler::command_quit;
-		commands["PRIVMSG"] = &MassegeHandler::command_privmsg;
-		commands["AWAY"] = &MassegeHandler::command_away;
-		commands["NOTICE"] = &MassegeHandler::command_notice;
-		commands["MODE"] = &MassegeHandler::command_mode;
-		commands["ISON"] = &MassegeHandler::command_ison;
-		commands["USERHOST"] = &MassegeHandler::command_userhost;
-		commands["VERSION"] = &MassegeHandler::command_version;
-		commands["INFO"] = &MassegeHandler::command_info;
-		commands["ADMIN"] = &MassegeHandler::command_admin;
-		commands["TIME"] = &MassegeHandler::command_time;
-		commands["OPER"] = &MassegeHandler::command_oper;
-		commands["WHO"] = &MassegeHandler::command_who;
-		commands["PING"] = &MassegeHandler::command_ping;
-		commands["PONG"] = &MassegeHandler::command_pong;
-		commands["WALLOPS"] = &MassegeHandler::command_wallops;
-		commands["WHOIS"] = &MassegeHandler::command_whois;
-		commands["TOPIC"] = &MassegeHandler::command_topic;
-		commands["JOIN"] = &MassegeHandler::command_join;
-		commands["KICK"] = &MassegeHandler::command_kick;
-		commands["PART"] = &MassegeHandler::command_part;
-		commands["NAMES"] = &MassegeHandler::command_names;
-		commands["LIST"] = &MassegeHandler::command_list;
+		commands["PASS"] 		= &MassegeHandler::command_pass;
+		commands["NICK"]		= &MassegeHandler::command_nick;
+		commands["USER"]		= &MassegeHandler::command_user;
+		commands["QUIT"]		= &MassegeHandler::command_quit;
+		commands["PRIVMSG"] 	= &MassegeHandler::command_privmsg;
+		commands["AWAY"]		= &MassegeHandler::command_away;
+		commands["NOTICE"]		= &MassegeHandler::command_notice;
+		commands["MODE"]		= &MassegeHandler::command_mode;
+		commands["ISON"]		= &MassegeHandler::command_ison;
+		commands["USERHOST"]	= &MassegeHandler::command_userhost;
+		commands["VERSION"] 	= &MassegeHandler::command_version;
+		commands["INFO"] 		= &MassegeHandler::command_info;
+		commands["ADMIN"] 		= &MassegeHandler::command_admin;
+		commands["TIME"] 		= &MassegeHandler::command_time;
+		commands["OPER"] 		= &MassegeHandler::command_oper;
+		commands["WHO"] 		= &MassegeHandler::command_who;
+		commands["PING"] 		= &MassegeHandler::command_ping;
+		commands["PONG"] 		= &MassegeHandler::command_pong;
+		commands["WALLOPS"] 	= &MassegeHandler::command_wallops;
+		commands["WHOIS"]		= &MassegeHandler::command_whois;
+		commands["TOPIC"]		= &MassegeHandler::command_topic;
+		commands["JOIN"]		= &MassegeHandler::command_join;
+		commands["KICK"]		= &MassegeHandler::command_kick;
+		commands["PART"]		= &MassegeHandler::command_part;
+		commands["NAMES"]		= &MassegeHandler::command_names;
+		commands["LIST"]		= &MassegeHandler::command_list;
 	}
 	// Распечатка
 	void	printMassege(){
