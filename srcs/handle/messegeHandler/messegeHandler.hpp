@@ -996,7 +996,6 @@ private:
 				add_error(ERR_NOSUCHSERVER, SERVER_NAME " :No such server");
 				return ;
 			}
-			add_message(id, ":"SERVER_NAME" "RPL_LISTSTART" " + res->first->second.getName() + " Channel :Users  Name\n");
 			if (lenparam == 1) {
 				for (vector<Channel>::iterator i = channel->begin(); i != channel->end(); i++) {
 					debug(GREEN"[command_list] Выводим инфу о канале..."DEFAULT);
@@ -1020,8 +1019,8 @@ private:
 					}
 				}
 			}
-			add_message(id, ":"SERVER_NAME" "RPL_LISTEND" " + res->first->second.getName() + " :End of /LIST\n");
 		}
+		add_message(id, ":"SERVER_NAME" "RPL_LISTEND" " + res->first->second.getName() + " :End of /LIST\n");
 	}
 //=====================================================================================================================
 //=====================================================================================================================
