@@ -4,8 +4,6 @@
 #include "additions.hpp"
 #include "../general/answers.hpp"
 
-//#include "../users/user.hpp"
-
 class MassegeHandler {
 private:
 	// Создать строку для корректного вывода сообщения
@@ -841,12 +839,12 @@ private:
 
 				if (temp_user.find(id) == temp_user.end()) {
 					debug(RED"[command_kick] вы не в этом канале"DEFAULT);
-					add_error(ERR_NOTONCHANNEL, param[1] + " :You're not on that channel"); //ЕСЛИ ТЫ НЕ В КАНАЛЕ
+					add_error(ERR_NOTONCHANNEL, param[1] + " :You're not on that channel"); //если ты не в конале
 				}
 				else {
 					if (temp_user.find(id)->second == false) {
 						debug(RED"[command_kick] вы не админ"DEFAULT);
-						add_error(ERR_CHANOPRIVSNEEDED, param[1] + " :You're not channel operator"); // ТЫ НЕ ОПЕРАТОР
+						add_error(ERR_CHANOPRIVSNEEDED, param[1] + " :You're not channel operator"); // ты не оператор
 					}
 					else {
 						bool flag_client = true;
@@ -907,7 +905,7 @@ void command_part(pair<map<int, User>::iterator, bool> *res) {
 				if (*us == it->getName()) {
 					if (it->delUser(id) == false) {
 						debug(RED"[command_part] Вы не в канале"DEFAULT);
-						add_error(ERR_NOTONCHANNEL, *us + " :You're not on that channel"); //ERR_NOTONCHANNEL //ЕСЛИ ТЫ НЕ В КАНАЛЕ
+						add_error(ERR_NOTONCHANNEL, *us + " :You're not on that channel"); //ERR_NOTONCHANNEL //если ты не в конале
 					}
 					else {
 						debug(GREEN"[command_part] Вы покидаете канал"DEFAULT);
@@ -924,7 +922,7 @@ void command_part(pair<map<int, User>::iterator, bool> *res) {
 			}
 			if (flag) {
 				debug(RED"[command_part] Такого канала нет"DEFAULT);
-				add_error(ERR_NOSUCHCHANNEL, *us + " :No such channel"); //ERR_NOSUCHCHANNEL //НЕТ ТАКОГО КАНАЛА
+				add_error(ERR_NOSUCHCHANNEL, *us + " :No such channel"); //ERR_NOSUCHCHANNEL //нет такого конала
 			}
 		}
 	}

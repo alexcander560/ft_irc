@@ -2,7 +2,6 @@
 
 void    set_standart_headers(struct curl_slist **headers)
 {
-	//TODO: Добавить иные заголовки для более стабильной работы
     *headers = curl_slist_append(*headers, "User-Agent: Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:93.0) Gecko/20100101 Firefox/93.0");
 }
 
