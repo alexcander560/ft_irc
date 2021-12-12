@@ -806,6 +806,7 @@ private:
 			return ;
 		}
 		if (lenparam != 2 && lenparam != 3) {
+			add_error(ERR_NEEDMOREPARAMS, "TOPIC :Not enough parameters");
 			debug(RED"[command_join] Неверное число аргументов"DEFAULT);
 			return ;
 		}
