@@ -812,6 +812,7 @@ private:
 			if (it->getName() == param[1]) {
 				if (lenparam == 2) {
 					debug(GREEN"[command_topic] Канал найден, выводим топик"DEFAULT);
+					add_message(id, ":"SERVER_NAME" "RPL_TOPIC" " + res->first->second.getName() + " " + param[1] + " :" + it->getTopic() + "\n");
 				}
 				else {
 					debug(GREEN"[command_topic] Канал найден, пытаемся поменять..."DEFAULT);
