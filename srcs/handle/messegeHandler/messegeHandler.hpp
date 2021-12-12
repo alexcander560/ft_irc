@@ -796,13 +796,11 @@ private:
 	}
 	// Используется для изменения или просмотра топика канала
 	void	command_topic(pair<map<int, User>::iterator, bool> *res) {
+		bool	flag = true;
+
 		if (res->first->second.getStatus() == -1) {
-			add_unregister_error();
-			return ;
-		}
-		bool flag = true;
-		if (res->first->second.getStatus() != 1) {
 			debug(RED"[command_topic] Нельзя запросить информацию до полной регистрации"DEFAULT);
+			add_unregister_error();
 			return ;
 		}
 		if (lenparam == 1) {
@@ -816,10 +814,19 @@ private:
 					debug(GREEN"[command_topic] Канал найден, выводим топик"DEFAULT);
 				}
 				else {
-					debug(GREEN"[command_topic] Канал найден, меняем"DEFAULT);
-					it->setTopic(param[2]);
+					debug(GREEN"[command_topic] Канал найден, пытаемся поменять..."DEFAULT);
+					//========== Нужно проверить есть ли я в канале =============
+					map<int, bool> temp_user = it->getUserList();
+					if (temp_user.find(id) != temp_user.end()) {
+						debug(GREEN"[command_topic] Вы в канале, меняем"DEFAULT);
+						it->setTopic(param[2]);
+						add_message(id, ":"SERVER_NAME" "RPL_TOPIC" " + res->first->second.getName() + " " + param[1] + " :" + it->getTopic() + "\n");
+					}
+					else {
+						debug(RED"[command_topic] Вы НЕ в канале"DEFAULT);
+						add_error(ERR_NOTONCHANNEL, it->getName() + " :You're not on that channel"); //ERR_NOTONCHANNEL
+					}
 				}
-				add_message(id, ":"SERVER_NAME" "RPL_TOPIC" " + res->first->second.getName() + " " + param[1] + " :" + it->getTopic() + "\n");
 				flag = false;
 				break ;
 			}
