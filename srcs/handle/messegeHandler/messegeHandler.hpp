@@ -561,7 +561,7 @@ private:
 		add_auto_message(RPL_YOUREOPER, ":You are now an IRC operator");
 		debug(GREEN"[command_oper] Вы стали IRC-оператором"DEFAULT);
 		res->first->second.setModeO(true);
-}
+	}
 	// Возвращает список пользователей по маске за исключением невидимых
 	void	command_who(pair<map<int, User>::iterator, bool> *res) {
 		bool	flag = false;
@@ -584,8 +584,7 @@ private:
 				debug(GREEN"[command_who] Найден пользователь подходящий под маску"DEFAULT);
 				if (it1->second.getStatus() != 1)
 					debug(RED"[command_who] Найденный пользователей не зарегестрирован"DEFAULT);
-				else if (it1->second.getMode().i == true)
-				{
+				else if (it1->second.getMode().i == true) {
 					debug(RED"[command_who] Найденный пользователей невидимый"DEFAULT);
 				}
 				else if (lenparam == 3 && it1->second.getMode().o == false)
