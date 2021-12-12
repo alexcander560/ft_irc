@@ -1,6 +1,6 @@
 # ft_irc
-Dragons attack the server
+Dragons attack the IRC server
 
-DEADLINE-TODO:
-4)Просматреть внимательно все комментарии и удалить всё ненужное!!!!
-
+SEGS:
+    - PART #dog && NAMES (не всегда)
+    - 
