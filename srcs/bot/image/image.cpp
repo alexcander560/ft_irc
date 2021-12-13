@@ -6,8 +6,9 @@ std::string	get_link(const char *name)
 	std::string response;
 	const char	*begin, *end;
 	std::string	URL, link;
+	char		*temp = curl_easy_escape(NULL, name, std::strlen(name));
 
-	URL = std::string("https://yandex.ru/images/search?text=") + std::string( curl_easy_escape(NULL, name, std::strlen(name)));
+	URL = std::string("https://yandex.ru/images/search?text=") + std::string(temp);
 	try
 	{
 		get_request(response, URL);
@@ -24,5 +25,6 @@ std::string	get_link(const char *name)
 	if (end == NULL)
 		throw (std::string("Link to image was not found"));
 	link = std::string(begin, end - begin);
+	free (temp);
 	return (link);
 }
