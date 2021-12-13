@@ -97,12 +97,11 @@ class Channel
 			cout << "----------------------------------------" << endl;
 		}
 		// Возвращает имя канала
-		const string	getName() const { return name; }
-		void			setTopic(string topic) { this->topic = topic; }
+		const string	getName() const				{ return name; }
+		void			setTopic(string topic)		{ this->topic = topic; }
 		// Возвращает топик канала
-		const string	getTopic() const { return topic; }
-		void	debug(string line)
-		{
+		const string	getTopic() const			{ return topic; }
+		void	debug(string line) {
 			if (DEBUG)
 				cout << "DEBUG: " << line << endl;
 		}

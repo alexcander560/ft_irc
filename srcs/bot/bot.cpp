@@ -7,14 +7,12 @@ int										_id;
 string									_name;
 vector< std::pair<int, string> >	*_message;
 
-void	setColor(string &lines, string color = DEFAULT)
-{
+void	setColor(string &lines, string color = DEFAULT) {
 	if (IS_COLOR_SET)
 		lines.append(color);
 }
 
-void	addLine(string line, string color = "")
-{
+void	addLine(string line, string color = "") {
 	string	def_color = DEFAULT;
 
 	if (!IS_COLOR_SET)
@@ -29,8 +27,7 @@ void	addLine(string line, string color = "")
 /* P.S. Дракончики */
 
 /* Команда HELP */
-void	help_command(void)
-{
+void	help_command(void) {
 	debug("[help_command] Command HELP for bot was called");
 	addLine("Commands for you:", COLOR_FOR_BOT);
 	addLine("\tHELP - show this information", COLOR_FOR_BOT);
@@ -39,11 +36,9 @@ void	help_command(void)
 }
 
 /* Команда GETHASH */
-void	get_hash_command(string text)
-{
+void	get_hash_command(string text) {
 	debug("[get_hash_command] Command GETHASH for bot was called");
-	if (text.empty())
-	{
+	if (text.empty()) {
 		addLine("Oooops. Is empty!? I can not!!!", RED);
 		return ;
 	}
@@ -51,22 +46,18 @@ void	get_hash_command(string text)
 }
 
 /* Команда GETIMAGE */
-void	get_image_command(string text)
-{
-	string link;
+void	get_image_command(string text) {
+	string	link;
 
 	debug("[get_image_command] Command GETIMAGE for bot was called");
-	if (text.empty())
-	{
+	if (text.empty()) {
 		addLine("Oooops. Is empty!? I can not!!!", RED);
 		return ;
 	}
-	try
-	{
+	try {
 		link = get_link(text.c_str());
 	}
-	catch (string e)
-	{
+	catch (string e) {
 		warning("[get_image_command] Cannot get image by name. Captcha in Yandex?");
 		warning(e.c_str());
 		addLine("Oooops. Captcha!? I can not!!!", RED);
@@ -76,16 +67,14 @@ void	get_image_command(string text)
 }
 
 /* Неизвестная команда */
-void	not_found_command(void)
-{
+void	not_found_command(void) {
 	warning(YELLOW"[not_found_command] Unknown command was called for bot." DEFAULT);
 	addLine("¯\\_(ツ)_/¯\n", RED);
 	addLine("Use HELP command for information about my beautiful life", RED);
 }
 
 /* Основная функция для бота. Обрабатывает строку, возвращает результат для отправки */
-void	handle_command(string line, int id, string name, std::vector< std::pair<int, string> > *message)
-{
+void	handle_command(string line, int id, string name, std::vector< std::pair<int, string> > *message) {
 	string	command = get_command_by_msg(line);
 	string	text = get_data_by_msg(line);
 

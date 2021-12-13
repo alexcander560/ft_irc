@@ -1,13 +1,11 @@
 #include "listen/listen.hpp"
 
-void  stop(std::string str)
-{
+void	stop(std::string str) {
 	std::cerr << str << std::endl;
 	exit(EXIT_FAILURE);
 }
 
-int  main(int args_count, char **args)
-{
+int	main(int args_count, char **args) {
 	int  port;
 
 	if (args_count != 3)

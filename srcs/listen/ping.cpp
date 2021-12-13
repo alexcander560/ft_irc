@@ -6,8 +6,7 @@
 
 #define PING_SECOND_KICK 660
 
-void	ping_client(std::map<int, User> &users, const int &id)
-{
+void	ping_client(std::map<int, User> &users, const int &id) {
 	std::vector< std::pair<int, std::string> >	messages;
 
 	users.find(id)->second.setIsPing(true);
@@ -15,8 +14,7 @@ void	ping_client(std::map<int, User> &users, const int &id)
 	send_message(messages);
 }
 
-void	kick_client(std::map<int, User> &users, const int &id)
-{
+void	kick_client(std::map<int, User> &users, const int &id) {
 	(void)users;
 	std::vector< std::pair<int, std::string> >	messages;
 
@@ -24,23 +22,19 @@ void	kick_client(std::map<int, User> &users, const int &id)
 	send_message(messages);
 }
 
-bool	check_time(std::map<int, User> *clients_map, std::string pass,
-				   std::map<int, string> &clients, fd_set &fds, map<int, string> &ip, std::vector<Channel> *channel)
-{
+bool	check_time(std::map<int, User> *clients_map, std::string pass, std::map<int, string> &clients, fd_set &fds, map<int, string> &ip, std::vector<Channel> *channel) {
 	std::map<int, User>::iterator begin = clients_map->begin();
 	std::map<int, User>::iterator end = clients_map->end();
 	time_t	current_time = getCurrentTimeForUser();
 	double	different;
 
-	while (begin != end)
-	{
+	while (begin != end) {
 		if (begin->second.getStatus() == -1)
 			goto done;
 		different = difftime(current_time, begin->second.getTimePing());
 		if (different > PING_SECOND && !begin->second.getIsPing())
 			ping_client(*clients_map, begin->first);
-		else if (different > PING_SECOND_KICK)
-		{
+		else if (different > PING_SECOND_KICK) {
 			send_message(handle_message("QUIT", begin->first, clients_map, pass, clients, fds,
 										ip.find(begin->first)->second, channel));
 			debug("[check_time] User was kick");

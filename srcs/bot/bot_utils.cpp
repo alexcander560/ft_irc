@@ -4,8 +4,7 @@
 /* Получение команды и информации из принимаемой строки */
 
 /* Из 'GETIMAGE прекрасный котик' возвращает 'GETIMAGE' */
-string	get_command_by_msg(std::string &msg)
-{
+string	get_command_by_msg(std::string &msg) {
 	size_t	position = 0;
 	string	command(msg);
 
@@ -19,8 +18,7 @@ string	get_command_by_msg(std::string &msg)
 }
 
 /* Из 'GETIMAGE прекрасный котик' возвращает 'прекрасный котик' */
-string	get_data_by_msg(std::string &msg)
-{
+string	get_data_by_msg(std::string &msg) {
 	size_t	position = 0;
 	string	command(msg);
 

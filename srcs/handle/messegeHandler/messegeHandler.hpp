@@ -1065,13 +1065,13 @@ public:
 		commands["ISON"]		= &MassegeHandler::command_ison;
 		commands["USERHOST"]	= &MassegeHandler::command_userhost;
 		commands["VERSION"] 	= &MassegeHandler::command_version;
-		commands["INFO"] 		= &MassegeHandler::command_info;
-		commands["ADMIN"] 		= &MassegeHandler::command_admin;
-		commands["TIME"] 		= &MassegeHandler::command_time;
-		commands["OPER"] 		= &MassegeHandler::command_oper;
-		commands["WHO"] 		= &MassegeHandler::command_who;
-		commands["PING"] 		= &MassegeHandler::command_ping;
-		commands["PONG"] 		= &MassegeHandler::command_pong;
+		commands["INFO"]		= &MassegeHandler::command_info;
+		commands["ADMIN"]		= &MassegeHandler::command_admin;
+		commands["TIME"]		= &MassegeHandler::command_time;
+		commands["OPER"]		= &MassegeHandler::command_oper;
+		commands["WHO"]			= &MassegeHandler::command_who;
+		commands["PING"]		= &MassegeHandler::command_ping;
+		commands["PONG"]		= &MassegeHandler::command_pong;
 		commands["WALLOPS"] 	= &MassegeHandler::command_wallops;
 		commands["WHOIS"]		= &MassegeHandler::command_whois;
 		commands["TOPIC"]		= &MassegeHandler::command_topic;
@@ -1082,7 +1082,7 @@ public:
 		commands["LIST"]		= &MassegeHandler::command_list;
 	}
 	// Распечатка
-	void	printMassege(){
+	void	printMassege() {
 		string	temp = "";
 		debug("[printMassege] Cообщение получено {" + str_message + "}");
 		for (int i = 0; i < lenparam; i++)
@@ -1117,8 +1117,7 @@ public:
 			catch(const std::exception & e) {
 				if (res.first->second.getStatus() == -1)
 					add_unregister_error();
-				else
-				{
+				else {
 					add_auto_message(ERR_UNKNOWNCOMMAND, param[0] + " :Unknown command");
 					debug(RED"[handle_message] Неизвестная команда" DEFAULT);
 				}

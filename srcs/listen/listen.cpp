@@ -10,8 +10,7 @@
 
 /* Создание сокета под IPv4, TCP, и проверка функции на ошибки */
 
-static int	create_socket()
-{
+static int	create_socket() {
 	int	socket_fd;
 
 	socket_fd = socket(PF_INET, SOCK_STREAM, TCP);
@@ -21,8 +20,7 @@ static int	create_socket()
 }
 
 /* Настройка сокета, проверка */
-static void	set_socket_options(const int socket_fd)
-{
+static void	set_socket_options(const int socket_fd) {
 	int		set_options;
 	int		enable_operation = true;
 
@@ -34,8 +32,7 @@ static void	set_socket_options(const int socket_fd)
 }
 
 /* Выдача сокету "имя" в виде адреса и порта */
-static void	bind_socket(const int socket_fd, const int port)
-{
+static void	bind_socket(const int socket_fd, const int port) {
 	int	bind_value;
 	struct sockaddr_in address; //For IPv4 instead IPv6 (sockaddr_in6);
 
@@ -50,8 +47,7 @@ static void	bind_socket(const int socket_fd, const int port)
 }
 
 /* Установка хука на активность сокета */
-static void	listen_socket(const int socket_fd)
-{
+static void	listen_socket(const int socket_fd) {
 	int	listen_value;
 
 	listen_value = listen(socket_fd, 42);
@@ -64,8 +60,7 @@ static void	listen_socket(const int socket_fd)
 }
 
 /* Слушаем отдельного клиента - отдельную машину, если угодно */
-void	listen_clients(const int socket_fd, const string pass)
-{
+void	listen_clients(const int socket_fd, const string pass) {
 	int						connection_fd;
 	fd_set					fds, read_fds;
 	map<int, std::string>	clients;
@@ -81,52 +76,37 @@ void	listen_clients(const int socket_fd, const string pass)
 
 	debug("[listen_clients] Listening clients");
 
-	while (true)
-	{
+	while (true) {
 		if (check_time(&clients_map, pass, clients, fds, clients_ip, &channel))
 			continue ;
 		read_fds = fd_set(fds);
 		struct timeval timeout = {0, 10000};
 		handle_select( select(FD_SETSIZE, &read_fds, NULL, NULL, &timeout) );
-		for (int i = 0; i < FD_SETSIZE; i++)
-		{
-			if (FD_ISSET(i, &read_fds))
-			{
-				if (i == socket_fd) //Новое подключение
-				{
+		for (int i = 0; i < FD_SETSIZE; i++) {
+			if (FD_ISSET(i, &read_fds)) {
+				if (i == socket_fd) { //Новое подключение
 					socklen_t	size = sizeof(client_ip);
 					connection_fd = accept(socket_fd, (struct sockaddr *)&client_ip, &size);
 					clients_ip.insert( make_pair<int, string>(connection_fd, std::string(inet_ntoa(client_ip.sin_addr))) );
 					handle_accept(connection_fd);
 					clients.insert(std::pair<int, std::string>(connection_fd, ""));
 					FD_SET(connection_fd, &fds);
-
 					if (DEBUG)
-						std::cout	<< "DEBUG: [listen_clients] New connection with ID " << connection_fd << " was add" << endl;
+						cout	<< "DEBUG: [listen_clients] New connection with ID " << connection_fd << " was add" << endl;
 				}
-				else //Старое подключение - обработка
-				{
+				else { //Старое подключение - обработка
 					char	buffer;
-					int	bytes = recv(i, &buffer, 1, 0);
-					if (bytes != 1) //Пользователь отключился. Удаляем из MAP
-					{
+					int		bytes = recv(i, &buffer, 1, 0);
+					if (bytes != 1) {//Пользователь отключился. Удаляем из MAP
 						debug("[listen_clients] ip_host= {" + clients_ip.find(i)->second + "}");
 						send_message(handle_message("QUIT", i, &clients_map, pass, clients, fds, clients_ip.find(i)->second, &channel)); // пользователь отключился
 					}
-					else //Пользователь ввел данные, обрабатываем
-					{
-						if (buffer == 13)
-						{
-
-						}
+					else { //Пользователь ввел данные, обрабатываем
+						if (buffer == 13){}
 						else if (buffer != 10 && buffer != 0) //Если введен любой символ, кроме ENTER в консоли
 							add_character_by_id(i, buffer, clients);
-						else //Если символ - конец строки (ENTER в консоли)
-						{
-							// std::string line = add_character_by_id(i, '\0', clients);
-
-							// line = line.substr(0, line.size() - 1);
-							string line = clients.find(i)->second;
+						else {//Если символ - конец строки (ENTER в консоли)
+							string	line = clients.find(i)->second;
 
 							//==========Для подсчёта шагов=====================
 							cout.fill('=');
@@ -149,8 +129,7 @@ void	listen_clients(const int socket_fd, const string pass)
 }
 
 /* Главная функция для прослушивания. Запускает все второстепенные, является главным узлом целого блока */
-void	listen_messages(const int port, const std::string pass)
-{
+void	listen_messages(const int port, const std::string pass) {
 	int	socket_fd;
 
 	socket_fd = create_socket();

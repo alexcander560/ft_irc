@@ -38,7 +38,6 @@ using 	std::set;
 
 # include "handle/users/user.hpp"
 # include "handle/users/channel.hpp"
-// #include "handle/messegeHandler/messegeHandler.hpp"
 
 class User;
 

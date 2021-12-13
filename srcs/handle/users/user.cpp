@@ -2,8 +2,7 @@
 #include "../messegeHandler/additions.hpp"
 
 // Конструктор
-User::User(int id, string ip)
-{
+User::User(int id, string ip) {
 	_nick.second = false;
 	_pass = false;
 	_data.second = false;
@@ -32,20 +31,20 @@ string				User::getHostName() const		{ return (_data.first.hostname); }
 string				User::getRealName() const		{ return (_data.first.realname); }
 string				User::getServerName() const		{ return (_data.first.servername); }
 string				User::getIp() const				{ return (_ip); }
-userMode				User::getMode() const			{ return (_mode); }
+userMode			User::getMode() const			{ return (_mode); }
 pair<bool, string>	User::getAwayMessage() const	{ return (_away_message); }
-time_t						User::getTimePing() const		{ return (_data.first.timeAfterPing); }
-time_t						User::getTimeIdle() const		{ return (_data.first.timeIdle); }
-time_t						User::getIsPing() const			{ return (_is_ping); }
+time_t				User::getTimePing() const		{ return (_data.first.timeAfterPing); }
+time_t				User::getTimeIdle() const		{ return (_data.first.timeIdle); }
+time_t				User::getIsPing() const			{ return (_is_ping); }
 // Все set
-void						User::setAwayMessage(pair<bool, string> away_message)	{ _away_message = away_message; }
-void						User::setModeI(bool flag)		{ _mode.i = flag; }
-void						User::setModeS(bool flag)		{ _mode.s = flag; }
-void						User::setModeO(bool flag)		{ _mode.o = flag; }
-void						User::setModeW(bool flag)		{ _mode.w = flag; }
-void						User::setTimePing(time_t time)	{ _data.first.timeAfterPing = time; }
-void						User::setTimeIdle(time_t time)	{ _data.first.timeIdle = time - _data.first.timeStart; }
-void						User::setIsPing(bool flag)		{ _is_ping = flag; }
+void				User::setAwayMessage(pair<bool, string> away_message)	{ _away_message = away_message; }
+void				User::setModeI(bool flag)		{ _mode.i = flag; }
+void				User::setModeS(bool flag)		{ _mode.s = flag; }
+void				User::setModeO(bool flag)		{ _mode.o = flag; }
+void				User::setModeW(bool flag)		{ _mode.w = flag; }
+void				User::setTimePing(time_t time)	{ _data.first.timeAfterPing = time; }
+void				User::setTimeIdle(time_t time)	{ _data.first.timeIdle = time - _data.first.timeStart; }
+void				User::setIsPing(bool flag)		{ _is_ping = flag; }
 
 // Устанавливает пользователю имя (проверяет на валидность)
 // Возвращает true, если ник успешно установлен, fasle если ник не валиден
@@ -75,8 +74,7 @@ bool			User::setNick(vector<string> param) {
 
 // Проверяет ввёл ли пользователь верный пароль
 // Возвращет true, если пароль верный, false если пароль неправильный
-bool			User::setPass(vector<string> param, const string pass_server)
-{
+bool			User::setPass(vector<string> param, const string pass_server) {
 	debug("[setPass] Пароль сервера: (" + pass_server + ") Пароль клиента: (" + param[1] + ")");
 	if (param.size() >= 2) {
 		if (param[1] == pass_server)
@@ -94,8 +92,7 @@ bool			User::setPass(vector<string> param, const string pass_server)
 
 // Устанавливает данные пользователя
 // Возвращает true, если данные успешно установлены, fasle при провале
-bool			User::setData(vector<string> param)
-{
+bool			User::setData(vector<string> param) {
 	if (param.size() == 5) {
 		_data.first.username = param[1];
 		_data.first.hostname = param[2];
@@ -111,9 +108,8 @@ bool			User::setData(vector<string> param)
 }
 
 // Проверяет все ли данные для пользователя заполненны, если да, то статус меняется на 1
-bool			User::registration()
-{
-	int old_status = _status;
+bool			User::registration() {
+	int	old_status = _status;
 
 	if (_nick.second && _pass && _data.second)
 		_status = 1;
@@ -121,8 +117,7 @@ bool			User::registration()
 }
 
 // Распечатать все данные о пользователе
-void			User::printUser() const
-{
+void			User::printUser() const {
 	cout << "--------------------------------------------------\n";
 	cout << "USER ID: " << _id << endl;
 	cout << "USER STATUS: " << _status << endl;

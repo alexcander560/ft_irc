@@ -51,30 +51,30 @@ class User
 		string				getServerName() const;
 		string				getRealName() const;
 		string				getIp() const;
-		userMode				getMode() const;
+		userMode			getMode() const;
 		pair<bool, string>	getAwayMessage() const;
-		time_t						getTimePing() const;
-		time_t						getTimeIdle() const;
-		time_t						getIsPing() const;
+		time_t				getTimePing() const;
+		time_t				getTimeIdle() const;
+		time_t				getIsPing() const;
 		// Устанавливает статус пользователя
-		void						setAwayMessage(pair<bool, string> away_message);
-		void						setModeI(bool flag);
-		void						setModeS(bool flag);
-		void						setModeO(bool flag);
-		void						setModeW(bool flag);
-		void						setTimePing(time_t time);
-		void						setTimeIdle(time_t time);
-		void						setIsPing(bool flag);
+		void				setAwayMessage(pair<bool, string> away_message);
+		void				setModeI(bool flag);
+		void				setModeS(bool flag);
+		void				setModeO(bool flag);
+		void				setModeW(bool flag);
+		void				setTimePing(time_t time);
+		void				setTimeIdle(time_t time);
+		void				setIsPing(bool flag);
 		// Устанавливает пользователю имя (проверяет на валидность)
-		bool			setNick(vector<string> param);
+		bool				setNick(vector<string> param);
 		// Проверяет ввёл ли пользователь верный пароль
-		bool			setPass(vector<string> param, const string pass_server);
+		bool				setPass(vector<string> param, const string pass_server);
 		// Устанавливает пользователю все нужные данные (проверяет на валидность)
-		bool			setData(vector<string> param);
+		bool				setData(vector<string> param);
 		// Проверяет все ли данные для пользователя заполненны, если да, то статус меняется на 1
-		bool			registration();
+		bool				registration();
 		// Распечатать все данные о пользователе
-		void			printUser() const;
+		void				printUser() const;
 		//Оператор сравнения двух пользователей
-		friend bool		operator == (const User &first, const User &second);
+		friend bool			operator == (const User &first, const User &second);
 };
